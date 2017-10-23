@@ -11,7 +11,6 @@ class InstructorAnalyticsDashboardTab(TabFragmentViewMixin, EnrolledTab):
     title = ugettext_noop("Instructor analytics")
     body_class = "instructor-analytics-tab"
     is_dynamic = True
-
     fragment_view_name = 'rg_instructor_analytics.views.CalendarTabFragmentView'
 
     @classmethod
