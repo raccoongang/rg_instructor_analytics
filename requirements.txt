@@ -1,5 +1,4 @@
-# Calendar Tab python requirements:
+# Instructor analytics Tab python requirements:
 # Django and openEdx's edx-platform are the runtime for this app.
 
-google-api-python-client==1.6.2
 web-fragments==0.2.2
