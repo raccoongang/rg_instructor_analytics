@@ -1,4 +1,0 @@
-# Instructor analytics Tab python requirements:
-# Django and openEdx's edx-platform are the runtime for this app.
-
-web-fragments==0.2.2

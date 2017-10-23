@@ -12,8 +12,6 @@ setup(
     version="0.1",
     install_requires=[
         "setuptools",
-        "pytz==2016.7",
-        "python-dateutil==2.1",
         "web-fragments==0.2.2",
     ],
     requires=[],
