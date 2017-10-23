@@ -21,12 +21,6 @@ from . import VENDOR_CSS_URL, VENDOR_JS_URL, VENDOR_PLUGIN_JS_URL, JS_URL
 log = logging.getLogger(__name__)
 
 
-@ensure_csrf_cookie
-@cache_control(no_cache=True, no_store=True, must_revalidate=True)
-def instructor_analytics(request, course_id):
-    return HttpResponse("")
-
-
 class CalendarTabFragmentView(EdxFragmentView):
 
     def render_to_fragment(self, request, course_id=None, **kwargs):
