@@ -30,7 +30,6 @@ def instructor_analytics(request, course_id):
 class CalendarTabFragmentView(EdxFragmentView):
 
     def render_to_fragment(self, request, course_id=None, **kwargs):
-        log.error("in fraaaaaaaaaaaaaaaaaaaaaaaaagment")
         try:
             course_key = CourseKey.from_string(course_id)
         except InvalidKeyError:
@@ -51,10 +50,6 @@ class CalendarTabFragmentView(EdxFragmentView):
             html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html',
                                     context)
             fragment = Fragment(html)
-            # fragment.add_css_url(VENDOR_CSS_URL)
-            # fragment.add_javascript_url(VENDOR_JS_URL)
-            # fragment.add_javascript_url(VENDOR_PLUGIN_JS_URL)
-            # fragment.add_javascript_url(JS_URL)
             return fragment
 
         except Exception as e:
@@ -62,26 +57,3 @@ class CalendarTabFragmentView(EdxFragmentView):
             html = render_to_string('calendar_tab/500_fragment.html')
             return Fragment(html)
 
-
-#
-# @ensure_csrf_cookie
-# @cache_control(no_cache=True, no_store=True, must_revalidate=True)
-# def instructor_analytics_dashboard(request, course_id):
-#     try:
-#         course_key = CourseKey.from_string(course_id)
-#     except InvalidKeyError:
-#         log.error(u"Unable to find course with course key %s while loading the Instructor Dashboard.", course_id)
-#         return HttpResponseServerError()
-#     course = get_course_by_id(course_key, depth=0)
-#
-#     sections = [
-#
-#     ]
-#
-#     context = {
-#         'course': course,
-#         'sections': sections
-#     }
-#     return render_to_response(
-#         'rg_instructor_analytics/instructor_analytics_dashboard/instructor_analytics_dashboard.html',
-#         context)

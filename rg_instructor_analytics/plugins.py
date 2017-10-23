@@ -12,7 +12,6 @@ class InstructorAnalyticsDashboardTab(TabFragmentViewMixin, EnrolledTab):
     body_class = "instructor-analytics-tab"
     is_dynamic = True
 
-    # view_name = "calendar_tab.views.calendar_view"
     fragment_view_name = 'rg_instructor_analytics.views.CalendarTabFragmentView'
 
     @classmethod
