@@ -54,6 +54,5 @@ class CalendarTabFragmentView(EdxFragmentView):
 
         except Exception as e:
             log.exception(e)
-            html = render_to_string('calendar_tab/500_fragment.html')
-            return Fragment(html)
+            return Http404()
 
