@@ -8,8 +8,9 @@
     <%static:css group='style-course'/>
 </%block>
 <%include file="/courseware/course_navigation.html" args="active_page='instructor_analytics'" />
-
-<style type="text/css"></style>
+<%
+    from django.utils.translation import ugettext as _
+%>
 
 <div class="container">
     <div class="instructor-dashboard-wrapper-2">
@@ -21,7 +22,7 @@
                         <button type="button"
                                 id="enrollment-stats-btn"
                                 class="btn-link"
-                                data-section="enrollment_stats">Enrollment stats
+                                data-section="enrollment_stats">${_("Enrollment stats")}
                         </button>
                     </li>
 
@@ -29,7 +30,7 @@
                         <button type="button"
                                 id="problems-btn"
                                 class="btn-link problems"
-                                data-section="problems">Problems
+                                data-section="problems">${_("Problems")}
                         </button>
                     </li>
 
@@ -37,23 +38,20 @@
                         <button type="button"
                                 id="gradebook-btn"
                                 class="btn-link"
-                                data-section="gradebook">Gradebook
+                                data-section="gradebook">${_("Gradebook")}
                         </button>
                     </li>
                 </ul>
 
                 <section id="section-enrollment-stats" class="idash-section">
-                    <h1>Section 1</h1>
                     <%include file="enrollment_stats.html" args="section_data={}" />
                 </section>
 
                 <section id="section-problem" class="idash-section">
-                    <h1>Section 2</h1>
                     <%include file="problems.html" args="section_data={}" />
                 </section>
 
                 <section id="section-gradebook" class="idash-section">
-                    <h1>Section 3</h1>
                     <%include file="gradebook.html" args="section_data={}" />
                 </section>
             </section>

@@ -32,6 +32,6 @@ class CalendarTabFragmentView(EdxFragmentView):
         log.debug(context)
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
         fragment = Fragment(html)
-        fragment.add_javascript_url(JS_URL)
+        fragment.add_javascript_url(JS_URL+'instructor_analytics.js')
 
         return fragment
