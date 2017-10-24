@@ -3,12 +3,13 @@ import logging
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 
 from edxmako.shortcuts import render_to_string
-from django.http import Http404, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest
 from courseware.courses import get_course_by_id
 
 from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
 from web_fragments.fragment import Fragment
+from . import JS_URL
 
 log = logging.getLogger(__name__)
 
@@ -29,8 +30,8 @@ class CalendarTabFragmentView(EdxFragmentView):
         }
 
         log.debug(context)
-        html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html',
-                                context)
+        html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
         fragment = Fragment(html)
-        return fragment
+        fragment.add_javascript_url(JS_URL+'instructor_analytics.js')
 
+        return fragment

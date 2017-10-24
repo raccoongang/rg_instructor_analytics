@@ -12,3 +12,7 @@ STATIC_URL = settings.STATIC_URL
 settings.MAKO_TEMPLATES['main'].extend([
     APP_ROOT / 'templates',
 ])
+
+log.debug('MAKO_TEMPLATES["main"]: {}'.format(settings.MAKO_TEMPLATES['main']))
+
+JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=STATIC_URL)
