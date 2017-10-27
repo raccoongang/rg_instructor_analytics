@@ -18,6 +18,7 @@ from opaque_keys.edx.keys import CourseKey
 from opaque_keys import InvalidKeyError
 from web_fragments.fragment import Fragment
 from courseware.courses import get_course_by_id
+from instructor.views.api import require_level
 
 from student.models import CourseEnrollment
 from . import JS_URL, CSS_URL

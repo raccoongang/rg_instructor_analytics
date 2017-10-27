@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 
+from instructor.views.api import require_level
 from .views import InstructorAnalyticsFragmentView, EnrollmentStatisticView
 
 urlpatterns = patterns(
@@ -11,7 +12,7 @@ urlpatterns = patterns(
     ),
     url(
         r'^api/enroll_statics$',
-        EnrollmentStatisticView.as_view(),
+        require_level('staff')(EnrollmentStatisticView.as_view()),
         name='enrollment_statistic_view'
     ),
 )
