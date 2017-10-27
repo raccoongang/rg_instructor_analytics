@@ -6,11 +6,18 @@
 <%block name="pagetitle">${_("Instructor Analytics")}</%block>
 <%block name="headextra">
     <%static:css group='style-course'/>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 </%block>
 <%include file="/courseware/course_navigation.html" args="active_page='instructor_analytics'" />
 <%
     from django.utils.translation import ugettext as _
 %>
+
+
+
 
 <div class="container">
     <div class="instructor-dashboard-wrapper-2">
@@ -44,15 +51,15 @@
                 </ul>
 
                 <section id="section-enrollment-stats" class="idash-section">
-                    <%include file="enrollment_stats.html" args="section_data={}" />
+                        <%include file="enrollment_stats.html" args="section_data=enroll_info" />
                 </section>
 
                 <section id="section-problem" class="idash-section">
-                    <%include file="problems.html" args="section_data={}" />
+                        <%include file="problems.html" args="section_data={course}" />
                 </section>
 
                 <section id="section-gradebook" class="idash-section">
-                    <%include file="gradebook.html" args="section_data={}" />
+                        <%include file="gradebook.html" args="section_data={course}" />
                 </section>
             </section>
         </main>

@@ -16,3 +16,4 @@ settings.MAKO_TEMPLATES['main'].extend([
 log.debug('MAKO_TEMPLATES["main"]: {}'.format(settings.MAKO_TEMPLATES['main']))
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=STATIC_URL)
+CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=STATIC_URL)

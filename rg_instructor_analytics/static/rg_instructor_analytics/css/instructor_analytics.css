@@ -1,0 +1,18 @@
+.dropdown-content {
+    padding: 24px 24px 24px 24px;
+    margin: 12px 12px 12px 0px;
+
+    width: auto;
+    height: auto;
+
+    display: none;
+    position: absolute;
+    background-color: #f6f6f6;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.show {
+    display: block;
+}
