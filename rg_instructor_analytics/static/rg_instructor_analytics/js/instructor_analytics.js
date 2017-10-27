@@ -25,11 +25,26 @@
     }
 
     function EnrollmentTab(button, content) {
-        var dateFormat = "mm/dd/yy";
-        var fromDate, toDate;
-        var periodDiv;
-        var selectDateBtn;
         var enrollTab = new Tab(button, content);
+
+        var dateFormat = "mm/dd/yy";
+
+        var selectDateBtn = enrollTab.content.find("#date-btn");
+
+        var periodDiv = enrollTab.content.find("#date_dropdown");
+
+        var fromDate = enrollTab.content.find("#from")
+            .datepicker()
+            .on("change", function () {
+                toDate.datepicker("option", "minDate", getDate(this));
+            });
+        var toDate = enrollTab.content.find("#to").datepicker()
+            .on("change", function () {
+                fromDate.datepicker("option", "maxDate", getDate(this));
+            });
+
+        var dateStart = periodDiv.attr('data-start');
+        var dateEnd = periodDiv.attr('data-end');
 
 
         function getDate(element) {
@@ -51,18 +66,53 @@
             };
 
             function onSuccess(response) {
-                var trace1 = {
-                    x: response.dates.map(function (x) {
-                        return new Date(x * 1000)
-                    }),
-                    y: response.counts,
+                var x = response.dates.map(function (x) {
+                    var result = new Date(x * 1000);
+                    result.setHours(0);
+                    result.setMinutes(0);
+                    return result;
+                });
+                var totalTrace = {
+                    x: x,
+                    y: response.total, mode: 'lines+markers',
+                    name: django.gettext('total'),
+                    line: {
+                        color: '#70A3FF',
+                        shape: 'spline',
+                        width: 2.3,
+                        smoothing: 1.25
+                    },
+                    type: 'scatter'
+                };
+                var enrollTrace = {
+                    x: x,
+                    y: response.enroll, mode: 'lines+markers',
+                    name: django.gettext('enroll'),
+                    fill: 'tozeroy',
+                    fillcolor: "rgba(139,178,42,0.25)",
+                    line: {
+                        shape: 'hv',
+                        color: '#8BB22A',
+                    },
+                    type: 'scatter'
+                };
+                var unenrollTrace = {
+                    x: x,
+                    y: response.unenroll, mode: 'lines+markers',
+                    name: django.gettext('unenroll'),
+                    fill: 'tozeroy',
+                    fillcolor: "rgba(204,70,48,0.25)",
+                    line: {
+                        shape: 'hv',
+                        color: '#CC4630',
+                    },
                     type: 'scatter'
                 };
                 var layout = {
                     xaxis: {},
                     yaxis: {dtick: 1}
                 };
-                var data = [trace1];
+                var data = [unenrollTrace, enrollTrace, totalTrace];
 
                 Plotly.newPlot('enrollment-stats-plot', data, layout);
             }
@@ -82,19 +132,6 @@
             });
         }
 
-        periodDiv = enrollTab.content.find("#date_dropdown");
-        fromDate = enrollTab.content.find("#from")
-            .datepicker()
-            .on("change", function () {
-                toDate.datepicker("option", "minDate", getDate(this));
-            });
-        toDate = enrollTab.content.find("#to").datepicker()
-            .on("change", function () {
-                fromDate.datepicker("option", "maxDate", getDate(this));
-            });
-        var dateStart = periodDiv.attr('data-start');
-        var dateEnd = periodDiv.attr('data-end');
-
         var now = new Date();
         if (dateEnd !== "null" && (dateEnd = new Date(parseFloat(dateEnd) * 1000)) < now) {
             toDate.datepicker("setDate", dateEnd);
@@ -113,15 +150,14 @@
         defaultStart.setMonth(defaultStart.getMonth() - 1);
         fromDate.datepicker("setDate", dateStart && dateStart > defaultStart ? dateStart : defaultStart);
 
-        selectDateBtn = enrollTab.content.find("#date-btn");
         selectDateBtn.click(function () {
             periodDiv.addClass('show');
-            updateEnrolls();
         });
 
         enrollTab.content.find("#date-apply-btn").click(function () {
             periodDiv.removeClass('show');
-            updateStatPeriod()
+            updateStatPeriod();
+            updateEnrolls();
         });
 
         enrollTab.loadTabData = updateEnrolls;

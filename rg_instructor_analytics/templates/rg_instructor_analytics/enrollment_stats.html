@@ -8,14 +8,14 @@
 <div id="date_dropdown" class="dropdown-content"
      data-start=${section_data['enroll_start']} data-end=${section_data['enroll_end']}>
     <div>
-        <label for="from">From</label>
+        <label for=${_("from")}>From</label>
         <input type="text" id="from" name="from">
-        <label for="to">to</label>
+        <label for=${_("to")}>to</label>
         <input type="text" id="to" name="to">
     </div>
     <p>&nbsp;</p>
     <div>
-        <button id="date-apply-btn">Apply</button>
+        <button id="date-apply-btn">${_("Apply")}</button>
     </div>
 </div>
 <div id="enrollment-stats-plot">

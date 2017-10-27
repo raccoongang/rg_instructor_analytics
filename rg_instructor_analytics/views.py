@@ -3,8 +3,12 @@ import logging
 from datetime import datetime, date
 
 import itertools
+from time import mktime
+
+from django.db.models import Count
 from django.http.response import JsonResponse
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
+from parse_rest.user import login_required
 
 from edxmako.shortcuts import render_to_string
 from django.http import HttpResponseBadRequest
@@ -23,6 +27,33 @@ log = logging.getLogger(__name__)
 
 class EnrollmentStatisticView(View):
 
+    @staticmethod
+    def get_state_before(course_key, from_date):
+        """
+        Provide tuple with count of enroll and unenroll users
+        """
+        stats = CourseEnrollment.history.filter(course_id=course_key, history_date__lt=from_date) \
+            .values('is_active').annotate(count=Count('is_active')).order_by('is_active')
+
+        enrollment_count = 0
+        un_enrollment_count = 0
+        for s in stats:
+            if s['is_active']:
+                enrollment_count += s['count']
+            else:
+                un_enrollment_count -= s['count']
+        return enrollment_count, un_enrollment_count
+
+    @staticmethod
+    def get_state_in_period(course_key, from_date, to_date):
+        """
+        Provide map, where key - day of course enroll activity and value - list of activity items
+        """
+        enrollment_query = CourseEnrollment.history.filter(course_id=course_key,
+                                                           history_date__range=(from_date, to_date)) \
+            .values('history_date', 'is_active').order_by('history_date')
+        return itertools.groupby(enrollment_query, lambda x: x['history_date'].date())
+
     # TODO refactoring sql request, ask Igor
     def post(self, request, course_id):
         try:
@@ -31,25 +62,47 @@ class EnrollmentStatisticView(View):
             log.error(u"Unable to find course with course key %s while getting enrollment statistic", course_id)
             return HttpResponseBadRequest()
 
-        from_date = datetime.fromtimestamp(int(request.POST['from']))
-        to_date = datetime.fromtimestamp(int(request.POST['to']))
+        from_timestamp = int(request.POST['from'])
+        from_date = datetime.fromtimestamp(from_timestamp)
 
-        enrollment_query = CourseEnrollment.objects.filter(course_id=course_key, created__range=(from_date, to_date)) \
-            .values('created').order_by('created')
-        enrollment = itertools.groupby(enrollment_query, lambda x: x['created'].date())
+        to_timestamp = int(request.POST['to'])
+        to_date = datetime.fromtimestamp(to_timestamp)
 
-        dates = []
-        counts = []
-        total_count = 0
+        enrollment_count, un_enrollment_count = EnrollmentStatisticView.get_state_before(course_key, from_date)
+        enrollment = EnrollmentStatisticView.get_state_in_period(course_key, from_date, to_date)
+
+        dates, counts_total, counts_enroll, counts_unenroll = [], [], [], []
+
+        dates.append(from_timestamp)
+        counts_total.append(enrollment_count + un_enrollment_count)
+        counts_enroll.append(enrollment_count)
+        counts_unenroll.append(un_enrollment_count)
+
         for day, items in enrollment:
-            new_enrolls = (day - date(1970, 1, 1)).total_seconds()
-            dates.append(new_enrolls)
-            counts.append(total_count)
-            total_count += len(list(items))
-            dates.append(new_enrolls)
-            counts.append(total_count)
+            for i in items:
+                if i['is_active']:
+                    enrollment_count += 1
+                else:
+                    un_enrollment_count -= 1
 
-        return JsonResponse(data={'dates': dates, 'counts': counts})
+            new_enrolls = mktime(day.timetuple())
+            dates.append(new_enrolls)
+            counts_total.append(enrollment_count + un_enrollment_count)
+            counts_enroll.append(enrollment_count)
+            counts_unenroll.append(un_enrollment_count)
+
+        dates.append(to_timestamp)
+        counts_total.append(enrollment_count + un_enrollment_count)
+        counts_enroll.append(enrollment_count)
+        counts_unenroll.append(un_enrollment_count)
+
+        data = {
+            'dates': dates,
+            'total': counts_total,
+            'enroll': counts_enroll,
+            'unenroll': counts_unenroll,
+        }
+        return JsonResponse(data=data)
 
 
 class InstructorAnalyticsFragmentView(EdxFragmentView):
@@ -71,10 +124,8 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
             enroll_end = course.end
 
         enroll_info = {
-            'enroll_start': (enroll_start.replace(tzinfo=None) - datetime(1970, 1, 1)).total_seconds() if (
-                enroll_start is not None) else 'null',
-            'enroll_end': (enroll_end.replace(tzinfo=None) - datetime(1970, 1, 1)).total_seconds() if (
-                enroll_end is not None) else 'null',
+            'enroll_start': mktime(enroll_start.timetuple()) if (enroll_start is not None) else 'null',
+            'enroll_end': mktime(enroll_end.timetuple()) if (enroll_end is not None) else 'null',
         }
         context = {
             'course': course,
