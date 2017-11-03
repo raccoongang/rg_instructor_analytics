@@ -1,13 +1,26 @@
+/**
+ * module for instructor analytics tab
+ */
 (function () {
     'use strict';
     var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
 
     var tabList = [];
 
-
+    /**
+     * Abstract class for tabs in instructor analytics tab
+     * @param button using for switch to given tab
+     * @param content content of given tab
+     * @class
+     * @abstract
+     */
     function Tab(button, content) {
         this.button = button;
         this.content = content;
+        /**
+         * Called for mark this tab active and show content.
+         * @param isActive
+         */
         this.setActive = function (isActive) {
             if (isActive) {
                 content.addClass('active-section');
@@ -19,11 +32,20 @@
             }
         };
 
+        /**
+         * Called for loading date for some tab implementation.
+         * @abstract
+         */
         this.loadTabData = function () {
             throw new Error("missing implementation")
         }
     }
 
+    /**
+     * Implementation of Tab for enrollment tab
+     * @returns {Tab}
+     * @class
+     */
     function EnrollmentTab(button, content) {
         var enrollTab = new Tab(button, content);
 
@@ -46,7 +68,10 @@
         var dateStart = periodDiv.attr('data-start');
         var dateEnd = periodDiv.attr('data-end');
 
-
+        /**
+         * Provide date from given datepicker
+         * @param element - datepicker
+         */
         function getDate(element) {
             try {
                 return $.datepicker.parseDate(dateFormat, element.value);
@@ -55,10 +80,16 @@
             }
         }
 
+        /**
+         * Update select date button according to selection of date range
+         */
         function updateStatPeriod() {
             selectDateBtn.html(fromDate.val() + ' - ' + toDate.val())
         }
 
+        /**
+         * Send ajax to server side according selected date range and redraw plot
+         */
         function updateEnrolls() {
             var date = {
                 from: fromDate.datepicker("getDate").getTime() / 1000,
@@ -170,16 +201,30 @@
         return enrollTab;
     }
 
+    /**
+     * Implementation of Tab for problem tab
+     * @returns {Tab}
+     * @class
+     */
     function ProblemTab(button, content) {
         var problemTab = new Tab(button, content);
         problemTab.loadTabData = function () {
+            console.log("Called loadTabData method for ProblemTab. " +
+                "ProblemTab functionality will be implemented in feature")
         };
         return problemTab;
     }
 
+    /**
+     * Implementation of Tab for gradebook tab
+     * @returns {Tab}
+     * @class
+     */
     function GradebookTab(button, content) {
         var greadebookTab = new Tab(button, content);
         greadebookTab.loadTabData = function () {
+            console.log("Called loadTabData method for GradebookTab. " +
+                "GradebookTab functionality will be implemented in feature")
         };
         return greadebookTab;
     }
@@ -191,8 +236,7 @@
     }
 
     $(function () {
-        var $content;
-        $content = $('.' + CSS_INSTRUCTOR_CONTENT);
+        var $content = $('.' + CSS_INSTRUCTOR_CONTENT);
         tabList = [
             EnrollmentTab(
                 $content.find('#enrollment-stats-btn'),
