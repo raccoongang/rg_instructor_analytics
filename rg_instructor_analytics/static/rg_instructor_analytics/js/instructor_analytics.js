@@ -74,7 +74,8 @@
                 });
                 var totalTrace = {
                     x: x,
-                    y: response.total, mode: 'lines+markers',
+                    y: response.total,
+                    mode: 'lines',
                     name: django.gettext('total'),
                     line: {
                         color: '#70A3FF',
@@ -82,11 +83,12 @@
                         width: 2.3,
                         smoothing: 1.25
                     },
-                    type: 'scatter'
+                    type: 'scatter',
                 };
                 var enrollTrace = {
                     x: x,
-                    y: response.enroll, mode: 'lines+markers',
+                    y: response.enroll,
+                    mode: 'lines',
                     name: django.gettext('enroll'),
                     fill: 'tozeroy',
                     fillcolor: "rgba(139,178,42,0.25)",
@@ -98,7 +100,8 @@
                 };
                 var unenrollTrace = {
                     x: x,
-                    y: response.unenroll, mode: 'lines+markers',
+                    y: response.unenroll,
+                    mode: 'lines',
                     name: django.gettext('unenroll'),
                     fill: 'tozeroy',
                     fillcolor: "rgba(204,70,48,0.25)",
@@ -124,7 +127,7 @@
             $.ajax({
                 traditional: true,
                 type: "POST",
-                url: "api/enroll_statics",
+                url: "api/enroll_statics/",
                 data: date,
                 success: onSuccess,
                 error: onError,
