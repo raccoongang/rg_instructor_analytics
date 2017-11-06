@@ -42,10 +42,12 @@ class EnrollmentStatisticView(View):
         Example of function result: [{'is_active': True, 'count': 10}, {'is_active': False, 'count': 2}]
         """
         return (
-            CourseEnrollment.history
-                            .filter(course_id=course_key, history_date__lt=date)
-                            .values('is_active')
-                            .annotate(count=Count('is_active')).order_by('is_active')
+            CourseEnrollment
+            .history
+            .filter(course_id=course_key, history_date__lt=date)
+            .values('is_active')
+            .annotate(count=Count('is_active'))
+            .order_by('is_active')
         )
 
     @staticmethod
@@ -74,12 +76,13 @@ class EnrollmentStatisticView(View):
         count - the number of student with given activity in given day.
         """
         enrollment_query = (
-            CourseEnrollment.history
-                            .filter(course_id=course_key, history_date__range=(from_date, to_date))
-                            .annotate(date=RawSQL("select DATE(history_date)", (), output_field=DateField()))
-                            .values("date", "is_active")
-                            .annotate(count=Count('date'))
-                            .order_by('is_active').order_by('date')
+            CourseEnrollment
+            .history
+            .filter(course_id=course_key, history_date__range=(from_date, to_date))
+            .annotate(date=RawSQL("select DATE(history_date)", (), output_field=DateField()))
+            .values("date", "is_active")
+            .annotate(count=Count('date'))
+            .order_by('is_active').order_by('date')
         )
 
         return enrollment_query

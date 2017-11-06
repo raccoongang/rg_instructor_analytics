@@ -1,5 +1,5 @@
 """
-Module for describe tab.
+Module for tabs description.
 """
 from courseware.access import has_access
 from courseware.tabs import EnrolledTab
@@ -9,7 +9,7 @@ from xmodule.tabs import TabFragmentViewMixin
 
 class InstructorAnalyticsDashboardTab(TabFragmentViewMixin, EnrolledTab):
     """
-    Provide information for tab.
+    Provides information for tab.
     """
 
     name = "instructor_analytics"

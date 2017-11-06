@@ -47,7 +47,7 @@ class TestEnrollmentStatisticView(TestCase):
         self.factory = RequestFactory()
 
         self.request = self.factory.post(
-            '/courses/%s/tab/instructor_analytics/api/enroll_statics/'.format(self.MOCK_COURSE_ID)
+            '/courses/{}/tab/instructor_analytics/api/enroll_statics/'.format(self.MOCK_COURSE_ID)
         )
         self.request.user = self.MOCK_ALLOWED_USER
         self.request.POST = self.MOCK_REQUEST_PARAMS
@@ -57,10 +57,12 @@ class TestEnrollmentStatisticView(TestCase):
     @patch('rg_instructor_analytics.views.CourseKey.from_string')
     @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_statistic_per_day')
     def test_enroll_statistic_post_call(
-            self, moc_get_statistic_per_day,
-            moc_course_key_from_string,
-            moc_get_course_by_id,
-            moc_has_access):
+        self,
+        moc_get_statistic_per_day,
+        moc_course_key_from_string,
+        moc_get_course_by_id,
+        moc_has_access
+    ):
         """
         Verify standard post flow.
         """
@@ -78,9 +80,9 @@ class TestEnrollmentStatisticView(TestCase):
     @patch('rg_instructor_analytics.views.log.error')
     @patch('rg_instructor_analytics.views.CourseKey.from_string')
     def test_enroll_statistic_post_call_with_fake_course(
-            self,
-            moc_course_key_from_string,
-            moc_log_error,
+        self,
+        moc_course_key_from_string,
+        moc_log_error,
     ):
         """
         Verify reaction to the invalid course.
@@ -101,11 +103,11 @@ class TestEnrollmentStatisticView(TestCase):
     @patch('rg_instructor_analytics.views.get_course_by_id')
     @patch('rg_instructor_analytics.views.CourseKey.from_string')
     def test_enroll_statistic_post_call_with_unallowed_user(
-            self,
-            moc_course_key_from_string,
-            moc_get_course_by_id,
-            moc_has_access,
-            moc_log_error
+        self,
+        moc_course_key_from_string,
+        moc_get_course_by_id,
+        moc_has_access,
+        moc_log_error
     ):
         """
         Verify reaction to user, which do not have access to  the given API.

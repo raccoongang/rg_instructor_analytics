@@ -9,9 +9,9 @@
 
     /**
      * Abstract class for tabs in instructor analytics tab
-     * @param button using for switch to given tab
-     * @param content content of given tab
-     * @class
+     * @param button is used for switching to the given tab
+     * @param content content of the given tab
+     * @class old realisation
      * @abstract
      */
     function Tab(button, content) {
@@ -42,9 +42,9 @@
     }
 
     /**
-     * Implementation of Tab for enrollment tab
+     * Implementation of Tab for the enrollment tab
      * @returns {Tab}
-     * @class
+     * @class old realisation
      */
     function EnrollmentTab(button, content) {
         var enrollTab = new Tab(button, content);
@@ -202,9 +202,9 @@
     }
 
     /**
-     * Implementation of Tab for problem tab
+     * Implementation of Tab for the problem tab
      * @returns {Tab}
-     * @class
+     * @class old realisation
      */
     function ProblemTab(button, content) {
         var problemTab = new Tab(button, content);
@@ -218,7 +218,7 @@
     /**
      * Implementation of Tab for gradebook tab
      * @returns {Tab}
-     * @class
+     * @class old realisation
      */
     function GradebookTab(button, content) {
         var greadebookTab = new Tab(button, content);

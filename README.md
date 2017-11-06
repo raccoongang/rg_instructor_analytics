@@ -1,8 +1,8 @@
 # rg_instructor_analytics
 
 ##Unit tests
-All test runs in edx environment. 
+All tests could be run only in local. 
 #####For run unit test follow the next steps:
-* Ensure that source placed in one of the edx-platform subdirectory.
+* Ensure that the source placed in one of the edx-platform subdirectory.
 * cd rg_instructor_analytics
 * sh ./test_tool/run_test.sh
