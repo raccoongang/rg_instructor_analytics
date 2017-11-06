@@ -1,4 +1,6 @@
-"""Module for tab fragment and api views."""
+"""
+Module for tab fragment and api views.
+"""
 from datetime import datetime
 import logging
 from time import mktime
@@ -27,7 +29,9 @@ CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.
 
 
 class EnrollmentStatisticView(View):
-    """Api for getting enrollment statistic."""
+    """
+    Api for getting enrollment statistic.
+    """
 
     @staticmethod
     def request_to_db_for_stats_before(course_key, date):
@@ -95,7 +99,7 @@ class EnrollmentStatisticView(View):
         enrollment_count, un_enrollment_count = EnrollmentStatisticView.get_state_before(course_key, from_date)
         enrollments = EnrollmentStatisticView.get_state_in_period(course_key, from_date, to_date)
 
-        dates, counts_total, counts_enroll, counts_unenroll = [], [], [], []
+        dates, counts_total, counts_enroll, counts_unenroll = ([], [], [], [])
 
         dates.append(int(from_timestamp))
         counts_total.append(enrollment_count + un_enrollment_count)
@@ -127,7 +131,9 @@ class EnrollmentStatisticView(View):
         return {'dates': dates, 'total': counts_total, 'enroll': counts_enroll, 'unenroll': counts_unenroll, }
 
     def post(self, request, course_id):
-        """Process post request for this view."""
+        """
+        Process post request for this view.
+        """
         try:
             course_key = CourseKey.from_string(course_id)
         except InvalidKeyError:
@@ -145,10 +151,14 @@ class EnrollmentStatisticView(View):
 
 
 class InstructorAnalyticsFragmentView(EdxFragmentView):
-    """Fragment for render tab."""
+    """
+    Fragment for render tab.
+    """
 
     def render_to_fragment(self, request, course_id=None, **kwargs):
-        """Render tab fragment."""
+        """
+        Render tab fragment.
+        """
         try:
             course_key = CourseKey.from_string(course_id)
         except InvalidKeyError:
@@ -170,8 +180,8 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
             enroll_end = course.end
 
         enroll_info = {
-            'enroll_start': mktime(enroll_start.timetuple()) if (enroll_start is not None) else 'null',
-            'enroll_end': mktime(enroll_end.timetuple()) if (enroll_end is not None) else 'null',
+            'enroll_start': mktime(enroll_start.timetuple()) if enroll_start else 'null',
+            'enroll_end': mktime(enroll_end.timetuple()) if enroll_end else 'null',
         }
         context = {
             'course': course,

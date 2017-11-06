@@ -1,4 +1,6 @@
-"""Test for view."""
+"""
+Test for view.
+"""
 from datetime import date
 
 from django.http.request import QueryDict
@@ -10,7 +12,9 @@ from rg_instructor_analytics.views import EnrollmentStatisticView
 
 
 class TestEnrollmentStatisticView(TestCase):
-    """Test for enrollment statistic view."""
+    """
+    Test for enrollment statistic view.
+    """
 
     MOCK_PREVIOUS_ENROLL_STATE = (4, -1)
     MOCK_CURRENT_ENROLL_STATE = [
@@ -37,8 +41,16 @@ class TestEnrollmentStatisticView(TestCase):
     }
 
     def setUp(self):
-        """Implement from base class."""
+        """
+        Implement from base class.
+        """
         self.factory = RequestFactory()
+
+        self.request = self.factory.post(
+            '/courses/%s/tab/instructor_analytics/api/enroll_statics/'.format(self.MOCK_COURSE_ID)
+        )
+        self.request.user = self.MOCK_ALLOWED_USER
+        self.request.POST = self.MOCK_REQUEST_PARAMS
 
     @patch('rg_instructor_analytics.views.has_access')
     @patch('rg_instructor_analytics.views.get_course_by_id')
@@ -49,17 +61,15 @@ class TestEnrollmentStatisticView(TestCase):
             moc_course_key_from_string,
             moc_get_course_by_id,
             moc_has_access):
-        """Verify standard post flow."""
+        """
+        Verify standard post flow.
+        """
         moc_get_statistic_per_day.return_value = self.EXPECTED_ENROLL_STATISTIC
         moc_course_key_from_string.return_value = 'key'
         moc_get_course_by_id.return_value = 'course'
         moc_has_access.return_value = True
 
-        request = self.factory.post('/courses/' + self.MOCK_COURSE_ID + '/tab/instructor_analytics/api/enroll_statics/')
-        request.user = self.MOCK_ALLOWED_USER
-        request.POST = self.MOCK_REQUEST_PARAMS
-
-        response = EnrollmentStatisticView.as_view()(request, course_id=self.MOCK_COURSE_ID)
+        response = EnrollmentStatisticView.as_view()(self.request, course_id=self.MOCK_COURSE_ID)
 
         self.assertEqual(response.status_code, 200)
         moc_course_key_from_string.assert_called_once_with(self.MOCK_COURSE_ID)
@@ -72,15 +82,13 @@ class TestEnrollmentStatisticView(TestCase):
             moc_course_key_from_string,
             moc_log_error,
     ):
-        """Verify reaction to the invalid course."""
+        """
+        Verify reaction to the invalid course.
+        """
         moc_course_key_from_string.return_value = 'key'
         moc_course_key_from_string.side_effect = Mock(side_effect=InvalidKeyError('', ''))
 
-        request = self.factory.post('/courses/' + self.MOCK_COURSE_ID + '/tab/instructor_analytics/api/enroll_statics/')
-        request.user = self.MOCK_ALLOWED_USER
-        request.POST = self.MOCK_REQUEST_PARAMS
-
-        response = EnrollmentStatisticView.as_view()(request, course_id=self.MOCK_COURSE_ID)
+        response = EnrollmentStatisticView.as_view()(self.request, course_id=self.MOCK_COURSE_ID)
 
         self.assertEqual(response.status_code, 400)
         moc_log_error.assert_called_once_with(
@@ -99,24 +107,28 @@ class TestEnrollmentStatisticView(TestCase):
             moc_has_access,
             moc_log_error
     ):
-        """Verify reaction to user, which do not have access to  the given API."""
+        """
+        Verify reaction to user, which do not have access to  the given API.
+        """
         moc_course_key_from_string.return_value = 'key'
         moc_get_course_by_id.return_value = 'course'
         moc_has_access.return_value = False
 
-        request = self.factory.post('/courses/' + self.MOCK_COURSE_ID + '/tab/instructor_analytics/api/enroll_statics/')
-        request.user = self.MOCK_UN_ALLOWED_USER
-        request.POST = self.MOCK_REQUEST_PARAMS
+        self.request.user = self.MOCK_UN_ALLOWED_USER
+        response = EnrollmentStatisticView.as_view()(self.request, course_id=self.MOCK_COURSE_ID)
 
-        response = EnrollmentStatisticView.as_view()(request, course_id=self.MOCK_COURSE_ID)
-
-        moc_log_error.assert_called_once_with("Enrollment statistics not available for user type `%s`", request.user)
+        moc_log_error.assert_called_once_with(
+            "Enrollment statistics not available for user type `%s`",
+            self.request.user
+        )
         self.assertEqual(response.status_code, 403)
 
     @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_state_before')
     @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_state_in_period')
     def test_get_statistic_per_day(self, mock_get_state_in_period, moc_get_state_before):
-        """Verify collection of statistic per day."""
+        """
+        Verify collection of statistic per day.
+        """
         moc_get_state_before.return_value = self.MOCK_PREVIOUS_ENROLL_STATE
         mock_get_state_in_period.return_value = self.MOCK_CURRENT_ENROLL_STATE
         stats = EnrollmentStatisticView.get_statistic_per_day(self.MOCK_FROM_DATE, self.MOCK_TO_DATE, 'key')
@@ -125,7 +137,9 @@ class TestEnrollmentStatisticView(TestCase):
 
     @patch('rg_instructor_analytics.views.EnrollmentStatisticView.request_to_db_for_stats_before')
     def test_get_state_before(self, mock_request_to_db_for_stats_before):
-        """Verify getting statistics of the enrolled/unenrolled users before given day."""
+        """
+        Verify getting statistics of the enrolled/unenrolled users before given day.
+        """
         mock_request_to_db_for_stats_before.return_value = [
             {'is_active': True, 'count': 10},
             {'is_active': False, 'count': 2},

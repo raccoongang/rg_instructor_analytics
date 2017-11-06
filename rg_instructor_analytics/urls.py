@@ -1,4 +1,6 @@
-"""Url config file."""
+"""
+Url config file.
+"""
 from django.conf.urls import url
 
 from rg_instructor_analytics.views import EnrollmentStatisticView, InstructorAnalyticsFragmentView

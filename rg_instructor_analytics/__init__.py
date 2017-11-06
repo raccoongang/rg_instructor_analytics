@@ -1,4 +1,6 @@
-"""rg_instructor_analytics app."""
+"""
+rg_instructor_analytics app.
+"""
 import logging
 
 from django.conf import settings

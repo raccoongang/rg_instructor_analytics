@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#all test running in ex's runtime
+
 PROJECT_ROOT=$(pwd)
 export SERVICE_VARIANT="lms"
 export DISABLE_MIGRATIONS="false"
@@ -15,6 +17,4 @@ $MYSQL -u root mysql -e "$GRANT_REQUEST2"
 $MYSQL -u root mysql -e "$GRANT_REQUEST3"
 $MYSQL -u root mysql -e "$GRANT_REQUEST4"
 
-pytest $PROJECT_ROOT/tests -c $PROJECT_ROOT/pytest.ini
-
-#paver test_bokchoy -t openedx/features/edx_rg_instructor_analytics/rg_instructor_analytics/test/ --disable_migrations
+pytest $PROJECT_ROOT/../tests -c $PROJECT_ROOT/../pytest.ini
