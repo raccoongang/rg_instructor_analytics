@@ -318,6 +318,7 @@
                 problemsWrapper.find('.status-icon').hide();
                 problemsWrapper.find('.submit').hide();
                 problemDetail.find('.instructor-info-action').hide();
+                problemDetail.find('.status').remove();
 
                 bindPlotsPopupForProblem(problemsWrapper, stringProblemID)
             }
@@ -521,7 +522,7 @@
         optionQuestion.getRequestMap = function () {
             const id2ValueMap = {};
             this.options.each(index =>
-                id2ValueMap[this.options[index].value] = this.options[index].parentNode.childNodes[2].nodeValue.trim());
+                id2ValueMap[this.options[index].value] = $(this.options[index].parentNode).text().trim());
             return {
                 type: 'select',
                 questionID: this.questionHtml.attr('id').replace('inputtype_', ''),
