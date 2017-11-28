@@ -20,7 +20,6 @@ from django.db.models.fields import DateField
 from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponseForbidden, JsonResponse
 from django.views.generic import View
-
 from edxmako.shortcuts import render_to_string
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey

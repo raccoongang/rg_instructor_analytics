@@ -4,7 +4,6 @@ rg_instructor_analytics app.
 import logging
 
 from django.conf import settings
-
 from path import Path as path
 
 log = logging.getLogger(__name__)
