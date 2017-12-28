@@ -194,6 +194,30 @@
             updateEnrolls();
         });
 
+        enrollTab.content.find("#select-1-week").click(function () {
+            setPeriod(7)
+        });
+
+        enrollTab.content.find("#select-2-week").click(function () {
+            setPeriod(14)
+        });
+
+        enrollTab.content.find("#select-4-week").click(function () {
+            setPeriod(30)
+        });
+
+        function setPeriod(days) {
+
+            let newFrom = new Date(toDate.datepicker('getDate') - 1000*60*60*24*days);
+            if (dateStart !== "null" && newFrom < dateStart) {
+                newFrom = dateStart
+            }
+            fromDate.datepicker("setDate", newFrom);
+            updateStatPeriod();
+            updateEnrolls();
+        }
+
+
         enrollTab.loadTabData = updateEnrolls;
 
         updateStatPeriod();
@@ -355,14 +379,20 @@
     function bindPlotsPopupForProblem(problem, stringProblemID) {
         var avalivleQuestions = [OpetionQuestion, RadioOpetionQuestion, MultyChoseQuestion];
         var questionsDivs = problem.find(".wrapper-problem-response");
+        var isAdded;
         questionsDivs.each(function (index) {
+            isAdded = false;
+            var html = $(questionsDivs[index]);
             for (var i = 0; i < avalivleQuestions.length; i++) {
-                var html = $(questionsDivs[index]);
                 var question = avalivleQuestions[i](html, stringProblemID);
                 if (question.isCanParse()) {
                     question.applyToCurrentProblem(html);
+                    isAdded = true;
                     break;
                 }
+            }
+            if(!isAdded){
+                $('<p>We can`t display plot for this question.</p>').appendTo(html);
             }
         });
     }
