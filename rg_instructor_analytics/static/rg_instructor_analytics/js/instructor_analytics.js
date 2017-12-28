@@ -353,7 +353,7 @@
      * @param stringProblemID string problem id
      */
     function bindPlotsPopupForProblem(problem, stringProblemID) {
-        var avalivleQuestions = [OpetionQuestion, RadioOpetionQuestion,MultyChoseQuestion];
+        var avalivleQuestions = [OpetionQuestion, RadioOpetionQuestion, MultyChoseQuestion];
         var questionsDivs = problem.find(".wrapper-problem-response");
         questionsDivs.each(function (index) {
             for (var i = 0; i < avalivleQuestions.length; i++) {
@@ -426,7 +426,7 @@
                     l: 500
                 }
             };
-            Plotly.newPlot('proble-question-plot', [answers],layout);
+            Plotly.newPlot('proble-question-plot', [answers], layout);
         };
 
         /**
@@ -450,7 +450,7 @@
          * @param html layout for inserting button for display plot
          */
         this.applyToCurrentProblem = function (html) {
-            const $plotBtn = $('<button id="show-plot">Show plot!</button>');
+            const $plotBtn = $('<button>Show plot!</button>');
             $plotBtn.appendTo(html);
             $plotBtn.click((item) => {
                 var requestMap = this.getRequestMap();
@@ -547,9 +547,9 @@
         const multyChooseQuestion = new RadioOpetionQuestion(questionHtml, stringProblemID);
         multyChooseQuestion.options = multyChooseQuestion.questionHtml.find('input[type="checkbox"]');
 
-        var baseRequestMapFunction  = multyChooseQuestion.getRequestMap;
+        var baseRequestMapFunction = multyChooseQuestion.getRequestMap;
         multyChooseQuestion.getRequestMap = function () {
-            var result =  baseRequestMapFunction.call(this)
+            var result = baseRequestMapFunction.call(this)
             result.type = 'multySelect';
             return result;
         };
@@ -565,10 +565,85 @@
      */
     function GradebookTab(button, content) {
         var greadebookTab = new Tab(button, content);
+
+        greadebookTab.studentsTable = content.find('#student_table_body');
+        greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
+        greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
+
+        content.find('.student-search-field').on('change', function postinput() {
+            updateData($(this).val());
+        });
+
+        greadebookTab.filterString = '';
         greadebookTab.loadTabData = function () {
-            console.log("Called loadTabData method for GradebookTab. " +
-                "GradebookTab functionality will be implemented in feature")
+            updateData()
         };
+
+        function updateData(filterString = '')
+        {
+            function onSuccess(response) {
+                greadebookTab.studentInfo = response.student_info;
+                greadebookTab.examNames = response.exam_names;
+                updateTables()
+            }
+
+            function onError() {
+                alert("Can not load statistic fo select course");
+            }
+
+            $.ajax({
+                traditional: true,
+                type: "POST",
+                url: "api/gradebook/",
+                data: {filter:filterString},
+                success: onSuccess,
+                error: onError,
+                dataType: "json"
+            });
+        }
+
+        function updateTables() {
+            greadebookTab.gradebookTableHeader.empty();
+            greadebookTab.gradebookTableBody.empty();
+
+            for (var i = 0; i < greadebookTab.examNames.length; i++) {
+                greadebookTab.gradebookTableHeader.append('<th><div class="assignment-label">' + greadebookTab.examNames[i] + '</div></th>')
+            }
+
+            greadebookTab.studentsTable.empty();
+            for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
+                greadebookTab.studentsTable.append(
+                    '<tr class="" style="display: table-row;" >' +
+                    '<td>' +
+                    '<a data-position="' + i + '">' + greadebookTab.studentInfo[i].username + '</a>' +
+                    '</td>' +
+                    '</tr>');
+                var row = '<tr>';
+                for (var g = 0; g < greadebookTab.studentInfo[i].grades.length; g++) {
+                    row += '<td>';
+                    row += greadebookTab.studentInfo[i].grades[g];
+                    row += '</td>';
+                }
+                row += '</tr>';
+                greadebookTab.gradebookTableBody.append(row);
+            }
+            $(greadebookTab.studentsTable).find('a').click(function (element) {
+                var stat = {
+                    y: greadebookTab.studentInfo[element.target.dataset['position']].grades,
+                    x: greadebookTab.examNames,
+                    type: 'bar',
+                };
+                var data = [stat];
+
+                var layout = {
+                    title: greadebookTab.studentInfo[element.target.dataset['position']].username,
+                    showlegend: false
+                };
+
+                Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});
+            })
+        }
+
         return greadebookTab;
     }
 
