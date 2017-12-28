@@ -209,7 +209,9 @@ class EnrollmentStatisticView(AccessMixin, View):
 
 
 class ProblemHomeWorkStatisticView(AccessMixin, View):
-    """Api for get homework`s statistic for given course."""
+    """
+    Api for get homework`s statistic for given course.
+    """
 
     _PARSABLE_PROBLEMS = frozenset(['multiplechoiceresponse', 'choiceresponse', 'stringresponse', 'optionresponse'])
     _LABEL = 'label'
@@ -237,7 +239,9 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
 
     @classmethod
     def get_academic_performance(cls, course_key):
-        """Provide map, where key - course and value - map with average grade and attempt."""
+        """
+        Provide map, where key - course and value - map with average grade and attempt.
+        """
         return {
             i['module_state_key']: {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
             for i in cls.academic_performance_request(course_key)
@@ -282,15 +286,21 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         return stat
 
     def process(self, request, **kwargs):
-        """Process post request."""
+        """
+        Process post request.
+        """
         return JsonResponse(data=self.get_homework_stat(kwargs['course_key']))
 
 
 class ProblemsStatisticView(AccessMixin, View):
-    """Api for getting statistic for each problem in unit."""
+    """
+    Api for getting statistic for each problem in unit.
+    """
 
     def process(self, request, **kwargs):
-        """Process post request."""
+        """
+        Process post request.
+        """
         course_key = kwargs['course_key']
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in request.POST.getlist('problems')]
         stats = (
@@ -306,15 +316,21 @@ class ProblemsStatisticView(AccessMixin, View):
 
 
 class ProblemDetailView(AccessMixin, View):
-    """Api for getting problem detail."""
+    """
+    Api for getting problem detail.
+    """
 
     def process(self, request, **kwargs):
-        """Process post request."""
+        """
+        Process post request.
+        """
         return xblock_view(request, kwargs['course_id'], request.POST['problem'], 'student_view')
 
 
 class ProblemQuestionParser:
-    """Base class for provide statistic for question."""
+    """
+    Base class for provide statistic for question.
+    """
 
     __metaclass__ = ABCMeta
 
@@ -332,16 +348,22 @@ class ProblemQuestionParser:
 
     @staticmethod
     def init_statistic_object():
-        """Provide init state for statistic."""
+        """
+        Provide init state for statistic.
+        """
         return {}
 
     @abstractmethod
     def process_statistic_item(self, state, item):
-        """Abstract method for process data form database and update statistic."""
+        """
+        Abstract method for process data form database and update statistic.
+        """
         pass
 
     def get_statistic(self):
-        """Provide statistic for given question."""
+        """
+        Provide statistic for given question.
+        """
         problems = StudentModule.objects.filter(module_state_key=self.problemID, grade__isnull=False,
                                                 module_type__exact="problem").values_list('state', flat=True)
         result = self.init_statistic_object()
@@ -351,18 +373,26 @@ class ProblemQuestionParser:
 
 
 class ProblemSelectQuestion(ProblemQuestionParser):
-    """Class for process question with `select` type (dropdown and single choice)."""
+    """
+    Class for process question with `select` type (dropdown and single choice).
+    """
 
     def __init__(self, problemID, questionID, answer_map):
-        """Implement constructor."""
+        """
+        Implement constructor.
+        """
         super(ProblemSelectQuestion, self).__init__(problemID, questionID, answer_map)
 
     def init_statistic_object(self):
-        """Overwrite base class."""
+        """
+        Overwrite base class.
+        """
         return {'type': 'bar', 'stats': {v: 0 for v in self.answer_map.values()}}
 
     def process_statistic_item(self, state, item):
-        """Overwrite base class."""
+        """
+        Overwrite base class.
+        """
         state['stats'][self.answer_map[item['student_answers'][self.questionID]]] += 1
 
 
@@ -372,11 +402,15 @@ class ProblemMultiSelectQuestion(ProblemSelectQuestion):
     """
 
     def __init__(self, problemID, questionID, answer_map):
-        """Implement constructor."""
+        """
+        Implement constructor.
+        """
         super(ProblemMultiSelectQuestion, self).__init__(problemID, questionID, answer_map)
 
     def process_statistic_item(self, state, item):
-        """Overwrite base class."""
+        """
+        Overwrite base class.
+        """
         for answer in item['student_answers'][self.questionID]:
             state['stats'][self.answer_map[answer]] += 1
 
@@ -404,7 +438,9 @@ class ProblemQuestionView(AccessMixin, View):
 
 
 class GradebookView(AccessMixin, View):
-    """Api for question statistic."""
+    """
+    Api for question statistic.
+    """
 
     def get_grades_values(self, grade_info):
         """Return percent value of the student grade."""
@@ -413,7 +449,9 @@ class GradebookView(AccessMixin, View):
         return result
 
     def process(self, request, **kwargs):
-        """Process post request."""
+        """
+        Process post request.
+        """
         filter_string = request.POST['filter']
 
         course_key = kwargs['course_key']
