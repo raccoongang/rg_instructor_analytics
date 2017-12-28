@@ -461,10 +461,10 @@ class GradebookView(AccessMixin, View):
         )
         if filter_string:
             enrolled_students = enrolled_students.filter(
-                Q(username__contains=filter_string) |
-                Q(first_name__contains=filter_string) |
-                Q(last_name__contains=filter_string) |
-                Q(email__contains=filter_string)
+                Q(username__icontains=filter_string) |
+                Q(first_name__icontains=filter_string) |
+                Q(last_name__icontains=filter_string) |
+                Q(email__icontains=filter_string)
             )
         enrolled_students = enrolled_students.order_by('username').select_related("profile")
 
