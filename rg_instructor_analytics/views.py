@@ -44,7 +44,9 @@ QUESTUIN_MULTI_SELECT_TYPE = 'multySelect'
 
 
 class AccessMixin(object):
-    """Base class for provide check  user permission."""
+    """
+    Base class for provide check  user permission.
+    """
 
     __metaclass__ = ABCMeta
 
@@ -52,11 +54,15 @@ class AccessMixin(object):
 
     @abstractmethod
     def process(self, request, **kwargs):
-        """Process allowed request."""
+        """
+        Process allowed request.
+        """
         pass
 
     def base_process(self, request, course_id):
-        """Preprocess request, check permission and select course."""
+        """
+        Preprocess request, check permission and select course.
+        """
         try:
             course_key = CourseKey.from_string(course_id)
         except InvalidKeyError:
@@ -72,11 +78,15 @@ class AccessMixin(object):
         return self.process(request, course_key=course_key, course=course, course_id=course_id)
 
     def post(self, request, course_id):
-        """Overwrite base method for process post request."""
+        """
+        Overwrite base method for process post request.
+        """
         return self.base_process(request, course_id)
 
     def render_to_fragment(self, request, course_id):
-        """Overwrite base method for process render to fragment."""
+        """
+        Overwrite base method for process render to fragment.
+        """
         return self.base_process(request, course_id)
 
 
@@ -357,7 +367,9 @@ class ProblemSelectQuestion(ProblemQuestionParser):
 
 
 class ProblemMultiSelectQuestion(ProblemSelectQuestion):
-    """Class for process question with `multySelect` type (question with checkboxes)."""
+    """
+    Class for process question with `multySelect` type (question with checkboxes).
+    """
 
     def __init__(self, problemID, questionID, answer_map):
         """Implement constructor."""
@@ -370,7 +382,9 @@ class ProblemMultiSelectQuestion(ProblemSelectQuestion):
 
 
 class ProblemQuestionView(AccessMixin, View):
-    """Api for question statistic."""
+    """
+    Api for question statistic.
+    """
 
     def process(self, request, **kwargs):
         """Process post request."""
@@ -395,7 +409,7 @@ class GradebookView(AccessMixin, View):
     def get_grades_values(self, grade_info):
         """Return percent value of the student grade."""
         result = [int(g['percent'] * 100.0) for g in grade_info['section_breakdown']]
-        result += [int(grade_info['percent'] * 100.0)]
+        result.append(int(grade_info['percent'] * 100.0))
         return result
 
     def process(self, request, **kwargs):
@@ -432,7 +446,7 @@ class GradebookView(AccessMixin, View):
                     for g in CourseGradeFactory().create(enrolled_students[0], kwargs['course'])
                                                  .summary['section_breakdown']
                 ]
-                exam_names += [_('total')]
+                exam_names.append(_('total'))
         return JsonResponse(data={'student_info': student_info, 'exam_names': exam_names})
 
 

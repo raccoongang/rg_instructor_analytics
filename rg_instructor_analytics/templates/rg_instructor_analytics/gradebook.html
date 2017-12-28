@@ -6,7 +6,7 @@
 
 <h1>${_("Gradebook")}</h1>
 
-<table class="student-table" style="float: left; width: 20%">
+<table class="student-table name-table" >
     <thead >
     <tr>
         <th>
@@ -21,7 +21,7 @@
     </tbody>
 </table>
 
-<div class="grades" style="position: relative;float: left;width: 30%;overflow-x: auto;overflow-y: hidden">
+<div class="grades grade-table-wrapper" >
     <table class="grade-table">
         <thead id="gradebook_table_header"/>
         <tbody id="gradebook_table_body"/>
@@ -29,7 +29,7 @@
 </div>
 
 
-<div style="position: relative;float: left;width: 50%;overflow-x: auto;overflow-y: hidden">
+<div class="gradebook-plot">
     <div id = "gradebook-stats-plot">
 
     </div>

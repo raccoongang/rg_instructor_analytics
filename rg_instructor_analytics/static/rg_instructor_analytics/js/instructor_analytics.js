@@ -595,7 +595,7 @@
                 traditional: true,
                 type: "POST",
                 url: "api/gradebook/",
-                data: {filter:filterString},
+                data: {filter: filterString},
                 success: onSuccess,
                 error: onError,
                 dataType: "json"
@@ -613,7 +613,7 @@
             greadebookTab.studentsTable.empty();
             for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
                 greadebookTab.studentsTable.append(
-                    '<tr class="" style="display: table-row;" >' +
+                    '<tr class="gradebook-table-row" >' +
                     '<td>' +
                     '<a data-position="' + i + '">' + greadebookTab.studentInfo[i].username + '</a>' +
                     '</td>' +

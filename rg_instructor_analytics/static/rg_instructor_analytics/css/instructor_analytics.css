@@ -54,3 +54,29 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+.gradebook-table-row {
+    display: table-row;
+}
+
+.name-table{
+    float: left;
+    width: 20%;
+}
+
+.grade-table-wrapper {
+    position: relative;
+    float: left;
+    width: 30%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+
+.gradebook-plot {
+    position: relative;
+    float: left;
+    width: 50%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
