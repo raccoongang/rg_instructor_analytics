@@ -4,8 +4,9 @@ Url config file.
 from django.conf.urls import url
 
 from rg_instructor_analytics.views import (
-    EnrollmentStatisticView, InstructorAnalyticsFragmentView, ProblemDetailView, ProblemHomeWorkStatisticView,
-    ProblemQuestionView, ProblemsStatisticView, GradebookView)
+    EnrollmentStatisticView, GradebookView, InstructorAnalyticsFragmentView, ProblemDetailView,
+    ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
+)
 
 urlpatterns = [
     url(r'^api/enroll_statics/$', EnrollmentStatisticView.as_view(),

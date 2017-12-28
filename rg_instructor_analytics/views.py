@@ -8,28 +8,28 @@ import json
 import logging
 from time import mktime
 
-from django.contrib.auth.models import User
 from courseware.access import has_access
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
 from courseware.module_render import xblock_view
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.db.models import Avg, Count, Q, Sum
 from django.db.models import IntegerField
 from django.db.models.expressions import RawSQL
 from django.db.models.fields import DateField
 from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponseForbidden, JsonResponse
+from django.utils.translation import ugettext as _
 from django.views.generic import View
 from edxmako.shortcuts import render_to_string
+from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 from student.models import CourseEnrollment
 from web_fragments.fragment import Fragment
 from xmodule.modulestore.django import modulestore
-from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
-from django.utils.translation import ugettext as _
 
 logging.basicConfig()
 
@@ -44,15 +44,19 @@ QUESTUIN_MULTI_SELECT_TYPE = 'multySelect'
 
 
 class AccessMixin(object):
+    """Base class for provide check  user permission."""
+
     __metaclass__ = ABCMeta
 
     group_name = 'staff'
 
     @abstractmethod
     def process(self, request, **kwargs):
+        """Process allowed request."""
         pass
 
     def base_process(self, request, course_id):
+        """Preprocess request, check permission and select course."""
         try:
             course_key = CourseKey.from_string(course_id)
         except InvalidKeyError:
@@ -68,9 +72,11 @@ class AccessMixin(object):
         return self.process(request, course_key=course_key, course=course, course_id=course_id)
 
     def post(self, request, course_id):
+        """Overwrite base method for process post request."""
         return self.base_process(request, course_id)
 
     def render_to_fragment(self, request, course_id):
+        """Overwrite base method for process render to fragment."""
         return self.base_process(request, course_id)
 
 
@@ -89,12 +95,12 @@ class EnrollmentStatisticView(AccessMixin, View):
         """
         return (
             CourseEnrollment
-                .history
-                .filter(course_id=course_key, history_date__lt=date)
-                .filter(~Q(history_type='+'))
-                .values('is_active')
-                .annotate(count=Count('is_active'))
-                .order_by('is_active')
+            .history
+            .filter(course_id=course_key, history_date__lt=date)
+            .filter(~Q(history_type='+'))
+            .values('is_active')
+            .annotate(count=Count('is_active'))
+            .order_by('is_active')
         )
 
     @staticmethod
@@ -124,14 +130,14 @@ class EnrollmentStatisticView(AccessMixin, View):
         """
         enrollment_query = (
             CourseEnrollment
-                .history
-                .filter(course_id=course_key, history_date__range=(from_date, to_date))
-                .filter(~Q(history_type='+'))
-                .annotate(date=RawSQL("select DATE(history_date)", (), output_field=DateField()))
-                .values("date", "is_active")
-                .annotate(count=Count('date'))
-                .order_by('is_active')
-                .order_by('date')
+            .history
+            .filter(course_id=course_key, history_date__range=(from_date, to_date))
+            .filter(~Q(history_type='+'))
+            .annotate(date=RawSQL("select DATE(history_date)", (), output_field=DateField()))
+            .values("date", "is_active")
+            .annotate(count=Count('date'))
+            .order_by('is_active')
+            .order_by('date')
         )
 
         return enrollment_query
@@ -186,7 +192,6 @@ class EnrollmentStatisticView(AccessMixin, View):
         """
         Process post request for this view.
         """
-
         from_timestamp = int(request.POST['from'])
         to_timestamp = int(request.POST['to'])
 
@@ -211,12 +216,14 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
                           (),
                           output_field=IntegerField())
 
-        return (StudentModule.objects
+        return (
+            StudentModule.objects
             .filter(course_id__exact=course_key, grade__isnull=False, module_type__exact="problem")
             .values('module_state_key')
             .annotate(attempts_avg=Avg(attempts))
             .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
-            .values('module_state_key', 'attempts_avg', 'grade_avg'))
+            .values('module_state_key', 'attempts_avg', 'grade_avg')
+        )
 
     @classmethod
     def get_academic_performance(cls, course_key):
@@ -266,10 +273,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
 
     def process(self, request, **kwargs):
         """Process post request."""
-
-        stat = self.get_homework_stat(kwargs['course_key'])
-
-        return JsonResponse(data=stat)
+        return JsonResponse(data=self.get_homework_stat(kwargs['course_key']))
 
 
 class ProblemsStatisticView(AccessMixin, View):
@@ -279,12 +283,14 @@ class ProblemsStatisticView(AccessMixin, View):
         """Process post request."""
         course_key = kwargs['course_key']
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in request.POST.getlist('problems')]
-        stats = (StudentModule.objects
+        stats = (
+            StudentModule.objects
             .filter(module_state_key__in=problems)
             .values('module_state_key')
             .annotate(correct=Sum('grade'))
             .annotate(incorrect=Sum('grade') - Sum('max_grade'))
-            .values('module_state_key', 'correct', 'incorrect'))
+            .values('module_state_key', 'correct', 'incorrect')
+        )
         incorrect, correct = tuple(map(list, zip(*[(int(s['incorrect'] or 0), int(s['correct'] or 0)) for s in stats])))
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
@@ -294,7 +300,6 @@ class ProblemDetailView(AccessMixin, View):
 
     def process(self, request, **kwargs):
         """Process post request."""
-
         return xblock_view(request, kwargs['course_id'], request.POST['problem'], 'student_view')
 
 
@@ -369,7 +374,6 @@ class ProblemQuestionView(AccessMixin, View):
 
     def process(self, request, **kwargs):
         """Process post request."""
-
         type = request.POST['type']
         questionID = request.POST['questionID']
         answer_map = json.loads(request.POST['answerMap'])
@@ -389,26 +393,26 @@ class GradebookView(AccessMixin, View):
     """Api for question statistic."""
 
     def get_grades_values(self, grade_info):
+        """Return percent value of the student grade."""
         result = [int(g['percent'] * 100.0) for g in grade_info['section_breakdown']]
         result += [int(grade_info['percent'] * 100.0)]
         return result
 
     def process(self, request, **kwargs):
         """Process post request."""
-
         filter_string = request.POST['filter']
 
         course_key = kwargs['course_key']
         enrolled_students = User.objects.filter(
-                courseenrollment__course_id=course_key,
-                courseenrollment__is_active=1,
+            courseenrollment__course_id=course_key,
+            courseenrollment__is_active=1,
         )
         if filter_string:
             enrolled_students = enrolled_students.filter(
-                    Q(username__contains=filter_string) |
-                    Q(first_name__contains=filter_string) |
-                    Q(last_name__contains=filter_string) |
-                    Q(email__contains=filter_string)
+                Q(username__contains=filter_string) |
+                Q(first_name__contains=filter_string) |
+                Q(last_name__contains=filter_string) |
+                Q(email__contains=filter_string)
             )
         enrolled_students = enrolled_students.order_by('username').select_related("profile")
 
@@ -425,9 +429,8 @@ class GradebookView(AccessMixin, View):
             if len(enrolled_students) > 0:
                 exam_names = [
                     g['label']
-                    for g in CourseGradeFactory()
-                             .create(enrolled_students[0], kwargs['course'])
-                             .summary['section_breakdown']
+                    for g in CourseGradeFactory().create(enrolled_students[0], kwargs['course'])
+                                                 .summary['section_breakdown']
                 ]
                 exam_names += [_('total')]
         return JsonResponse(data={'student_info': student_info, 'exam_names': exam_names})
