@@ -12,6 +12,10 @@ url(
         name='instructor_analytics_endpoint',
     ),
 ```
+* Add in to settings file: 
+```python
+FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
+```
 * Run:
 ```bash
 sudo -sHu edxapp
