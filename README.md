@@ -1,7 +1,7 @@
 # rg_instructor_analytics
 
-## Install
-* Add `rg_instructor_analytics` to installed app 
+## Installation
+* Add `rg_instructor_analytics` to the installed app 
 * Add to lms url: 
 ```python
 url(
@@ -16,7 +16,7 @@ url(
 ```python
 FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 ```
-* Run:
+* Run in the console:
 ```bash
 sudo -sHu edxapp
 cd 
