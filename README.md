@@ -1,8 +1,8 @@
 # rg_instructor_analytics
 
 ## Installation
-* Add `rg_instructor_analytics` to the installed app 
-* Add to lms url: 
+* Add `rg_instructor_analytics` to the installed app (i.e. in `edx-platform/lms/envs/common.py`)
+* Add to lms url (i.e. in `edx-platform/lms/urls.py`): 
 ```python
 url(
         r'^courses/{}/tab/instructor_analytics/'.format(
@@ -12,7 +12,7 @@ url(
         name='instructor_analytics_endpoint',
     ),
 ```
-* Add in to the settings file: 
+* Add in to the settings file (i.e. in `edx-platform/lms/envs/common.py`): 
 ```python
 FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 ```
