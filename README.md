@@ -12,7 +12,7 @@ url(
         name='instructor_analytics_endpoint',
     ),
 ```
-* Add in to settings file: 
+* Add in to the settings file: 
 ```python
 FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 ```
