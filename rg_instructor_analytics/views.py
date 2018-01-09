@@ -23,19 +23,16 @@ from django.http.response import HttpResponseForbidden, JsonResponse
 from django.utils.translation import ugettext as _
 from django.views.generic import View
 from edxmako.shortcuts import render_to_string
-
-try:
-    from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
-except:
-    from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
-
-from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from web_fragments.views import FragmentView
 from student.models import CourseEnrollment
 from web_fragments.fragment import Fragment
+from web_fragments.views import FragmentView
 from xmodule.modulestore.django import modulestore
+try:
+    from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
+except Exception:
+    from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
 
 logging.basicConfig()
 
