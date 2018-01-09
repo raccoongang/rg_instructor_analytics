@@ -1,7 +1,7 @@
 # rg_instructor_analytics
 
 ## Installation
-* Add `rg_instructor_analytics` to the installed app (i.e. in `edx-platform/lms/envs/common.py`)
+* Add `rg_instructor_analytics` and `web_fragments` to the installed app (i.e. in `edx-platform/lms/envs/common.py`)
 * Add to lms url (i.e. in `edx-platform/lms/urls.py`): 
 ```python
 url(
