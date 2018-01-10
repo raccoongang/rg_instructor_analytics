@@ -39,7 +39,7 @@ class InstructorAnalyticsDashboardTab(CourseTab):
         """
         Return the slug to be included in this tab's URL.
         """
-        return "tab/" + self.type
+        return "tab/{}".format(self.type)
 
     @property
     def fragment_view(self):
