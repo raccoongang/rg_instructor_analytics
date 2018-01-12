@@ -1,5 +1,3 @@
-// import Tab from 'Tab';
-
 /**
  * Implementation of Tab for the problem tab
  * @returns {Tab}
@@ -361,5 +359,3 @@ function MultyChoseQuestion(questionHtml, stringProblemID) {
 
     return multyChooseQuestion;
 }
-
-// exports.ProblemTab = ProblemTab;

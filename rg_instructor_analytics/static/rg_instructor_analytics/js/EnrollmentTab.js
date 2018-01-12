@@ -1,5 +1,3 @@
-// import Tab from 'Tab';
-
 /**
  * Implementation of Tab for the enrollment tab
  * @returns {Tab}
@@ -183,5 +181,3 @@ function EnrollmentTab(button, content) {
     updateEnrolls();
     return enrollTab;
 };
-
-// exports.EnrollmentTab = EnrollmentTab;

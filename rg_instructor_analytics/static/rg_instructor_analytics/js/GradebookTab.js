@@ -1,5 +1,3 @@
-// import Tab from 'Tab';
-
 /**
  * Implementation of Tab for gradebook tab
  * @returns {Tab}
@@ -87,5 +85,3 @@ function GradebookTab(button, content) {
 
     return greadebookTab;
 };
-
-// exports.GradebookTab = GradebookTab;

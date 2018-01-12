@@ -1,5 +1,3 @@
-// import Tab from 'Tab';
-
 function CohortTab(button, content) {
     var cohortTab = new Tab(button, content);
 
@@ -90,4 +88,3 @@ function CohortTab(button, content) {
 
     return cohortTab;
 };
-// exports.CohortTab = CohortTab;

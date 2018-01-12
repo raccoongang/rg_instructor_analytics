@@ -31,5 +31,3 @@ function Tab(button, content) {
         throw new Error("missing implementation")
     }
 }
-
-// exports.Tab = Tab;
