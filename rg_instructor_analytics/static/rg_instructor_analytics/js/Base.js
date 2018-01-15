@@ -1,4 +1,5 @@
 $(function () {
+
     'use strict';
     var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
 
@@ -24,7 +25,10 @@ $(function () {
                 $content.find('#section-gradebook')),
             CohortTab(
                 $content.find('#cohort-btn'),
-                $content.find('#section-cohort'))
+                $content.find('#section-cohort')),
+            FunnelTab(
+                $content.find('#funnel-btn'),
+                $content.find('#section-funnel'))
         ];
         tabList.forEach(function (tab) {
             tab.button.click(function () {

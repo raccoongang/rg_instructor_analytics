@@ -49,6 +49,7 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         fragment.add_javascript_url(JS_URL + 'EnrollmentTab.js')
         fragment.add_javascript_url(JS_URL + 'GradebookTab.js')
         fragment.add_javascript_url(JS_URL + 'ProblemTab.js')
+        fragment.add_javascript_url(JS_URL + 'FunnelTab.js')
         fragment.add_javascript_url(JS_URL + 'Base.js')
         fragment.add_css_url(CSS_URL + 'instructor_analytics.css')
 

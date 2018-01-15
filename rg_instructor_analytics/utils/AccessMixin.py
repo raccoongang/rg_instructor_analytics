@@ -1,5 +1,5 @@
 """
-Module for access mixin.
+Module for access mget_course_by_idixin.
 """
 from abc import ABCMeta, abstractmethod
 import logging
