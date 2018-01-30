@@ -704,11 +704,10 @@
                 type: "POST",
                 url: "api/cohort/send_email/",
                 data: request,
-                success: () => console.log('sended email'),
-                error: console.log('email send fail'),
+                success: () => console.log('Emails are sended'),
+                error:  () => console.log('Email sending failed'),
                 dataType: "json"
             });
-            console.log(request);
         });
 
         function updateCohort() {
@@ -738,7 +737,7 @@
             }
 
             function onError() {
-                alert("Can not load statistic fo select course");
+                alert("Statistics for the select course cannot be loaded.");
             }
 
             $.ajax({

@@ -1,15 +1,6 @@
 <%page args="section_data" expression_filter="h"/>
 <%
-    import uuid
-
     from django.utils.translation import ugettext as _
-    from openedx.core.djangolib.markup import HTML
-    from mock import patch
-    from xmodule.html_module import HtmlDescriptor
-    from xblock.field_data import DictFieldData
-    from xblock.fields import ScopeIds
-    from openedx.core.lib.url_utils import quote_slashes
-    from openedx.core.lib.xblock_utils import wrap_xblock
 %>
 <h1>${_("Cohort")}</h1>
 

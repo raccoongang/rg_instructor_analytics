@@ -505,8 +505,17 @@ class CohortView(AccessMixin, View):
         """
         Generate cohort.
 
+        :param student_info [
+                    {
+                        'id': 'user id',
+                        'username': 'user name',
+                        'grade': 'user grade'
+                    }
+                    .....
+                ]
+
         Generate cohort for next algorithm:
-        1. Calculate mean(m) and standart deviation(s) of total grade [0;1]
+        1. Calculate mean(m) and standart deviation(s) of total grade [0,1]
         2. Set thresholds 0:(m - 3s):(m - 0.5s):(m + 0.5s):(m - 3s):1
         3. Return [
             {
