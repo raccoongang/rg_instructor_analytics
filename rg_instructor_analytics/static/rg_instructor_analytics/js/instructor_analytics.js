@@ -694,7 +694,7 @@
             });
 
             var request = {
-                users_id: ids,
+                users_ids: ids,
                 subject: $('#email-subject').val(),
                 body: $('#email-body').froalaEditor('html.get'),
             };
