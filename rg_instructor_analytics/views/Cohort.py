@@ -142,5 +142,3 @@ class CohortSendMessage(AccessMixin, View):
             students=User.objects.filter(id__in=request.POST['users_ids'].split(',')).values_list('email', flat=True)
         )
         return JsonResponse({'status': 'ok'})
-
-
