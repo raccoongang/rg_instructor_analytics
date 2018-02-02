@@ -10,6 +10,12 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <!-- froala. -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.3/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 </%block>
 <%include file="/courseware/course_navigation.html" args="active_page='instructor_analytics'" />
 <%
@@ -46,6 +52,15 @@
                                 data-section="gradebook">${_("Gradebook")}
                         </button>
                     </li>
+
+
+                    <li class="nav-item">
+                        <button type="button"
+                                id="cohort-btn"
+                                class="btn-link"
+                                data-section="cohort">${_("Cohort")}
+                        </button>
+                    </li>
                 </ul>
 
                 <section id="section-enrollment-stats" class="idash-section">
@@ -58,6 +73,10 @@
 
                 <section id="section-gradebook" class="idash-section">
                     <%include file="gradebook.html" args="section_data={course}" />
+                </section>
+
+                <section id="section-cohort" class="idash-section">
+                    <%include file="cohort.html" args="section_data={'course':course}" />
                 </section>
             </section>
         </main>
