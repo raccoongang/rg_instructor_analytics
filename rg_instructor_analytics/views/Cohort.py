@@ -28,8 +28,17 @@ class CohortView(AccessMixin, View):
         """
         Generate cohort.
 
+        :param student_info [
+                    {
+                        'id': 'user id',
+                        'username': 'user name',
+                        'grade': 'user grade'
+                    }
+                    .....
+                ]
+
         Generate cohort for next algorithm:
-        1. Calculate mean(m) and standart deviation(s) of total grade [0;1]
+        1. Calculate mean(m) and standart deviation(s) of total grade [0,1]
         2. Set thresholds 0:(m - 3s):(m - 0.5s):(m + 0.5s):(m - 3s):1
         3. Return [
             {
@@ -47,8 +56,10 @@ class CohortView(AccessMixin, View):
         thresholds = []
         if mean - 3 * s > 0:
             thresholds.append(mean - 3 * s)
-        thresholds.append(mean - 0.5 * s)
-        thresholds.append(mean + 0.5 * s)
+        if mean - 0.5 * s > 0:
+            thresholds.append(mean - 0.5 * s)
+        if mean + 0.5 * s < 1:
+            thresholds.append(mean + 0.5 * s)
         if mean + 3 * s < 1:
             thresholds.append(mean + 3 * s)
         thresholds.append(1)
@@ -128,6 +139,8 @@ class CohortSendMessage(AccessMixin, View):
         tasks.send_email_to_cohort(
             subject=request.POST['subject'],
             message=request.POST['body'],
-            students=User.objects.filter(id__in=request.POST['users_id'].split(',')).values_list('email', flat=True)
+            students=User.objects.filter(id__in=request.POST['users_ids'].split(',')).values_list('email', flat=True)
         )
         return JsonResponse({'status': 'ok'})
+
+
