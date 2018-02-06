@@ -21,7 +21,6 @@ function CohortTab(button, content) {
         };
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/cohort/send_email/",
             data: request,
