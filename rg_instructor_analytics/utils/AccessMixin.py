@@ -15,7 +15,6 @@ from opaque_keys.edx.keys import CourseKey
 logging.basicConfig()
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
 class AccessMixin(object):
