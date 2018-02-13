@@ -3,10 +3,13 @@ Url config file.
 """
 from django.conf.urls import url
 
-from rg_instructor_analytics.views import (
-    CohortSendMessage, CohortView, EnrollmentStatisticView, GradebookView, InstructorAnalyticsFragmentView,
+from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
+from rg_instructor_analytics.views.Enrollment import EnrollmentStatisticView
+from rg_instructor_analytics.views.Gradebook import GradebookView
+from rg_instructor_analytics.views.Problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
+from rg_instructor_analytics.views.TabFragment import InstructorAnalyticsFragmentView
 
 urlpatterns = [
     url(r'^api/enroll_statics/$', EnrollmentStatisticView.as_view(), name='enrollment_statistic_view'),
