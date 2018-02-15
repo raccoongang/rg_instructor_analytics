@@ -1,5 +1,5 @@
 /**
- * Implementation of Tab for gradebook tab
+ * Implementation of Tab for the gradebook tab
  * @returns {Tab}
  * @class old realisation
  */
@@ -27,7 +27,7 @@ function GradebookTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select course");
+            alert("Can not load statistic for select course");
         }
 
         $.ajax({

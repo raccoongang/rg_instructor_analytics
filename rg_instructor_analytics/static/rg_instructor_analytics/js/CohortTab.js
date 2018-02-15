@@ -15,21 +15,19 @@ function CohortTab(button, content) {
         });
 
         var request = {
-            users_id: ids,
+            users_ids: ids,
             subject: $('#email-subject').val(),
             body: $('#email-body').froalaEditor('html.get'),
         };
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/cohort/send_email/",
             data: request,
-            success: () => console.log('sended email'),
-            error: console.log('email send fail'),
+            success: () => console.log('Emails are sended'),
+            error: () => console.log('Email sending failed'),
             dataType: "json"
         });
-        console.log(request);
     });
 
     function updateCohort() {
@@ -59,7 +57,7 @@ function CohortTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select course");
+            alert("Statistics for the select course cannot be loaded.");
         }
 
         $.ajax({
@@ -76,15 +74,22 @@ function CohortTab(button, content) {
     cohortTab.loadTabData = updateCohort;
     cohortTab.emailBody.on('froalaEditor.image.beforeUpload', function (e, editor, files) {
         if (files.length) {
+            // Create a File Reader.
             var reader = new FileReader();
+
+            // Set the reader to insert images when they are loaded.
             reader.onload = function (e) {
                 var result = e.target.result;
                 editor.image.insert(result, null, null, editor.image.get());
             };
+
+            // Read image as base64.
             reader.readAsDataURL(files[0]);
         }
+
+        // Stop default upload chain.
         return false;
     });
 
     return cohortTab;
-};
+}

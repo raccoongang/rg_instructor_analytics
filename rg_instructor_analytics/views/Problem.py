@@ -35,7 +35,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         """
         Make request to db for academic performance.
 
-        Return list, where each item contain id of problem, average count of attempts and percent of correct answer.
+        Return list, where each item contain id of the problem, average count of attempts and percent of correct answer.
         """
         attempts = RawSQL("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)",
                           (),
@@ -65,7 +65,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         Provide statistic for given course.
 
         :param course_key:  object, that represent course.
-        :return: map with list of correct answers, attempts, list of problems for unit and names.
+        :return: map with list of correct answers, attempts, list of the problems for unit and names.
         Each item of given list represent one unit.
         """
         academic_performance = ProblemHomeWorkStatisticView.get_academic_performance(course_key)
@@ -140,7 +140,7 @@ class ProblemDetailView(AccessMixin, View):
         return xblock_view(request, kwargs['course_id'], request.POST['problem'], 'student_view')
 
 
-class ProblemQuestionParser:
+class ProblemQuestionParser():
     """
     Base class for provide statistic for question.
     """
@@ -159,7 +159,6 @@ class ProblemQuestionParser:
         self.problemID = problemID
         self.questionID = questionID
 
-    @staticmethod
     def init_statistic_object():
         """
         Provide init state for statistic.
@@ -234,7 +233,9 @@ class ProblemQuestionView(AccessMixin, View):
     """
 
     def process(self, request, **kwargs):
-        """Process post request."""
+        """
+        Process post request.
+        """
         type = request.POST['type']
         questionID = request.POST['questionID']
         answer_map = json.loads(request.POST['answerMap'])

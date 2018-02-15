@@ -1,5 +1,4 @@
 $(function () {
-
     'use strict';
     var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
 

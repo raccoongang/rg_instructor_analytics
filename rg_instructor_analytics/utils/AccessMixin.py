@@ -1,5 +1,5 @@
 """
-Module for access mget_course_by_idixin.
+Module for access mixin.
 """
 from abc import ABCMeta, abstractmethod
 import logging
@@ -15,7 +15,6 @@ from opaque_keys.edx.keys import CourseKey
 logging.basicConfig()
 
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
 
 
 class AccessMixin(object):

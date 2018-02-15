@@ -37,7 +37,7 @@ function ProblemTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select course");
+            alert("Can not load statistic for select course");
         }
 
         $.ajax({
@@ -52,8 +52,8 @@ function ProblemTab(button, content) {
     }
 
     /**
-     * function for display plot with homework problem stat
-     * @param homeworsProblem string id of problem
+     * function for display plot with homework problem statistics
+     * @param homeworsProblem string id of the problem
      */
     function loadHomeWorkProblems(homeworsProblem) {
         function onSuccess(response) {
@@ -85,7 +85,7 @@ function ProblemTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select course");
+            alert("Can not load statistic for select course");
         }
 
         $.ajax({
@@ -101,7 +101,7 @@ function ProblemTab(button, content) {
     }
 
     /**
-     * function for render problem body
+     * function for the render problem body
      * @param stringProblemID string problem id
      */
     function displayProblemView(stringProblemID) {
@@ -121,7 +121,7 @@ function ProblemTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select course");
+            alert("Can not load statistic for select course");
         }
 
         $.ajax({
@@ -190,12 +190,12 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-     * abstract method, that provide information for request about question statistic
-     * @return object with next body:
+     * abstract method, that provide information for question statistics request
+     * @return object with the body:
      * return {
-         *       type: string // string marker for given question
-         *       questionID: string, // id of question
-         *       answerMap: JSON string // json with relation between real data and it representation in database
+         *       type: string // string marker for the given question
+         *       questionID: string, // id of the question
+         *       answerMap: JSON string // json with relation between the real data and its representation in the database
          *  }
      *
      * @abstract
@@ -205,8 +205,8 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-     * function for display server response as bar plot
-     * @param data server response. Object with key - name of position and value - value of position
+     * function for displaying server's as the bar plot
+     * @param data server response. Object with key - name of the position and value - value of the position
      */
     this.displayBar = function (data) {
         const plot_popupp = $('#model_plot');
@@ -233,7 +233,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-     * call`s when receive response with stats for question
+     * call`s when receive response with statistics for the question
      * @param response
      */
     this.onGettingStat = function (response) {
@@ -249,8 +249,8 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-     * apply given instance to some question of problem
-     * @param html layout for inserting button for display plot
+     * apply given instance to some question of the problem
+     * @param html layout for inserting the button to display the plot
      */
     this.applyToCurrentProblem = function (html) {
         const $plotBtn = $('<button>Show plot!</button>');
