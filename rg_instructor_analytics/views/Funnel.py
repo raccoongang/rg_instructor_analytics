@@ -1,23 +1,22 @@
 """
-Module for problem subtab.
+Module for funnel subtab.
 """
-from abc import ABCMeta, abstractmethod
-from itertools import chain
 import json
 
-from courseware.courses import get_course_by_id
-from courseware.models import StudentModule
-from courseware.module_render import xblock_view
-from django.db.models import Avg, Sum, Count, Q
-from django.db.models import IntegerField
+from django.db.models import Count
 from django.db.models.expressions import RawSQL
 from django.http.response import JsonResponse
 from django.views.generic import View
 
+from courseware.courses import get_course_by_id
+from courseware.models import StudentModule
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 
 
 def info_for_course_element(element, level):
+    """
+    Return new element of the course item.
+    """
     return {
         'level': level,
         'name': element.display_name,
@@ -28,56 +27,57 @@ def info_for_course_element(element, level):
 
 
 def add_as_child(element, child):
+    """
+    Append to dictionary new element, named children.
+    """
     element['children'].append(child)
+
 
 class GradeFunnelView(AccessMixin, View):
     """
-    Api for get homework`s statistic for given course.
+    Api for get funnel for given course.
     """
 
     def get_query_for_course_item_stat(self, course_key, block_type):
+        """
+        Return query set for select given block type for given course.
+        """
         return (
-            StudentModule.objects
-                .filter(
-                    modified__exact=RawSQL(
-                            "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
-                            "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
-                            "AND t2.module_type = %s)", (course_key, block_type))
+            StudentModule.objects.filter(
+                modified__exact=RawSQL(
+                    "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
+                    "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
+                    "AND t2.module_type = %s)", (course_key, block_type))
             )
         )
 
-    def get_progress_info_for_problems(self, course_key):
-        info = self.get_query_for_course_item_stat(course_key, 'problem')
-        info = (info.values('module_state_key')
-            .order_by('module_state_key')
-            .annotate(count=Count('module_state_key'))
-            .values('module_state_key', 'count'))
-
-        result = {
-            i['module_state_key']: i['count'] for i in info
-        }
-        return result
-
     def get_progress_info_for_subsection(self, course_key):
+        """
+        Return activity for each of the section.
+        """
         info = self.get_query_for_course_item_stat(course_key, 'sequential')
-        info = (info.values('module_state_key', 'state')
-            .order_by('module_state_key', 'state')
-            .annotate(count=Count('module_state_key'))
-            .values('module_state_key', 'state', 'count'))
+        info = (
+            info.values('module_state_key', 'state')
+                .order_by('module_state_key', 'state')
+                .annotate(count=Count('module_state_key'))
+                .values('module_state_key', 'state', 'count')
+        )
 
         result = {}
         for i in info:
             if i['module_state_key'] not in result:
                 result[i['module_state_key']] = []
-            result[i['module_state_key']].append(
-                    {
-                        'count': i['count'],
-                        'offset': json.loads(i['state'])['position']
-                    })
+            result[i['module_state_key']].append({
+                'count': i['count'],
+                'offset': json.loads(i['state'])['position']
+            })
 
         return result
 
     def get_course_info(self, course_key, subsection_activity):
+        """
+        Return information about the course in tree view.
+        """
         course_info = []
         course = get_course_by_id(course_key, depth=4)
         for section in course.get_children():
@@ -93,8 +93,7 @@ class GradeFunnelView(AccessMixin, View):
                 add_as_child(section_info, subsection_info)
                 if subsection_info['id'] in subsection_activity:
                     for u in subsection_activity[subsection_info['id']]:
-                        # import ipdb;ipdb.set_trace(context=23);
-                        subsection_info['children'][u['offset']-1]['student_count'] = u['count']
+                        subsection_info['children'][u['offset'] - 1]['student_count'] = u['count']
                         subsection_info['student_count'] += u['count']
                     section_info['student_count'] += subsection_info['student_count']
             course_info.append(section_info)
@@ -105,7 +104,6 @@ class GradeFunnelView(AccessMixin, View):
         Process post request.
         """
         course_key = kwargs['course_key']
-        # problem_activity = self.get_progress_info_for_problems(course_key)
         subsection_activity = self.get_progress_info_for_subsection(course_key)
         courses_structure = self.get_course_info(course_key, subsection_activity)
-        return JsonResponse(data={'courses_structure':courses_structure})
+        return JsonResponse(data={'courses_structure': courses_structure})
