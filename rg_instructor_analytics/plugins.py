@@ -1,10 +1,11 @@
 """
 Module for tabs description.
 """
-from courseware.access import has_access
-from courseware.tabs import CourseTab
 from django.core.files.storage import get_storage_class
 from django.utils.translation import ugettext_noop
+
+from courseware.access import has_access
+from courseware.tabs import CourseTab
 
 
 class InstructorAnalyticsDashboardTab(CourseTab):

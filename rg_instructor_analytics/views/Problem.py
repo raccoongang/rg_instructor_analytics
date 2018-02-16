@@ -5,15 +5,15 @@ from abc import ABCMeta, abstractmethod
 from itertools import chain
 import json
 
-from courseware.courses import get_course_by_id
-from courseware.models import StudentModule
-from courseware.module_render import xblock_view
 from django.db.models import Avg, Sum
 from django.db.models import IntegerField
 from django.db.models.expressions import RawSQL
 from django.http.response import JsonResponse
 from django.views.generic import View
 
+from courseware.courses import get_course_by_id
+from courseware.models import StudentModule
+from courseware.module_render import xblock_view
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 
 

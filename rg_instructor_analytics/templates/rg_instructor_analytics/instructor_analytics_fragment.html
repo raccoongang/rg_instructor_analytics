@@ -61,6 +61,15 @@
                                 data-section="cohort">${_("Cohort")}
                         </button>
                     </li>
+
+
+                    <li class="nav-item">
+                        <button type="button"
+                                id="funnel-btn"
+                                class="btn-link"
+                                data-section="cohort">${_("Grading funnel")}
+                        </button>
+                    </li>
                 </ul>
 
                 <section id="section-enrollment-stats" class="idash-section">
@@ -77,6 +86,10 @@
 
                 <section id="section-cohort" class="idash-section">
                     <%include file="cohort.html" args="section_data={'course':course}" />
+                </section>
+
+                <section id="section-funnel" class="idash-section">
+                    <%include file="funnel.html" args="section_data={'course':course}" />
                 </section>
             </section>
         </main>

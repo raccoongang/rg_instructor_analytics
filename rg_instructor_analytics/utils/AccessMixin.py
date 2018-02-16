@@ -4,13 +4,13 @@ Module for access mixin.
 from abc import ABCMeta, abstractmethod
 import logging
 
-from courseware.access import has_access
-from courseware.courses import get_course_by_id
 from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponseForbidden
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 
+from courseware.access import has_access
+from courseware.courses import get_course_by_id
 
 logging.basicConfig()
 
