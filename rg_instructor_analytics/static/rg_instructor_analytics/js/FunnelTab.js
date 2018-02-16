@@ -17,7 +17,7 @@ function FunnelTab(button, content) {
                 target.parent().unbind('click')
                 var location = target.data('location');
                 var data = funnelTab.courseStructure[location[0]];
-                for(var i=1;i<location.length;i++){
+                for (var i = 1; i < location.length; i++) {
                     data = data.children[location[i]];
                 }
                 if(data.level < 3 ){ // when it is not problem level
@@ -46,7 +46,7 @@ function FunnelTab(button, content) {
         }
 
         function onError() {
-            alert('Can not load statistic fo select course');
+            alert('Can not load statistic for the selected course');
         }
 
         $.ajax({
