@@ -1,4 +1,3 @@
-
 function FunnelTab(button, content) {
     'use strict';
     var funnelTab = new Tab(button, content);
@@ -8,7 +7,7 @@ function FunnelTab(button, content) {
         function onSuccess(response) {
             console.log(response);
             funnelTab.courseStructure = response.courses_structure
-            addNewFunnelItems( funnelTab.courseStructureView, funnelTab.courseStructure)
+            addNewFunnelItems(funnelTab.courseStructureView, funnelTab.courseStructure)
         }
 
         function addListenerToFunnelItems(rootItem) {
@@ -21,17 +20,17 @@ function FunnelTab(button, content) {
                     data = data.children[location[i]];
                 }
                 if (data.level < 3) { // when it is not problem level
-                    addNewFunnelItems(target, data.children,location)
+                    addNewFunnelItems(target, data.children, location)
                 }
 
             })
         }
 
-        function addNewFunnelItems(view, data, location = []){
-             var sectionItem = '<ul>';
-             var viewContent = view.find('.content');
-             viewContent.empty();
-             for (var s = 0; s < data.length; s++) {
+        function addNewFunnelItems(view, data, location = []) {
+            var sectionItem = '<ul>';
+            var viewContent = view.find('.content');
+            viewContent.empty();
+            for (var s = 0; s < data.length; s++) {
                 var newLocation = location.slice();
                 newLocation.push(s)
                 sectionItem += '<li><div class="funnel-item" data-location="[' + newLocation + ']">';
