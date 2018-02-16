@@ -20,7 +20,7 @@ function FunnelTab(button, content) {
                 for (var i = 1; i < location.length; i++) {
                     data = data.children[location[i]];
                 }
-                if(data.level < 3 ){ // when it is not problem level
+                if (data.level < 3) { // when it is not problem level
                     addNewFunnelItems(target, data.children,location)
                 }
 
