@@ -42,35 +42,44 @@ function GradebookTab(button, content) {
     }
 
     function updateTables() {
+        var htmlStringStudents = '';
+        var htmlStringResults = '';
+        var htmlTemp = `<div class="gradebook-table-cell"><form class="student-search">
+            <input type="search" class="student-search-field" placeholder="Search students"/>
+            </form></div>`;
+
         greadebookTab.gradebookTableHeader.empty();
         greadebookTab.gradebookTableBody.empty();
 
         for (var i = 0; i < greadebookTab.examNames.length; i++) {
-            greadebookTab.gradebookTableHeader.append('<th><div class="assignment-label">' + greadebookTab.examNames[i] + '</div></th>')
+            htmlTemp += `<div class="gradebook-table-cell"><div class="assignment-label">${greadebookTab.examNames[i]}</div></div>`;
         }
-
+        greadebookTab.gradebookTableHeader.append(htmlTemp);
         greadebookTab.studentsTable.empty();
+        
         for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
-            greadebookTab.studentsTable.append(
-                '<tr class="gradebook-table-row" >' +
-                '<td>' +
-                '<a data-position="' + i + '">' + greadebookTab.studentInfo[i].username + '</a>' +
-                '</td>' +
-                '</tr>');
-            var row = '<tr>';
+            var htmlStringResults = '';
             for (var g = 0; g < greadebookTab.studentInfo[i].grades.length; g++) {
-                row += '<td>';
-                row += greadebookTab.studentInfo[i].grades[g];
-                row += '</td>';
+                htmlStringResults += `<div class="gradebook-table-cell">${greadebookTab.studentInfo[i].grades[g]}</div>`;
             }
-            row += '</tr>';
-            greadebookTab.gradebookTableBody.append(row);
+            
+            htmlStringStudents += 
+                `<div class="gradebook-table-row">
+                    <div class="gradebook-table-cell">
+                        <a data-position="${i}">${greadebookTab.studentInfo[i].username}</a>
+                    </div>
+                    ${htmlStringResults}
+                </div>`;
         }
-        $(greadebookTab.studentsTable).find('a').click(function (element) {
+    
+        greadebookTab.gradebookTableBody.append(htmlStringStudents);
+        
+        
+        $(greadebookTab.gradebookTableBody).click(function (element) {
             var stat = {
                 y: greadebookTab.studentInfo[element.target.dataset['position']].grades,
                 x: greadebookTab.examNames,
-                type: 'bar',
+                type: 'bar'
             };
             var data = [stat];
 
@@ -78,7 +87,8 @@ function GradebookTab(button, content) {
                 title: greadebookTab.studentInfo[element.target.dataset['position']].username,
                 showlegend: false
             };
-
+            $('.gradebook-table-row').removeClass("active");
+            element.target.parentElement.parentElement.classList.add("active");
             Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});
         })
     }

@@ -67,16 +67,48 @@
 .grade-table-wrapper {
     position: relative;
     float: left;
-    width: 30%;
+    width: 80%;
     overflow-x: auto;
     overflow-y: hidden;
 }
-
+.grade-table {
+    width: 100%;
+}
 
 .gradebook-plot {
     position: relative;
-    float: left;
-    width: 50%;
+    width: 100%;
+    max-width: 880px;
     overflow-x: auto;
     overflow-y: hidden;
+}
+.gradebook-table-row {
+    display: flex;
+}
+.gradebook-table-row.active .gradebook-table-cell {
+    background: rgb(49,204,245);
+}
+.gradebook-table-cell {
+    box-sizing: border-box;
+    padding: 5px;
+    flex: 1 1 50%;
+    background: rgb(241,241,241);
+    margin: 0 1px 1px;
+    text-align: center;
+}
+.gradebook-table-cell a {
+    color: rgb(34,34,34);
+    cursor: pointer;
+}
+
+.gradebook-table-cell:first-child {
+    flex: 0 0 250px;
+    text-align: left;
+}
+#gradebook_table_header .gradebook-table-cell {
+    background: rgb(210,210,210);
+}
+#gradebook_table_body {
+    max-height: 100px;
+    overflow-y: auto;
 }
