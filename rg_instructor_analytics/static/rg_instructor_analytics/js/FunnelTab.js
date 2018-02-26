@@ -14,7 +14,7 @@ function FunnelTab(button, content) {
         }
 
         function generateFunnel(data) {
-            return data.map((e, i) => e.level > 2 ? ' ' : `${generateFunnelItem(e,generateFunnel(e.children))}`).join(' ');
+            return data.map((e) => e.level > 2 ? ' ' : `${generateFunnelItem(e,generateFunnel(e.children))}`).join(' ');
         }
 
         function generateFunnelItem(item, children) {
