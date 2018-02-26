@@ -3,26 +3,34 @@
     from django.utils.translation import ugettext as _
 %>
 <h1>${_("Enroll statistic")}</h1>
+<h2 class="enrollment-title">${_("Lorem ipsum dolor sit amet")}</h2>
+<span class="enrollment-title-text">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
+<div class="enroll-buttons-holder">
+    <button id="date-btn">Select period</button>
+    <div id="date_dropdown" class="dropdown-content"
+        data-start=${section_data['enroll_start']} data-end=${section_data['enroll_end']}>
+        <div>
+            <label for=${_("from")}>From</label>
+            <input type="text" id="from" name="from">
+            <label for=${_("to")}>to</label>
+            <input type="text" id="to" name="to">
+        </div>
+        <p>&nbsp;</p>
+        <div>
+            <button id="date-apply-btn">${_("Apply")}</button>
+        </div>
+    </div>
 
-<button id="date-btn">Select period</button>
-<div id="date_dropdown" class="dropdown-content"
-     data-start=${section_data['enroll_start']} data-end=${section_data['enroll_end']}>
-    <div>
-        <label for=${_("from")}>From</label>
-        <input type="text" id="from" name="from">
-        <label for=${_("to")}>to</label>
-        <input type="text" id="to" name="to">
-    </div>
-    <p>&nbsp;</p>
-    <div>
-        <button id="date-apply-btn">${_("Apply")}</button>
-    </div>
+    <button id="select-1-week">Show for week</button>
+    <button id="select-2-week">Show for two week</button>
+    <button id="select-4-week">Show for month</button>
 </div>
 
-<button id="select-1-week">Show for week</button>
-<button id="select-2-week">Show for two week</button>
-<button id="select-4-week">Show for month</button>
-
+<div class="enrollment-legend-holder">
+    <div class="enrollment-legend-item">Unenroll</div>
+    <div class="enrollment-legend-item">Enroll</div>
+    <div class="enrollment-legend-item">Total</div>
+</div>
 <div id="enrollment-stats-plot">
 
 </div>
