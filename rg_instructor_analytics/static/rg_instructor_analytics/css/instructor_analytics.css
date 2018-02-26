@@ -1,6 +1,6 @@
 .dropdown-content {
     padding: 24px;
-    margin: 12px 12px 12px 0;
+    margin: 40px 12px 12px 0;
 
     width: auto;
     height: auto;
@@ -57,6 +57,7 @@
 
 .gradebook-table-row {
     display: table-row;
+    font-size: 12px;
 }
 
 .name-table{
@@ -87,23 +88,31 @@
 }
 .gradebook-table-row.active .gradebook-table-cell {
     background: rgb(49,204,245);
+    
 }
 .gradebook-table-cell {
     box-sizing: border-box;
-    padding: 5px;
+    padding: 7px 5px;
     flex: 1 1 50%;
-    background: rgb(241,241,241);
+    background: #f1f1f1;
     margin: 0 1px 1px;
     text-align: center;
 }
 .gradebook-table-cell a {
     color: rgb(34,34,34);
     cursor: pointer;
+    font-size: 12px;
+    padding: 7px 5px;
+    display: flex;
+    align-items: center;
 }
-
+.student-search {
+    padding: 7px 5px;
+}
 .gradebook-table-cell:first-child {
     flex: 0 0 250px;
     text-align: left;
+    padding: 0;
 }
 #gradebook_table_header .gradebook-table-cell {
     background: rgb(210,210,210);
@@ -111,4 +120,137 @@
 #gradebook_table_body {
     max-height: 100px;
     overflow-y: auto;
+}
+.funnel-item.active > .content {
+    display: block
+}
+.funnel-item > .content {
+    display: none;
+}
+.idash-section ul {
+    list-style: none;
+    padding: 0;
+}
+.idash-section button:not(.btn-link) {
+        background: none;
+        border: 1px solid #0075b4;
+        color: #0075b4;
+        padding: 5px 10px;
+        transition: 0.2s;
+        box-shadow: none;
+        text-shadow: none;
+        
+}
+.idash-section button:hover,
+.idash-section button:focus {
+    background: #0075b4 !important;
+    color: #fff;
+    transition: 0.2s;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+.fr-placeholder {
+    line-height: 1.3 !important;
+}
+.grade-table-wrapper {
+    width: 100%;
+}
+.gradebook-plot {
+    max-width: 100%;
+}
+.idash-section {
+    max-width: 768px;
+    margin: 0 auto;
+    width: 100%;
+}
+.js-plotly-plot {
+    width: 900px;
+    transform: translate(-7%);
+}
+#date-btn {
+    padding-right: 20px;
+    position: relative;
+}
+#date-btn:before {
+    content: '\f0d7';
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translate(0,-50%);
+    transition: 0.3s;
+}
+#date-btn.active:before {
+    transform: translate(0,-50%) rotate(180deg);
+    transition: 0.3s;
+}
+
+.instructor-dashboard-wrapper-2 .idash-section button {
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 7px 14px;
+}
+.enroll-buttons-holder {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+.enrollment-legend-holder {
+    max-width: 768px;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    bottom: -40px;
+    z-index: 1;
+}
+.enrollment-legend-item {
+    position: relative;
+    padding-left: 40px;
+}
+.enrollment-legend-item:before {
+    content: '';
+    height: 2px;
+    border-bottom: 4px solid #eccada;
+    width: 28px;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(0,-50%);
+}
+.enrollment-legend-item:first-child:before {
+   
+    background: #c14f84;
+    border-color: #eccada;
+}
+.enrollment-legend-item:nth-child(2):before {
+    background: #68b22c;
+    border-bottom: 4px solid #d1e8bf;
+}
+.enrollment-legend-item:nth-child(3):before {
+    background: #568ecc;
+    border-bottom: none;
+}
+.enrollment-title,
+.hd.hd-3.problem-header {
+    font-size: 18px;
+    color: #020202;
+    margin-bottom: 16px;
+}
+.enrollment-title-text,
+.problem p {
+    font-size: 13px;
+    color: #3f3f3f;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+.dropdown-content.show {
+    z-index: 2;
+}
+
+.hidden {
+    display: none !important;
+}
+.modal-content .js-plotly-plot {
+    transform: translate(0);
 }

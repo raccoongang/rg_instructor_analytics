@@ -31,8 +31,8 @@ $(function () {
         ];
         tabList.forEach(function (tab) {
             tab.button.click(function () {
-                toggleToTab(tab)
-            })
+                toggleToTab(tab);
+            });
         });
 
         toggleToTab(tabList[0]);
