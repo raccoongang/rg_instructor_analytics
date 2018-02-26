@@ -102,6 +102,9 @@ class GradeFunnelView(AccessMixin, View):
         return course_info
 
     def append_inout_info(self, statistic, accomulate=0):
+        """
+        Append information about how many student in course.
+        """
         for i in reversed(statistic):
             i['student_count_out'] = accomulate
             if len(i['children']):
