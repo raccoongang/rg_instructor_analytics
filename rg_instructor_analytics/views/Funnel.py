@@ -109,7 +109,7 @@ class GradeFunnelView(AccessMixin, View):
             i['student_count_out'] = accomulate
             if len(i['children']):
                 self.append_inout_info(i['children'], accomulate=accomulate)
-            accomulate += i['student_count_in']
+            accomulate += i['student_count']
             i['student_count_in'] = accomulate
 
     def process(self, request, **kwargs):

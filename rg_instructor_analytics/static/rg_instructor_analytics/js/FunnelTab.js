@@ -19,12 +19,12 @@ function FunnelTab(button, content) {
 
         function generateFunnelItem(item, children) {
             const name = item.name;
-            const incoming = item.incoming;
-            const stuck = item.stuck;
-            const out = item.out;
+            const incoming = item.student_count_in;
+            const stuck = item.student_count;
+            const out = item.student_count_out;
             const className = `funnel-item-${item.level}`;
             return `<div class="${className}">
-                       incoming::${incoming}  stuck::${stuck}  out::${out}   type::${className} name::${name}  
+                       ${incoming}  ${stuck}  ${out}   type::${className}
                        ${children}
                     </div>`
         }
