@@ -228,8 +228,8 @@ function BaseQuestion(questionHtml, stringProblemID) {
      * @param data server response. Object with key - name of the position and value - value of the position
      */
     this.displayBar = function (data) {
-        const plot_popupp = $('#model_plot');
-        plot_popupp.show();
+        const plot_popup = $('#model_plot');
+        plot_popup.show();
 
         var x = [];
         var y = [];
@@ -245,7 +245,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
         };
         const layout = {
             margin: {
-                l: 500
+                l: 150
             },
             showlegend: false
         };

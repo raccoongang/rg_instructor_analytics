@@ -420,3 +420,19 @@
     right: 10px;
     color: #fff;
 }
+.modal-for-plot {
+    position: static;
+    width: 750px;
+}
+.modal-for-plot .js-plotly-plot {
+    width: 750px;
+    transform: translate(0,0);
+}
+#proble-question-plot {
+    margin: 0 !important;
+}
+.modal-for-plot .close {
+    position: relative;
+    z-index: 1;
+    margin-top: 30px;
+}
