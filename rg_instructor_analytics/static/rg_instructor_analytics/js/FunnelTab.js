@@ -6,42 +6,27 @@ function FunnelTab(button, content) {
     function updateFunnel() {
         function onSuccess(response) {
             console.log(response);
-            funnelTab.courseStructure = response.courses_structure
-            addNewFunnelItems(funnelTab.courseStructureView, funnelTab.courseStructure)
-        }
+            funnelTab.courseStructure = response.courses_structure;
 
-        function addListenerToFunnelItems(rootItem) {
-            rootItem.find('.funnel-item').click((item) => {
-                var target = $(item.target);
-                target.parent().unbind('click')
-                var location = target.data('location');
-                var data = funnelTab.courseStructure[location[0]];
-                for (var i = 1; i < location.length; i++) {
-                    data = data.children[location[i]];
-                }
-                if (data.level < 3) { // when it is not problem level
-                    addNewFunnelItems(target, data.children, location)
-                }
-
-            })
-        }
-
-        function addNewFunnelItems(view, data, location = []) {
-            var sectionItem = '<ul>';
-            var viewContent = view.find('.content');
+            const viewContent = funnelTab.courseStructureView.find('.content');
             viewContent.empty();
-            for (var s = 0; s < data.length; s++) {
-                var newLocation = location.slice();
-                newLocation.push(s)
-                sectionItem += '<li><div class="funnel-item" data-location="[' + newLocation + ']">';
-                sectionItem += (
-                    'Name : ' + data[s].name + ' | ' + data[s].student_count
-                );
-                sectionItem += '<div class="content"/></div></li>';
-            }
-            sectionItem += '</ul>';
-            viewContent.append(sectionItem);
-            addListenerToFunnelItems(view)
+            viewContent.append(generateFunnel(funnelTab.courseStructure));
+        }
+
+        function generateFunnel(data) {
+            return data.map((e, i) => e.level > 2 ? ' ' : `${generateFunnelItem(e,generateFunnel(e.children))}`).join(' ');
+        }
+
+        function generateFunnelItem(item, children) {
+            const name = item.name;
+            const incoming = item.incoming;
+            const stuck = item.stuck;
+            const out = item.out;
+            const className = `funnel-item-${item.level}`;
+            return `<div class="${className}">
+                       incoming::${incoming}  stuck::${stuck}  out::${out}   type::${className} name::${name}  
+                       ${children}
+                    </div>`
         }
 
         function onError() {
