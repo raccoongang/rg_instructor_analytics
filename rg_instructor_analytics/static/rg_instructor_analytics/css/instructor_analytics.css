@@ -1,10 +1,8 @@
 .dropdown-content {
     padding: 24px;
     margin: 40px 12px 12px 0;
-
     width: auto;
     height: auto;
-
     display: none;
     position: absolute;
     background-color: #f6f6f6;
@@ -253,4 +251,172 @@
 }
 .modal-content .js-plotly-plot {
     transform: translate(0);
+}
+.funnel-item-1,
+.funnel-item-2 {
+    display: none;
+}
+.funnel-item-0 {
+    display: flex;
+    margin-bottom: 6px;
+}
+.funnel-item-1,
+.funnel-item-2,
+.funnel-item-0 {
+    flex-direction: column;
+    align-items: center;
+}
+.funnel-item-0.active .funnel-item-1 {
+    display: flex;
+}
+.funnel-item-1.active .funnel-item-2 {
+    display: flex;
+}
+.funnel-item-content {
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+    padding-right: 80px;
+    display: flex;
+    align-items: center;
+}
+.funnel-item-content:before {
+    content: '\f107';
+    font-family: "FontAwesome";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translate(0,-50%);
+    color: #fff;
+    font-size: 18px;
+    transition: 0.2s;
+}
+.funnel-item-0 > .funnel-item-content {
+    border-radius: 5px;
+    background-color: #8392cb;
+    width: 554px;
+    min-height: 80px;
+    color: #c5d1ff;
+    margin-bottom: 3px;
+    font-size: 14px;
+    padding: 20px;
+    display: block;
+}
+.funnel-item-0.active > .funnel-item-content,
+.funnel-item-0:hover> .funnel-item-content {
+    background-color: #6677b6;
+    color: #e2e8ff;
+    transition: 0.2s;
+}
+.funnel-item-1 > .funnel-item-content {
+    border-radius: 5px;
+    background-color: #95c891;
+    width: 420px;
+    min-height: 50px;
+    color: #242424;
+    margin-bottom: 3px;
+    font-size: 12px;
+    padding: 10px;
+    text-align: left;
+}
+.funnel-item-1.active > .funnel-item-content,
+.funnel-item-1:hover > .funnel-item-content {
+    background-color: #73b76d;
+    transition: 0.2s;
+}
+.funnel-item-2 > .funnel-item-content {
+    border-radius: 5px;
+    background-color: rgb(117, 203, 197);
+    width: 361px;
+    min-height: 30px;
+    color: #242424;
+    margin-bottom: 3px;
+    font-size: 12px;
+    padding: 10px;
+    text-align: left;
+}
+.funnel-item-2 .funnel-item-content:before {
+    display: none;
+}
+.funnel-item-0.active > .funnel-item-content:before,
+.funnel-item-1.active > .funnel-item-content:before {
+    transform: translate(0,-50%) rotate(180deg);
+    transition: 0.2s;
+}
+.funnel-item-incoming,
+.funnel-item-outgoing {
+    position: absolute;
+    width: 85px;
+    height: 40px;
+    background: url(/static/rg_instructor_analytics/images/Arrow.svg) no-repeat right center;
+    background-size: auto 30px;
+    padding-right: 40px;
+    left: -10px;
+    transform: translate(-100%,-50%);
+    font-size: 16px;
+    color: #505050;
+    top: 50%;
+    display: flex;
+    align-items: center;
+}
+.funnel-item-incoming {
+    justify-content: flex-end;
+}
+.funnel-item-outgoing {
+    left: auto;
+    right: -10px;
+    background: url(/static/rg_instructor_analytics/images/Arrow.svg) no-repeat left center;
+    padding: 0 0 0 40px;
+    transform: translate(100%,-50%);
+    background-size: auto 30px;
+}
+.funnel-item-1 .funnel-item-incoming,
+.funnel-item-1 .funnel-item-outgoing {
+    background-size: auto 18px;
+    padding-right: 25px;
+    color: #999999;
+    font-size: 12px;
+}
+.funnel-item-1 .funnel-item-outgoing {
+    padding: 0 0 0 24px;
+}
+.funnel-item-2 .funnel-item-incoming,
+.funnel-item-2 .funnel-item-outgoing {
+    background-size: auto 14px;
+    padding-right: 20px;
+    color: #999999;
+    font-size: 12px;
+}
+.funnel-item-2 .funnel-item-outgoing {
+    padding: 0 0 0 18px;
+}
+.idash-section .content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.funnel-item-stuck {
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translate(0,-50%);
+}
+.funnel-item-0 > .funnel-item-content > .funnel-item-stuck {
+    position: static;
+    transform: translate(0,0);
+    top: auto;
+    right: auto;
+    margin-top: 12px;
+    display: block;
+    color: #fff;
+}
+.funnel-item-1 > .funnel-item-content > .funnel-item-stuck {
+    color: #fff;
+}
+.funnel-item-2 > .funnel-item-content > .funnel-item-stuck {
+    right: 10px;
+    color: #fff;
 }
