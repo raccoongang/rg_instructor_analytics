@@ -18,7 +18,10 @@ function ProblemTab(button, content) {
                 y: response.correct_answer,
                 data: response.problems,
                 name: django.gettext('Percent of the correct answers'),
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: '#568ecc'
+                },
             };
 
             const attempts = {
@@ -26,12 +29,21 @@ function ProblemTab(button, content) {
                 y: response.attempts,
                 data: response.problems,
                 name: django.gettext('Average count of attempts'),
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: '#c14f84'
+                },
+
             };
+            const layout = {
+                showlegend: false
+            }
             const data = [correct_answer, attempts];
 
-            Plotly.newPlot('problem-homeworks-stats-plot', data);
+            Plotly.newPlot('problem-homeworks-stats-plot', data, layout, { displayModeBar: false});
+
             document.getElementById("problem-homeworks-stats-plot").on('plotly_click', function (data) {
+                $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden').removeClass('hidden');
                 loadHomeWorkProblems(response.problems[data.points[0].pointNumber]);
             });
         }
@@ -61,23 +73,30 @@ function ProblemTab(button, content) {
             const incorrect = {
                 y: response.incorrect,
                 name: django.gettext('Incorrect answers'),
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: '#c14f84'
+                }
             };
 
             const correct = {
                 y: response.correct,
                 name: django.gettext('Correct answers'),
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: '#568ecc'
+                },
             };
             const data = [correct, incorrect];
 
             const layout = {
                 barmode: 'relative',
                 xaxis: {dtick: 1},
-                yaxis: {dtick: 1}
+                yaxis: {dtick: 1},
+                showlegend: false
             };
 
-            Plotly.newPlot('problems-stats-plot', data, layout);
+            Plotly.newPlot('problems-stats-plot', data, layout,{ displayModeBar: false});
 
             document.getElementById("problems-stats-plot").on('plotly_click', function (data) {
                 displayProblemView(homeworsProblem[data.points[0].pointNumber]);
@@ -209,8 +228,8 @@ function BaseQuestion(questionHtml, stringProblemID) {
      * @param data server response. Object with key - name of the position and value - value of the position
      */
     this.displayBar = function (data) {
-        const plot_popupp = $('#model_plot');
-        plot_popupp.show();
+        const plot_popup = $('#model_plot');
+        plot_popup.show();
 
         var x = [];
         var y = [];
@@ -226,10 +245,11 @@ function BaseQuestion(questionHtml, stringProblemID) {
         };
         const layout = {
             margin: {
-                l: 500
-            }
+                l: 150
+            },
+            showlegend: false
         };
-        Plotly.newPlot('proble-question-plot', [answers], layout);
+        Plotly.newPlot('proble-question-plot', [answers], layout, { displayModeBar: false});
     };
 
     /**

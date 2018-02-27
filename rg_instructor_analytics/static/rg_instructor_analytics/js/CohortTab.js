@@ -3,7 +3,9 @@ function CohortTab(button, content) {
 
     cohortTab.cohortList = content.find('#cohort-check-list');
     cohortTab.emailBody = cohortTab.content.find('#email-body');
-    cohortTab.emailBody.froalaEditor();
+    cohortTab.emailBody.froalaEditor({
+        toolbarButtons: ['undo', 'redo' , 'bold', '|', 'alert', 'clear', 'insert']
+    });
 
     content.find('#cohort-send-email-btn').click(function () {
         var ids = '';

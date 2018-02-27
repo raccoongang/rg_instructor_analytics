@@ -101,11 +101,12 @@ function EnrollmentTab(button, content) {
             };
             var layout = {
                 xaxis: {},
-                yaxis: {dtick: 1}
+                yaxis: {dtick: 1},
+                showlegend: false
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
 
-            Plotly.newPlot('enrollment-stats-plot', data, layout);
+            Plotly.newPlot('enrollment-stats-plot', data, layout, {displayModeBar: false});
         }
 
         function onError() {
@@ -142,7 +143,8 @@ function EnrollmentTab(button, content) {
     fromDate.datepicker("setDate", dateStart && dateStart > defaultStart ? dateStart : defaultStart);
 
     selectDateBtn.click(function () {
-        periodDiv.addClass('show');
+        $(this).toggleClass('active');
+        periodDiv.toggleClass('show');
     });
 
     enrollTab.content.find("#date-apply-btn").click(function () {

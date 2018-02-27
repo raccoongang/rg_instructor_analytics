@@ -6,30 +6,22 @@
 
 <h1>${_("Gradebook")}</h1>
 
-<table class="student-table name-table" >
-    <thead >
-    <tr>
-        <th>
-            <form class="student-search">
-                <input type="search" class="student-search-field" placeholder="${_('Search students')}"/>
-            </form>
-        </th>
-    </tr>
-    </thead>
-    <tbody id="student_table_body">
-
-    </tbody>
-</table>
+<h2 class="enrollment-title">${_("Lorem ipsum dolor sit amet")}</h2>
+<span class="enrollment-title-text">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
 
 <div class="grades grade-table-wrapper" >
-    <table class="grade-table">
-        <thead id="gradebook_table_header"/>
-        <tbody id="gradebook_table_body"/>
-    </table>
+    <div class="grade-table">
+        <div class="gradebook-table-row" id="gradebook_table_header">
+           
+        </div>
+        <div id="gradebook_table_body"></div>
+    </div>
 </div>
 
 
 <div class="gradebook-plot">
+        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Details")}</h2>
+        <span class="enrollment-title-text enrollment-title-text-1 hidden">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
     <div id = "gradebook-stats-plot">
 
     </div>
