@@ -132,7 +132,7 @@ class EnrollmentStatisticView(AccessMixin, View):
         counts_total.append(total)
         counts_enroll.append(enrollment_count)
         counts_unenroll.append(un_enrollment_count)
-
+        
         return {'dates': dates, 'total': counts_total, 'enroll': counts_enroll, 'unenroll': counts_unenroll, }
 
     def process(self, request, **kwargs):
