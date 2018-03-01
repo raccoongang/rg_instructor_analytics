@@ -7,7 +7,7 @@
 <%block name="headextra">
     <%static:css group='style-course'/>
     <!-- Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.js"></script>
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
@@ -70,6 +70,15 @@
                                 data-section="cohort">${_("Grading funnel")}
                         </button>
                     </li>
+
+
+                    <li class="nav-item">
+                        <button type="button"
+                                id="suggestion-btn"
+                                class="btn-link"
+                                data-section="cohort">${_("Suggestion")}
+                        </button>
+                    </li>
                 </ul>
 
                 <section id="section-enrollment-stats" class="idash-section">
@@ -90,6 +99,10 @@
 
                 <section id="section-funnel" class="idash-section">
                     <%include file="funnel.html" args="section_data={'course':course}" />
+                </section>
+
+                <section id="section-suggestion" class="idash-section">
+                    <%include file="suggestion.html" args="section_data={'course':course}" />
                 </section>
             </section>
         </main>

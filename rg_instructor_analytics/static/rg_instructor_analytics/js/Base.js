@@ -27,7 +27,10 @@ $(function () {
                 $content.find('#section-cohort')),
             FunnelTab(
                 $content.find('#funnel-btn'),
-                $content.find('#section-funnel'))
+                $content.find('#section-funnel')),
+            SuggestionTab(
+                $content.find('#suggestion-btn'),
+                $content.find('#section-suggestion'))
         ];
         tabList.forEach(function (tab) {
             tab.button.click(function () {

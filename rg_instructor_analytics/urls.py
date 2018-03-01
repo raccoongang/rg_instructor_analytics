@@ -10,6 +10,7 @@ from rg_instructor_analytics.views.Gradebook import GradebookView
 from rg_instructor_analytics.views.Problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
+from rg_instructor_analytics.views.Suggestion import SuggestionView
 from rg_instructor_analytics.views.TabFragment import InstructorAnalyticsFragmentView
 
 urlpatterns = [
@@ -34,6 +35,8 @@ urlpatterns = [
     url(r'^api/cohort/send_email/$', CohortSendMessage.as_view(), name='send_email_to_cohort'),
 
     url(r'^api/funnel/$', GradeFunnelView.as_view(), name='funnel'),
+
+    url(r'^api/suggestion/$', SuggestionView.as_view(), name='suggestion'),
 
     url(r'^', InstructorAnalyticsFragmentView.as_view(), name='instructor_analytics_dashboard'),
 ]

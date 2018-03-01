@@ -112,12 +112,14 @@ class GradeFunnelView(AccessMixin, View):
             accomulate += i['student_count']
             i['student_count_in'] = accomulate
 
+    def get_funnel_info(self,course_key):
+        subsection_activity = self.get_progress_info_for_subsection(course_key)
+        courses_structure = self.get_course_info(course_key, subsection_activity)
+        self.append_inout_info(courses_structure)
+        return courses_structure
+
     def process(self, request, **kwargs):
         """
         Process post request.
         """
-        course_key = kwargs['course_key']
-        subsection_activity = self.get_progress_info_for_subsection(course_key)
-        courses_structure = self.get_course_info(course_key, subsection_activity)
-        self.append_inout_info(courses_structure)
-        return JsonResponse(data={'courses_structure': courses_structure})
+        return JsonResponse(data={'courses_structure': self.get_funnel_info(kwargs['course_key'])})
