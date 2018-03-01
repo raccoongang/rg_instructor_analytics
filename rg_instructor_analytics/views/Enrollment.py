@@ -101,33 +101,40 @@ class EnrollmentStatisticView(AccessMixin, View):
 
         dates, counts_total, counts_enroll, counts_unenroll = ([], [], [], [])
 
+        total = enrollment_count + un_enrollment_count
+        enrollment_count = 0
+        un_enrollment_count = 0
+
         dates.append(int(from_timestamp))
-        counts_total.append(enrollment_count + un_enrollment_count)
+        counts_total.append(total)
         counts_enroll.append(enrollment_count)
         counts_unenroll.append(un_enrollment_count)
 
         for enroll in enrollments:
             if enroll['is_active']:
-                enrollment_count += enroll['count']
+                enrollment_count = enroll['count']
             else:
-                un_enrollment_count -= enroll['count']
+                un_enrollment_count = -enroll['count']
 
+            total += enrollment_count + un_enrollment_count
+            import ipdb;ipdb.set_trace()
             stat_date = int(mktime(enroll['date'].timetuple()))
             if dates[-1] != stat_date:
                 dates.append(stat_date)
-                counts_total.append(enrollment_count + un_enrollment_count)
+                counts_total.append(total)
                 counts_enroll.append(enrollment_count)
                 counts_unenroll.append(un_enrollment_count)
             else:
-                counts_total[-1] = enrollment_count + un_enrollment_count
+                counts_total[-1] = total
                 counts_enroll[-1] = enrollment_count
                 counts_unenroll[-1] = un_enrollment_count
 
         dates.append(to_timestamp)
-        counts_total.append(enrollment_count + un_enrollment_count)
+        counts_total.append(total)
         counts_enroll.append(enrollment_count)
         counts_unenroll.append(un_enrollment_count)
 
+        import ipdb;ipdb.set_trace()
         return {'dates': dates, 'total': counts_total, 'enroll': counts_enroll, 'unenroll': counts_unenroll, }
 
     def process(self, request, **kwargs):
