@@ -79,7 +79,12 @@ function GradebookTab(button, content) {
             var stat = {
                 y: greadebookTab.studentInfo[element.target.dataset['position']].grades,
                 x: greadebookTab.examNames,
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: ['#568ecc', '#568ecc','#568ecc','#568ecc','#568ecc','#c14f84']
+                },
+                width: 0.6
+                
             };
             var data = [stat];
 

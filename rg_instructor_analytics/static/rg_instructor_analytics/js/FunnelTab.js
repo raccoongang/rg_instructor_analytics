@@ -11,6 +11,7 @@ function FunnelTab(button, content) {
             const viewContent = funnelTab.courseStructureView.find('.content');
             viewContent.empty();
             viewContent.append(generateFunnel(funnelTab.courseStructure));
+            $('.funnel-item-0').on('click',(e)=> $(e.target).closest('.funnel-item').toggleClass('active'));
         }
 
         function generateFunnel(data) {
@@ -22,13 +23,17 @@ function FunnelTab(button, content) {
             const incoming = item.student_count_in;
             const stuck = item.student_count;
             const out = item.student_count_out;
-            const className = `funnel-item-${item.level}`;
+            const className = `funnel-item funnel-item-${item.level}`;
             return `<div class="${className}">
-                       ${incoming}  ${stuck}  ${out}   type::${className}
-                       ${children}
+                        <div class="funnel-item-content">
+                            <span class="funnel-item-incoming">${incoming}</span>
+                            <span class="funnel-item-outgoing">${out}</span>
+                            <span class="funnel-item-name">${name}</span>
+                            <span class="funnel-item-stuck">stuck: ${stuck}</span>
+                        </div>
+                        ${children}
                     </div>`
         }
-
         function onError() {
             alert('Can not load statistic for the selected course');
         }

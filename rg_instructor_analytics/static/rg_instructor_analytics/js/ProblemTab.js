@@ -18,7 +18,10 @@ function ProblemTab(button, content) {
                 y: response.correct_answer,
                 data: response.problems,
                 name: django.gettext('Percent of the correct answers'),
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: '#568ecc'
+                },
             };
 
             const attempts = {
@@ -27,6 +30,9 @@ function ProblemTab(button, content) {
                 data: response.problems,
                 name: django.gettext('Average count of attempts'),
                 type: 'bar',
+                marker:{
+                    color: '#c14f84'
+                },
 
             };
             const layout = {
@@ -67,13 +73,19 @@ function ProblemTab(button, content) {
             const incorrect = {
                 y: response.incorrect,
                 name: django.gettext('Incorrect answers'),
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: '#c14f84'
+                }
             };
 
             const correct = {
                 y: response.correct,
                 name: django.gettext('Correct answers'),
-                type: 'bar'
+                type: 'bar',
+                marker:{
+                    color: '#568ecc'
+                },
             };
             const data = [correct, incorrect];
 
@@ -216,8 +228,8 @@ function BaseQuestion(questionHtml, stringProblemID) {
      * @param data server response. Object with key - name of the position and value - value of the position
      */
     this.displayBar = function (data) {
-        const plot_popupp = $('#model_plot');
-        plot_popupp.show();
+        const plot_popup = $('#model_plot');
+        plot_popup.show();
 
         var x = [];
         var y = [];
@@ -233,7 +245,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
         };
         const layout = {
             margin: {
-                l: 500
+                l: 150
             },
             showlegend: false
         };
