@@ -31,7 +31,7 @@ function ProblemTab(button, content) {
             };
             const layout = {
                 showlegend: false
-            }
+            };
             const data = [correct_answer, attempts];
 
             Plotly.newPlot('problem-homeworks-stats-plot', data, layout, { displayModeBar: false});
