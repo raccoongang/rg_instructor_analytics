@@ -51,9 +51,6 @@ class BaseNorma():
     description = ''
     filter = FilterBuilder().build(_('blank'))
 
-    def get_predefine_filters(self):
-        return [self.filter]
-
     @abstractmethod
     def intent(self):
         pass
@@ -71,7 +68,7 @@ class BaseNorma():
         """
         return {
             'intent': self.intent(),
-            'filters': [i.serialize() for i in self.get_predefine_filters()],
+            'filter': self.filter.serialize(),
             'title': self.title,
             'description': self.description
         }
@@ -95,11 +92,8 @@ class FunnelNorma(BaseNorma):
         2: 'Unit',
     }
 
-    title = _('Suggestion by stack users')
-    filter = (FilterBuilder()
-              .add(stuck_percent=25, title=_("Setup percent of the stuck student"))
-              .build(_('Default stack filter'))
-              )
+    title = _('Suggestion by stuck users')
+    filter = (FilterBuilder().build(_('Default stuck filter')))
 
     def intent(self):
         return 'funnel_norm'
@@ -113,14 +107,33 @@ class FunnelNorma(BaseNorma):
                 result = result + self.get_items_with(i['children'], criteria)
         return result
 
+    def get_stuck_threshold(self):
+        return 25.0
+
     def provide_data(self, course_key):
         filtered_items = self.get_items_with(
             GradeFunnelView().get_funnel_info(course_key),
             (lambda i:
              float(i['student_count_in']) > 0
-             and float(i['student_count']) / float(i['student_count_in']) * 100.0 > float(self.filter.stuck_percent))
+             and float(i['student_count']) / float(i['student_count_in']) * 100.0 > float(self.get_stuck_threshold()))
         )
-        return [{'displayLabel': i['name'], 'elementId':i['id']} for i in filtered_items]
+        label = _('On the partition named `{}` stuck to many students. We recommend reassessing content or pay '
+                  'attention to the assignment.')
+        return [{'displayLabel': label.format(i['name']), 'elementId':i['id']} for i in filtered_items]
+
+
+class UserDefineFunnelNorm(FunnelNorma):
+    title = _('Suggestion by stuck users')
+    filter = (FilterBuilder()
+              .add(stuck_percent=25, title=_("Setup percent of the stuck student"))
+              .build(_('Default stuck filter'))
+              )
+
+    def intent(self):
+        return 'user_funnel_norm'
+
+    def get_stuck_threshold(self):
+        return self.filter.stuck_percent
 
 
 class SuggestionView(AccessMixin, View):
@@ -128,7 +141,8 @@ class SuggestionView(AccessMixin, View):
     Api for get courses suggestion.
     """
     norma_list = [
-        FunnelNorma()
+        FunnelNorma(),
+        UserDefineFunnelNorm()
     ]
 
     def process(self, request, **kwargs):

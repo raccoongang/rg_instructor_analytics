@@ -20,24 +20,16 @@ function SuggestionTab(button, content) {
                 `<div class="norma-wrapper">
                     <div class="title">${norma.title}</div>
                     <div class="description">${norma.description}</div>
-                    <div class="filter-list">
-                        ${norma.filters.map(renderFilter(norma.intent)).join('')}
+                    <div class="filter-wrap">
+                        <form class="filter-form" data-intent="${norma.intent}" action="">
+                            <div class="title">${norma.filter.title}</div>
+                            ${norma.filter.items.map(renderFilterItem).join('')}
+                            <input type="submit" value="Submit">
+                        </form>
                     </div>
                 </div>`
             );
         };
-
-        function renderFilter(intent) {
-            return (filter) => {
-                return (
-                    `<form class="filter-form" data-intent="${intent}" action="">
-                        <div class="title">${filter.title}</div>
-                        ${filter.items.map(renderFilterItem).join('')}
-                        <input type="submit" value="Submit">
-                    </form>`
-                );
-            }
-        }
 
         function renderFilterItem(item) {
             return (
@@ -50,7 +42,7 @@ function SuggestionTab(button, content) {
 
         function renderResultItem(item) {
             return (`
-            <div class = "suggestion-filter-result">
+            <div class = "suggestion-filter-result-block">
                 <div class="title">${item.displayLabel}</div>
                 <div class="go_to_problem" data-itemid="${item.elementId}">Go to item</div>
             </div>
@@ -58,7 +50,16 @@ function SuggestionTab(button, content) {
         }
 
         function onFilterSuccces(data) {
-            suggestionTab.content.find('#suggestion-results').append(data.information.map(renderResultItem).join(''));
+            const intent = data.provider.intent;
+            const resultAria = suggestionTab.content.find('#suggestion-results');
+            let filterContent = resultAria.find(`[data-intent='${intent}']`);
+            if (filterContent.length !== 0) {
+                filterContent.empty()
+            } else {
+                resultAria.append(`<div class="suggestion-filter-result" data-intent="${intent}"/>`)
+                filterContent = resultAria.find(`[data-intent='${intent}']`);
+            }
+            filterContent.append(data.information.map(renderResultItem).join(''));
         }
 
 
