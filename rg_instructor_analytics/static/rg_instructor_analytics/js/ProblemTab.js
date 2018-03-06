@@ -43,7 +43,7 @@ function ProblemTab(button, content) {
             Plotly.newPlot('problem-homeworks-stats-plot', data, layout, { displayModeBar: false});
 
             document.getElementById("problem-homeworks-stats-plot").on('plotly_click', function (data) {
-                $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden').removeClass('hidden');
+                $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
                 loadHomeWorkProblems(response.problems[data.points[0].pointNumber]);
             });
         }
@@ -237,19 +237,43 @@ function BaseQuestion(questionHtml, stringProblemID) {
             y.push(key);
             x.push(data[key]);
         });
-        const answers = {
-            x: x,
-            y: y,
-            type: 'bar',
-            orientation: 'h'
-        };
-        const layout = {
-            margin: {
-                l: 150
-            },
-            showlegend: false
-        };
-        Plotly.newPlot('proble-question-plot', [answers], layout, { displayModeBar: false});
+        console.log('XXXxxxXX', x);
+        console.log('YYYyyyYY', y);
+        // const answers = {
+        //     x: x,
+        //     y: y,
+        //     type: 'bar',
+        //     orientation: 'h',
+        //     marker:{
+        //         color: '#c14f84'
+        //     }
+            
+        // };
+        // const layout = {
+        //     margin: {
+        //         l: 150
+        //     },
+        //     showlegend: false
+        // };
+        // Plotly.newPlot('proble-question-plot', [answers], layout, { displayModeBar: false});
+        let plot = '';
+        idx = 0;
+        let maxValue = Math.max(...x);
+
+        for (let item in x) {
+            let name = y[idx++];
+            let value = x[item];
+            plot += `
+            <li class="plot-row">
+                <span class="plot-name">${name}</span>
+                <div class="plot-bar-holder">
+                    <div class="plot-bar" style="width: ${(value*100)/maxValue}%"></div>
+                </div>
+               <span class="plot-value">${value}</span> 
+            </li>`
+        }
+        plot = `<ul>${plot}</ul>`;
+        $('#proble-question-plot').html(plot);
     };
 
     /**
@@ -273,11 +297,21 @@ function BaseQuestion(questionHtml, stringProblemID) {
      * @param html layout for inserting the button to display the plot
      */
     this.applyToCurrentProblem = function (html) {
-        const $plotBtn = $('<button>Show plot!</button>');
+        const $plotBtn = $('<button>Show Plot</button>');
         $plotBtn.appendTo(html);
         $plotBtn.click((item) => {
             var requestMap = this.getRequestMap();
             requestMap.problemID = this.problemID;
+            
+            $(item.target).toggleClass('active');
+            if ($(item.target).hasClass('active')) {
+                $(item.target).html('Hide Plot');
+                $('#model_plot').removeClass('hidden');
+            } else {
+                $(item.target).html('Show Plot');
+                $('#model_plot').addClass('hidden');
+            }
+            
             $.ajax({
                 traditional: true,
                 type: "POST",
