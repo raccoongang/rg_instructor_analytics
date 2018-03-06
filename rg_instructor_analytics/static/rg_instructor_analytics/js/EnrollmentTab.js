@@ -71,6 +71,9 @@ function EnrollmentTab(button, content) {
                     width: 2.3,
                     smoothing: 1.25
                 },
+                hovermode:'closest',
+                hoverdistance:1000,
+                spikedistance:1000,
                 type: 'scatter',
             };
             var enrollTrace = {
@@ -97,15 +100,18 @@ function EnrollmentTab(button, content) {
                     shape: 'hv',
                     color: '#CC4630',
                 },
+                hoveron:'points+fills',
                 type: 'scatter'
             };
             var layout = {
+                hovermode:'closest',
                 xaxis: {},
-                yaxis: {dtick: 1}
+                yaxis: {dtick: 1},
+                showlegend: false,
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
 
-            Plotly.newPlot('enrollment-stats-plot', data, layout);
+            Plotly.newPlot('enrollment-stats-plot', data, layout, {displayModeBar: false});
         }
 
         function onError() {
@@ -142,7 +148,8 @@ function EnrollmentTab(button, content) {
     fromDate.datepicker("setDate", dateStart && dateStart > defaultStart ? dateStart : defaultStart);
 
     selectDateBtn.click(function () {
-        periodDiv.addClass('show');
+        $(this).toggleClass('active');
+        periodDiv.toggleClass('show');
     });
 
     enrollTab.content.find("#date-apply-btn").click(function () {

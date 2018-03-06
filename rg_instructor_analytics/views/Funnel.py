@@ -22,7 +22,9 @@ def info_for_course_element(element, level):
         'name': element.display_name,
         'id': element.location.to_deprecated_string(),
         'student_count': 0,
-        'children': []
+        'student_count_in': 0,
+        'student_count_out': 0,
+        'children': [],
     }
 
 
@@ -99,6 +101,17 @@ class GradeFunnelView(AccessMixin, View):
             course_info.append(section_info)
         return course_info
 
+    def append_inout_info(self, statistic, accomulate=0):
+        """
+        Append information about how many student in course.
+        """
+        for i in reversed(statistic):
+            i['student_count_out'] = accomulate
+            if len(i['children']):
+                self.append_inout_info(i['children'], accomulate=accomulate)
+            accomulate += i['student_count']
+            i['student_count_in'] = accomulate
+
     def process(self, request, **kwargs):
         """
         Process post request.
@@ -106,4 +119,5 @@ class GradeFunnelView(AccessMixin, View):
         course_key = kwargs['course_key']
         subsection_activity = self.get_progress_info_for_subsection(course_key)
         courses_structure = self.get_course_info(course_key, subsection_activity)
+        self.append_inout_info(courses_structure)
         return JsonResponse(data={'courses_structure': courses_structure})

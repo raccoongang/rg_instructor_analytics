@@ -1,10 +1,8 @@
 .dropdown-content {
     padding: 24px;
-    margin: 12px 12px 12px 0;
-
+    margin: 40px 12px 12px 0;
     width: auto;
     height: auto;
-
     display: none;
     position: absolute;
     background-color: #f6f6f6;
@@ -57,6 +55,7 @@
 
 .gradebook-table-row {
     display: table-row;
+    font-size: 12px;
 }
 
 .name-table{
@@ -67,16 +66,437 @@
 .grade-table-wrapper {
     position: relative;
     float: left;
-    width: 30%;
+    width: 80%;
     overflow-x: auto;
     overflow-y: hidden;
 }
-
+.grade-table {
+    width: 100%;
+}
 
 .gradebook-plot {
     position: relative;
-    float: left;
-    width: 50%;
+    width: 100%;
+    max-width: 880px;
     overflow-x: auto;
     overflow-y: hidden;
+}
+.gradebook-table-row {
+    display: flex;
+}
+.gradebook-table-row.active .gradebook-table-cell {
+    background: rgb(49,204,245);
+    
+}
+.gradebook-table-cell {
+    box-sizing: border-box;
+    padding: 7px 5px;
+    flex: 1 1 50%;
+    background: #f1f1f1;
+    margin: 0 1px 1px;
+    text-align: center;
+}
+.gradebook-table-cell a {
+    color: rgb(34,34,34);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 7px 5px;
+    display: flex;
+    align-items: center;
+}
+.student-search {
+    padding: 7px 5px;
+}
+.gradebook-table-cell:first-child {
+    flex: 0 0 250px;
+    text-align: left;
+    padding: 0;
+}
+#gradebook_table_header .gradebook-table-cell {
+    background: rgb(210,210,210);
+}
+#gradebook_table_body {
+    max-height: 100px;
+    overflow-y: auto;
+}
+.funnel-item.active > .content {
+    display: block;
+}
+.funnel-item > .content {
+    display: none;
+}
+.idash-section ul {
+    list-style: none;
+    padding: 0;
+}
+.idash-section button:not(.btn-link) {
+        background: none;
+        border: 1px solid #0075b4;
+        color: #0075b4;
+        padding: 5px 10px;
+        transition: 0.2s;
+        box-shadow: none;
+        text-shadow: none;
+        border-radius: 0;
+}
+.idash-section button:hover,
+.idash-section button:focus {
+    background: #0075b4 !important;
+    color: #fff;
+    transition: 0.2s;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+.fr-placeholder {
+    line-height: 1.3 !important;
+}
+.grade-table-wrapper {
+    width: 100%;
+}
+.gradebook-plot {
+    max-width: 100%;
+}
+.idash-section {
+    max-width: 768px;
+    margin: 0 auto;
+    width: 100%;
+}
+.js-plotly-plot {
+    width: 900px;
+    transform: translate(-7%);
+}
+#date-btn {
+    padding-right: 20px;
+    position: relative;
+}
+#date-btn:before {
+    content: '\f0d7';
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translate(0,-50%);
+    transition: 0.3s;
+}
+#date-btn.active:before {
+    transform: translate(0,-50%) rotate(180deg);
+    transition: 0.3s;
+}
+
+.instructor-dashboard-wrapper-2 .idash-section button {
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 7px 14px;
+}
+.enroll-buttons-holder {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+.enrollment-legend-holder {
+    max-width: 768px;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    bottom: -40px;
+    z-index: 1;
+}
+.enrollment-legend-item {
+    position: relative;
+    padding-left: 40px;
+}
+.enrollment-legend-item:before {
+    content: '';
+    height: 2px;
+    border-bottom: 4px solid #eccada;
+    width: 28px;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(0,-50%);
+}
+.enrollment-legend-item:first-child:before {
+    background: #c14f84;
+    border-color: #eccada;
+}
+.enrollment-legend-item:nth-child(2):before {
+    background: #68b22c;
+    border-bottom: 4px solid #d1e8bf;
+}
+.enrollment-legend-item:nth-child(3):before {
+    background: #568ecc;
+    border-bottom: none;
+}
+.enrollment-title,
+.hd.hd-3.problem-header {
+    font-size: 18px;
+    color: #020202;
+    margin-bottom: 16px;
+}
+.enrollment-title-text,
+.problem p {
+    font-size: 13px;
+    color: #3f3f3f;
+    margin-bottom: 16px;
+    display: inline-block;
+}
+.dropdown-content.show {
+    z-index: 2;
+}
+
+.hidden {
+    display: none !important;
+}
+.modal-content .js-plotly-plot {
+    transform: translate(0);
+}
+.funnel-item-1,
+.funnel-item-2 {
+    display: none;
+}
+.funnel-item-0 {
+    display: flex;
+    margin-bottom: 6px;
+}
+.funnel-item-1,
+.funnel-item-2,
+.funnel-item-0 {
+    flex-direction: column;
+    align-items: center;
+}
+.funnel-item-0.active .funnel-item-1 {
+    display: flex;
+}
+.funnel-item-1.active .funnel-item-2 {
+    display: flex;
+}
+.funnel-item-content {
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: 0.2s;
+    padding-right: 80px;
+    display: flex;
+    align-items: center;
+}
+.funnel-item-content:before {
+    content: '\f107';
+    font-family: "FontAwesome";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translate(0,-50%);
+    color: #fff;
+    font-size: 18px;
+    transition: 0.2s;
+}
+.funnel-item-0 > .funnel-item-content {
+    border-radius: 5px;
+    background-color: #8392cb;
+    width: 554px;
+    min-height: 80px;
+    color: #c5d1ff;
+    margin-bottom: 3px;
+    font-size: 14px;
+    padding: 20px;
+    display: block;
+}
+.funnel-item-0.active > .funnel-item-content,
+.funnel-item-0:hover> .funnel-item-content {
+    background-color: #6677b6;
+    color: #e2e8ff;
+    transition: 0.2s;
+}
+.funnel-item-1 > .funnel-item-content {
+    border-radius: 5px;
+    background-color: #95c891;
+    width: 420px;
+    min-height: 50px;
+    color: #242424;
+    margin-bottom: 3px;
+    font-size: 12px;
+    padding: 10px;
+    text-align: left;
+}
+.funnel-item-1.active > .funnel-item-content,
+.funnel-item-1:hover > .funnel-item-content {
+    background-color: #73b76d;
+    transition: 0.2s;
+}
+.funnel-item-2 > .funnel-item-content {
+    border-radius: 5px;
+    background-color: rgb(117, 203, 197);
+    width: 361px;
+    min-height: 30px;
+    color: #242424;
+    margin-bottom: 3px;
+    font-size: 12px;
+    padding: 10px;
+    text-align: left;
+}
+.funnel-item-2 .funnel-item-content:before {
+    display: none;
+}
+.funnel-item-0.active > .funnel-item-content:before,
+.funnel-item-1.active > .funnel-item-content:before {
+    transform: translate(0,-50%) rotate(180deg);
+    transition: 0.2s;
+}
+.funnel-item-incoming,
+.funnel-item-outgoing {
+    position: absolute;
+    width: 85px;
+    height: 40px;
+    background: url(/static/rg_instructor_analytics/images/Arrow.svg) no-repeat right center;
+    background-size: auto 30px;
+    padding-right: 40px;
+    left: -10px;
+    transform: translate(-100%,-50%);
+    font-size: 16px;
+    color: #505050;
+    top: 50%;
+    display: flex;
+    align-items: center;
+}
+.funnel-item-incoming {
+    justify-content: flex-end;
+}
+.funnel-item-outgoing {
+    left: auto;
+    right: -10px;
+    background: url(/static/rg_instructor_analytics/images/Arrow.svg) no-repeat left center;
+    padding: 0 0 0 40px;
+    transform: translate(100%,-50%);
+    background-size: auto 30px;
+}
+.funnel-item-1 .funnel-item-incoming,
+.funnel-item-1 .funnel-item-outgoing {
+    background-size: auto 18px;
+    padding-right: 25px;
+    color: #999999;
+    font-size: 12px;
+}
+.funnel-item-1 .funnel-item-outgoing {
+    padding: 0 0 0 24px;
+}
+.funnel-item-2 .funnel-item-incoming,
+.funnel-item-2 .funnel-item-outgoing {
+    background-size: auto 14px;
+    padding-right: 20px;
+    color: #999999;
+    font-size: 12px;
+}
+.funnel-item-2 .funnel-item-outgoing {
+    padding: 0 0 0 18px;
+}
+.idash-section .content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.funnel-item-stuck {
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translate(0,-50%);
+}
+.funnel-item-0 > .funnel-item-content > .funnel-item-stuck {
+    position: static;
+    transform: translate(0,0);
+    top: auto;
+    right: auto;
+    margin-top: 12px;
+    display: block;
+    color: #fff;
+}
+.funnel-item-1 > .funnel-item-content > .funnel-item-stuck {
+    color: #fff;
+}
+.funnel-item-2 > .funnel-item-content > .funnel-item-stuck {
+    right: 10px;
+    color: #fff;
+}
+.modal-for-plot {
+    position: static;
+    width: 750px;
+}
+.modal-for-plot .js-plotly-plot {
+    width: 750px;
+    transform: translate(0,0);
+}
+#proble-question-plot {
+    margin: 0 !important;
+}
+.modal-for-plot .close {
+    position: relative;
+    z-index: 1;
+    margin-top: 30px;
+}
+.enrollment-legend-holder__square .enrollment-legend-item:before {
+    content: '';
+    height: 16px;
+    width: 16px;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(0,-50%);
+    border: none;
+}
+.enrollment-legend-holder__square .enrollment-legend-item {
+    font-weight: 600;
+    font-size: 14px;
+}
+.enrollment-legend-holder__square .enrollment-legend-item:nth-child(1):before {
+    background: #0075b4;
+}
+.enrollment-legend-holder__square .enrollment-legend-item:nth-child(2):before {
+    background: #c14f84;
+}
+.instructor-dashboard-wrapper-2 .idash-section .wrapper-problem-response button {
+    position: relative;
+    padding-right: 20px;
+}
+.wrapper-problem-response button:before {
+    content: '\f0d7';
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translate(0,-50%);
+    transition: 0.3s;
+}
+
+.wrapper-problem-response button.active:before {
+    transform: translate(0,-50%) rotate(180deg);
+    transition: 0.3s;
+}
+.show.problem-action-btn.btn-default.btn-small {
+    display: none;
+}
+
+.plot-row {
+    display: flex;
+    width: 750px;
+    margin-bottom: 7px;
+}
+.plot-bar-holder {
+    background: #999999;
+    flex: 1;
+    display: flex;
+}
+.plot-bar {
+    background: #c14f84;
+}
+.plot-name {
+    flex: 0 0 70px;
+    overflow: hidden;
+    padding: 5px;
+}
+.plot-value {
+    flex: 0 0 50px;
+    text-align: center;
 }

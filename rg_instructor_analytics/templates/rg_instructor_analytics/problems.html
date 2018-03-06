@@ -4,26 +4,35 @@
     from django.utils.translation import ugettext as _
 %>
 
-<div id="model_plot" class="modal-for-plot">
-
-    <div class="modal-content">
-        <button class="close">&times;</button>
-        <div id="proble-question-plot" style="margin-top: 30px"></div>
-    </div>
-
-</div>
-
 <h1>${_("Problems")}</h1>
-
+<h2 class="enrollment-title">${_("Lorem ipsum dolor sit amet")}</h2>
+<span class="enrollment-title-text">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
+<div class="enrollment-legend-holder enrollment-legend-holder__square">
+    <div class="enrollment-legend-item">Average count of attempts</div>
+    <div class="enrollment-legend-item">Percent of correct answers</div>
+</div>
 <div id="problem-homeworks-stats-plot">
-
+    
 </div>
 
+<h2 class="enrollment-title enrollment-title-1 hidden">${_("Details")}</h2>
+<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
+<div class="enrollment-legend-holder enrollment-legend-holder__square enrollment-legend-holder__square-1 hidden">
+    <div class="enrollment-legend-item">Correct Answers</div>
+    <div class="enrollment-legend-item">Incorrect Answers</div>
+</div>
 <div id="problems-stats-plot">
-
+    
 </div>
 
-
+<h2 class="enrollment-title enrollment-title-2 hidden">${_("Details")}</h2>
+<span class="enrollment-title-text enrollment-title-text-2 hidden">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
 <div id="problem-body">
+
+</div>
+<div id="model_plot" class="modal-for-plot">
+    <div>
+        <div id="proble-question-plot"></div>
+    </div>
 
 </div>
