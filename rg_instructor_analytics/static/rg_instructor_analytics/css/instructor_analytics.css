@@ -120,7 +120,7 @@
     overflow-y: auto;
 }
 .funnel-item.active > .content {
-    display: block
+    display: block;
 }
 .funnel-item > .content {
     display: none;
@@ -137,7 +137,7 @@
         transition: 0.2s;
         box-shadow: none;
         text-shadow: none;
-        
+        border-radius: 0;
 }
 .idash-section button:hover,
 .idash-section button:focus {
@@ -217,7 +217,6 @@
     transform: translate(0,-50%);
 }
 .enrollment-legend-item:first-child:before {
-   
     background: #c14f84;
     border-color: #eccada;
 }
@@ -435,4 +434,69 @@
     position: relative;
     z-index: 1;
     margin-top: 30px;
+}
+.enrollment-legend-holder__square .enrollment-legend-item:before {
+    content: '';
+    height: 16px;
+    width: 16px;
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translate(0,-50%);
+    border: none;
+}
+.enrollment-legend-holder__square .enrollment-legend-item {
+    font-weight: 600;
+    font-size: 14px;
+}
+.enrollment-legend-holder__square .enrollment-legend-item:nth-child(1):before {
+    background: #0075b4;
+}
+.enrollment-legend-holder__square .enrollment-legend-item:nth-child(2):before {
+    background: #c14f84;
+}
+.instructor-dashboard-wrapper-2 .idash-section .wrapper-problem-response button {
+    position: relative;
+    padding-right: 20px;
+}
+.wrapper-problem-response button:before {
+    content: '\f0d7';
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translate(0,-50%);
+    transition: 0.3s;
+}
+
+.wrapper-problem-response button.active:before {
+    transform: translate(0,-50%) rotate(180deg);
+    transition: 0.3s;
+}
+.show.problem-action-btn.btn-default.btn-small {
+    display: none;
+}
+
+.plot-row {
+    display: flex;
+    width: 750px;
+    margin-bottom: 7px;
+}
+.plot-bar-holder {
+    background: #999999;
+    flex: 1;
+    display: flex;
+}
+.plot-bar {
+    background: #c14f84;
+}
+.plot-name {
+    flex: 0 0 70px;
+    overflow: hidden;
+    padding: 5px;
+}
+.plot-value {
+    flex: 0 0 50px;
+    text-align: center;
 }

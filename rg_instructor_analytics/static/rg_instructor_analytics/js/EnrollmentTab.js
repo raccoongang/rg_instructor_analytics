@@ -71,6 +71,9 @@ function EnrollmentTab(button, content) {
                     width: 2.3,
                     smoothing: 1.25
                 },
+                hovermode:'closest',
+                hoverdistance:1000,
+                spikedistance:1000,
                 type: 'scatter',
             };
             var enrollTrace = {
@@ -97,12 +100,14 @@ function EnrollmentTab(button, content) {
                     shape: 'hv',
                     color: '#CC4630',
                 },
+                hoveron:'points+fills',
                 type: 'scatter'
             };
             var layout = {
+                hovermode:'closest',
                 xaxis: {},
                 yaxis: {dtick: 1},
-                showlegend: false
+                showlegend: false,
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
 
