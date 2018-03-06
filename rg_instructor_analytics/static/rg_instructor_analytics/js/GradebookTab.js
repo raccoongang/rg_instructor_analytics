@@ -92,6 +92,8 @@ function GradebookTab(button, content) {
                 title: greadebookTab.studentInfo[element.target.dataset['position']].username,
                 showlegend: false
             };
+            $('gradebook-table-row').removeClass('active');
+            $(element.target).closest('.gradebook-table-row').toggleClass('active');
             $('.enrollment-title-1.hidden').removeClass('hidden');
             $('.enrollment-title-text-1.hidden').removeClass('hidden');
             Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});

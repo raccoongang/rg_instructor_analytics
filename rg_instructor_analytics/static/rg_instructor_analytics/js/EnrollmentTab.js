@@ -87,7 +87,6 @@ function EnrollmentTab(button, content) {
                     shape: 'hv',
                     color: '#8BB22A',
                 },
-                hoveron:'points+fills',
                 type: 'scatter'
             };
             var unenrollTrace = {
