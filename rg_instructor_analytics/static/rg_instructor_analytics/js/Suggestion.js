@@ -1,6 +1,6 @@
 function SuggestionTab(button, content) {
     'use strict';
-    var suggestionTab = new Tab(button, content);
+    const suggestionTab = new Tab(button, content);
 
     function updateSuggestion() {
         function onFilterInfoLoad(response) {
@@ -29,7 +29,7 @@ function SuggestionTab(button, content) {
                     </div>
                 </div>`
             );
-        };
+        }
 
         function renderFilterItem(item) {
             return (
@@ -38,7 +38,7 @@ function SuggestionTab(button, content) {
                     <input type="text" name="${item.name}" value="${item.value}">
                 </label>`
             );
-        };
+        }
 
         function renderResultItem(item) {
             return (`
@@ -56,7 +56,7 @@ function SuggestionTab(button, content) {
             if (filterContent.length !== 0) {
                 filterContent.empty()
             } else {
-                resultAria.append(`<div class="suggestion-filter-result" data-intent="${intent}"/>`)
+                resultAria.append(`<div class="suggestion-filter-result" data-intent="${intent}"/>`);
                 filterContent = resultAria.find(`[data-intent='${intent}']`);
             }
             filterContent.append(data.information.map(renderResultItem).join(''));
