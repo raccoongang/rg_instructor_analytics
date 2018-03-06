@@ -112,7 +112,12 @@ class GradeFunnelView(AccessMixin, View):
             accomulate += i['student_count']
             i['student_count_in'] = accomulate
 
-    def get_funnel_info(self,course_key):
+    def get_funnel_info(self, course_key):
+        """
+        Return course info in the tree-like structure.
+
+        Structure of the node described inside function info_for_course_element.
+        """
         subsection_activity = self.get_progress_info_for_subsection(course_key)
         courses_structure = self.get_course_info(course_key, subsection_activity)
         self.append_inout_info(courses_structure)
