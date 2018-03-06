@@ -107,7 +107,7 @@ function EnrollmentTab(button, content) {
                 hovermode:'closest',
                 xaxis: {},
                 yaxis: {dtick: 1},
-                showlegend: false
+                showlegend: false,
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
 

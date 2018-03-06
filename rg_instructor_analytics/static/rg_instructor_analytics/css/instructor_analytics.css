@@ -120,7 +120,7 @@
     overflow-y: auto;
 }
 .funnel-item.active > .content {
-    display: block
+    display: block;
 }
 .funnel-item > .content {
     display: none;
@@ -137,8 +137,7 @@
         transition: 0.2s;
         box-shadow: none;
         text-shadow: none;
-        border-radius: 0; 
-        
+        border-radius: 0;
 }
 .idash-section button:hover,
 .idash-section button:focus {
@@ -218,7 +217,6 @@
     transform: translate(0,-50%);
 }
 .enrollment-legend-item:first-child:before {
-   
     background: #c14f84;
     border-color: #eccada;
 }

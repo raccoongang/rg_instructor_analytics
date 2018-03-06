@@ -20,7 +20,7 @@ function ProblemTab(button, content) {
                 name: django.gettext('Percent of the correct answers'),
                 type: 'bar',
                 marker:{
-                    color: '#568ecc'
+                    color: '#568ecc',
                 },
             };
 
@@ -31,12 +31,12 @@ function ProblemTab(button, content) {
                 name: django.gettext('Average count of attempts'),
                 type: 'bar',
                 marker:{
-                    color: '#c14f84'
+                    color: '#c14f84',
                 },
 
             };
             const layout = {
-                showlegend: false
+                showlegend: false,
             };
             const data = [correct_answer, attempts];
 
@@ -75,7 +75,7 @@ function ProblemTab(button, content) {
                 name: django.gettext('Incorrect answers'),
                 type: 'bar',
                 marker:{
-                    color: '#c14f84'
+                    color: '#c14f84',
                 }
             };
 
@@ -93,7 +93,7 @@ function ProblemTab(button, content) {
                 barmode: 'relative',
                 xaxis: {dtick: 1},
                 yaxis: {dtick: 1},
-                showlegend: false
+                showlegend: false,
             };
 
             Plotly.newPlot('problems-stats-plot', data, layout,{ displayModeBar: false});
@@ -251,9 +251,9 @@ function BaseQuestion(questionHtml, stringProblemID) {
         // };
         // const layout = {
         //     margin: {
-        //         l: 150
+        //         l: 150,
         //     },
-        //     showlegend: false
+        //     showlegend: false,
         // };
         // Plotly.newPlot('proble-question-plot', [answers], layout, { displayModeBar: false});
         let plot = '';
