@@ -12,40 +12,106 @@ function ProblemTab(button, content) {
      */
     function updateHomeWork() {
         function onSuccess(response) {
+            console.log(response);
+            let maxAttempts = Math.max(...response.attempts);
+            let countAttempts = [Math.min(...response.attempts),maxAttempts/2,maxAttempts];
+            let correctAnswer = [...response.correct_answer];
+            let yAxis = [...response.names];
+            let xAxisRight = ['0', '50%', '100%'];
 
-            const correct_answer = {
-                x: response.names,
-                y: response.correct_answer,
-                data: response.problems,
-                name: django.gettext('Percent of the correct answers'),
-                type: 'bar',
-                marker:{
-                    color: '#568ecc'
-                },
-            };
-
-            const attempts = {
-                x: response.names,
-                y: response.attempts,
-                data: response.problems,
-                name: django.gettext('Average count of attempts'),
-                type: 'bar',
-                marker:{
-                    color: '#c14f84'
-                },
-
-            };
-            const layout = {
-                showlegend: false
+            let bars = '', index = 0;
+            for (let item in yAxis) {
+                let attempts = (100*response.attempts[index])/maxAttempts;
+                let percent = correctAnswer[index]*100;
+                let barHeight = 'auto';
+                if (!percent && !attempts){
+                    barHeight = 0;
+                }
+                bars += `
+                    <li 
+                        class="plot-bar-vert" 
+                        style="width: ${(100-yAxis.length)/yAxis.length}%; height: ${barHeight}"
+                        data-attribute="${index}"
+                    >
+                        <div class="plot-bar-attempts" style="height: ${attempts}%">
+                           <span class="plot-bar-value">${response.attempts[index]}</span>
+                        </div>
+                        <div class="plot-bar-percent" style="height: ${percent}%">
+                            <span class="plot-bar-value">${percent}%</span>
+                        </div>
+                    </li>
+                `
+                index++;
             }
-            const data = [correct_answer, attempts];
+            bars = `<ul class="plot-body">${bars}</ul>`;
 
-            Plotly.newPlot('problem-homeworks-stats-plot', data, layout, { displayModeBar: false});
+            let axis = ``;
+            yAxis.forEach((item)=>{
+                axis += `<li style="width: ${(100-yAxis.length)/yAxis.length}%;">${item}</li>`
+            }); 
+            axis = `<ul class="x-axis">${axis}</ul>`
+            bars += axis;
 
-            document.getElementById("problem-homeworks-stats-plot").on('plotly_click', function (data) {
+            axis = ''
+            countAttempts.forEach((item)=>{
+                axis += `<li>${item}</li>`
+            })
+            axis = `<ul class="y-axis-l">${axis}</ul>`
+            bars += axis;
+
+            axis = ''
+            xAxisRight.forEach((item)=>{
+                axis += `<li>${item}</li>`
+            })
+            axis = `<ul class="y-axis-r">${axis}</ul>`
+            bars += axis;
+
+            $('#problem-homeworks-stats-plot').html(bars);
+
+            $('#problem-homeworks-stats-plot').on('click', function (e) {
                 $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
-                loadHomeWorkProblems(response.problems[data.points[0].pointNumber]);
+                if ($(e.target).closest('li').data()) {
+                    let attr = $(e.target).closest('li').data();
+                
+                    console.log('link',response.problems, attr.attribute);
+                    loadHomeWorkProblems(response.problems[attr.attribute]);
+                }
             });
+
+            // const correct_answer = {
+            //     x: response.names,
+            //     y: response.correct_answer,
+            //     data: response.problems,
+            //     name: django.gettext('Percent of the correct answers'),
+            //     type: 'bar',
+            //     marker:{
+            //         color: '#568ecc'
+            //     },
+            // };
+
+            // const attempts = {
+            //     x: response.names,
+            //     y: response.attempts,
+            //     data: response.problems,
+            //     name: django.gettext('Average count of attempts'),
+            //     type: 'bar',
+            //     marker:{
+            //         color: '#c14f84'
+            //     },
+
+            // };
+            // const layout = {
+            //     showlegend: false
+            // }
+            // const data = [correct_answer, attempts];
+            // console.log('data',data);
+            
+            // Plotly.newPlot('problem-homeworks-stats-plot', data, layout, { displayModeBar: false});
+
+            // document.getElementById("problem-homeworks-stats-plot").on('plotly_click', function (data) {
+            //     $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
+            //     loadHomeWorkProblems(response.problems[data.points[0].pointNumber]);
+            // });
         }
 
         function onError() {
