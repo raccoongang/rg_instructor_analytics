@@ -617,3 +617,80 @@
 .x-axis li {
     
 }
+.correct-bar {
+    background: #0075b4;
+    transform: translate(0,-50%);
+}
+.incorrect-bar {
+    background: #c14f84;
+    transform: translate(-100%,50%);
+}
+#problems-stats-plot {
+    height: 400px;
+    position: relative;
+    padding: 30px 50px;
+    margin-bottom: 100px;
+    text-align: center;
+}
+#problems-stats-plot .plot-body {
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+    
+    background: linear-gradient(
+        to bottom, 
+        #eee, #eee 0.4%, 
+        white 0.4%, white 25%,
+        #eee 25%, #eee 25.4%,
+        white 25.4%, white 50%,
+        black 50%, black 50.4%, 
+        white 50.4%, white 75%,
+        #eee 75%, #eee 75.4%,
+        white 75.4%, white 99.4%,
+        #eee 99.4%, #eee 100%
+    );
+}
+#problems-stats-plot li {
+    
+}
+#problems-stats-plot li>div {
+    flex: 0 0 100%;
+}
+
+
+#problems-stats-plot .plot-bar-vertical {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+#problems-stats-plot .plot-bar-vertical:hover:before {
+    content: '';
+    position: absolute;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 1;
+    width: 100%;
+    height: calc(100% + 50px);
+    top: -5px;
+    border: 1px solid #568ecc;
+    left: 0;
+}
+#problems-stats-plot .plot-bar-vertical:hover:after {
+    content: 'show details';
+    border: 1px #568ecc solid;
+    padding: 3px 5px;
+    color: #568ecc;
+    position: absolute;
+    bottom: -80px;
+    z-index: 2;
+    width: 110px;
+    height: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 10px;
+    left: 50%;
+    transform: translate(-50%);
+}
