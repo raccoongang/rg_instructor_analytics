@@ -171,6 +171,13 @@ function ProblemTab(button, content) {
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
 
+            axis = '';
+            xAxis.forEach(item=>{
+                axis += `<li>${item.toFixed(1)}</li>`
+            })
+            axis = `<ul class="y-axis-l">${axis}</ul>`
+            bars += axis;
+            
             $('#problems-stats-plot').html(bars);
 
 

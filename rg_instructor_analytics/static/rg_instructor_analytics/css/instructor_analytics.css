@@ -644,8 +644,8 @@
         black 50%, black 50.4%, 
         white 50.4%, white 75%,
         #eee 75%, #eee 75.4%,
-        white 75.4%, white 99.4%,
-        #eee 99.4%, #eee 100%
+        white 75.4%, white 99.6%,
+        #eee 99.6%, #eee 100%
     );
 }
 
@@ -688,4 +688,7 @@
     font-size: 10px;
     left: 50%;
     transform: translate(-50%);
+}
+#problems-stats-plot .y-axis-l {
+    flex-direction: column;
 }
