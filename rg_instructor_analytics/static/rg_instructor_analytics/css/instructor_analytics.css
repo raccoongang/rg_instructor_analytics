@@ -614,9 +614,7 @@
 .plot-bar-vert>div>span {
     transform: rotate(-90deg);
 }
-.x-axis li {
-    
-}
+
 .correct-bar {
     background: #0075b4;
     transform: translate(0,-50%);
@@ -650,13 +648,10 @@
         #eee 99.4%, #eee 100%
     );
 }
-#problems-stats-plot li {
-    
-}
+
 #problems-stats-plot li>div {
     flex: 0 0 100%;
 }
-
 
 #problems-stats-plot .plot-bar-vertical {
     position: relative;

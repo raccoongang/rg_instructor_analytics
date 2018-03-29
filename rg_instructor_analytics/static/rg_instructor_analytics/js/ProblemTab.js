@@ -147,9 +147,13 @@ function ProblemTab(button, content) {
             for (let item in yAxis) {
                 const correctBar = 100 * correct[index] / maxCorrect;
                 const incorrectBar = Math.abs(100 * incorrect[index] / maxIncorrect);
+                let barHeight = 'auto';
+                if (!correctBar && !incorrectBar) {
+                    barHeight = 0;
+                }
                 bars += `
                         <li class="plot-bar-vertical"
-                            style="width: ${(100 - yAxis.length) / yAxis.length}%"
+                            style="width: ${(100 - yAxis.length) / yAxis.length}%; height: ${barHeight}"
                             data-attribute="${index}"
                         >
                             <div class="correct-bar" style="height:${correctBar/2}%"></div>
@@ -159,12 +163,21 @@ function ProblemTab(button, content) {
                 index++;
             }
             bars = `<ul class="plot-body">${bars}</ul>`;
+            
+            let axis = '';
+            yAxis.forEach(item=>{
+                axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%">${item}</li>`;
+            })
+            axis = `<ul class="x-axis">${axis}</ul>`;
+            bars += axis;
+
             $('#problems-stats-plot').html(bars);
 
 
             $('#problems-stats-plot').on('click', function (e) {
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
+                    console.log(homeworsProblem[attr.attribute])
                     displayProblemView(homeworsProblem[attr.attribute]);
                 }
             });
