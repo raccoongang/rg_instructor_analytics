@@ -78,7 +78,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
             stat['correct_answer'].append(0)
             stat['attempts'].append(0)
             stat['problems'].append([])
-            stat['names'].append('HW{}'.format(hw_number))
+            stat['names'].append(subsection.display_name)
             problems_in_hw = 0
 
             for child in chain.from_iterable(unit.get_children() for unit in subsection.get_children()):

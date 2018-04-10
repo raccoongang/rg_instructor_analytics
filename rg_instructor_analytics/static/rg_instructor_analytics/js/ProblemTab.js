@@ -98,6 +98,7 @@ function ProblemTab(button, content) {
     function loadHomeWorkProblems(homeworsProblem) {
         function onSuccess(response) {
 
+
             const correct = response.correct;
             const incorrect = response.incorrect;
             const absIncorrect = incorrect.map(x => Math.abs(x));
@@ -294,23 +295,6 @@ function BaseQuestion(questionHtml, stringProblemID) {
         });
         console.log('XXXxxxXX', x);
         console.log('YYYyyyYY', y);
-        // const answers = {
-        //     x: x,
-        //     y: y,
-        //     type: 'bar',
-        //     orientation: 'h',
-        //     marker:{
-        //         color: '#c14f84'
-        //     }
-
-        // };
-        // const layout = {
-        //     margin: {
-        //         l: 150
-        //     },
-        //     showlegend: false
-        // };
-        // Plotly.newPlot('proble-question-plot', [answers], layout, { displayModeBar: false});
         let plot = '';
         idx = 0;
         let maxValue = Math.max(...x);
@@ -319,13 +303,13 @@ function BaseQuestion(questionHtml, stringProblemID) {
             let name = y[idx++];
             let value = x[item];
             plot += `
-                        <li class="plot-row">
-                            <span class="plot-name">${name}</span>
-                            <div class="plot-bar-holder">
-                                <div class="plot-bar" style="width: ${(value * 100) / maxValue}%"></div>
-                            </div>
-                                <span class="plot-value">${value}</span>
-                            </li>`
+              <li class="plot-row">
+                <span class="plot-name">${name}</span>
+                <div class="plot-bar-holder">
+                   <div class="plot-bar" style="width: ${(value * 100) / maxValue}%"></div>
+                </div>
+                <span class="plot-value">${value}</span>
+              </li>`
         }
         plot = `<ul>${plot}</ul>`;
         $('#proble-question-plot').html(plot);
@@ -357,7 +341,6 @@ function BaseQuestion(questionHtml, stringProblemID) {
         $plotBtn.click((item) => {
             var requestMap = this.getRequestMap();
             requestMap.problemID = this.problemID;
-
             $(item.target).toggleClass('active');
             if ($(item.target).hasClass('active')) {
                 $(item.target).html('Hide Plot');
