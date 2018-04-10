@@ -138,7 +138,6 @@
         box-shadow: none;
         text-shadow: none;
         border-radius: 0; 
-        
 }
 .idash-section button:hover,
 .idash-section button:focus {
@@ -217,7 +216,6 @@
     transform: translate(0,-50%);
 }
 .enrollment-legend-item:first-child:before {
-   
     background: #c14f84;
     border-color: #eccada;
 }
@@ -692,3 +690,4 @@
 #problems-stats-plot .y-axis-l {
     flex-direction: column;
 }
+

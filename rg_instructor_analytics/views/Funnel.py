@@ -24,7 +24,7 @@ def info_for_course_element(element, level):
         'student_count': 0,
         'student_count_in': 0,
         'student_count_out': 0,
-        'children': []
+        'children': [],
     }
 
 
