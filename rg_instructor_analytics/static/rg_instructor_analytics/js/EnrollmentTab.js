@@ -101,7 +101,7 @@ function EnrollmentTab(button, content) {
             };
             var layout = {
                 xaxis: {},
-                yaxis: {dtick: 1},
+                yaxis: {nticks: 4},
                 showlegend: false
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];

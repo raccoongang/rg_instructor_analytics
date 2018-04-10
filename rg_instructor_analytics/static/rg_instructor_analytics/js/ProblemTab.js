@@ -43,21 +43,21 @@ function ProblemTab(button, content) {
                 index++;
             }
             bars = `<ul class="plot-body">${bars}</ul>`;
-
+            //build y axis
             let axis = ``;
             yAxis.forEach((item) => {
                 axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%;">${item}</li>`
             });
             axis = `<ul class="x-axis">${axis}</ul>`
             bars += axis;
-
+            // build left x axis
             axis = ''
             countAttempts.forEach((item) => {
                 axis += `<li>${item.toFixed(1)}</li>`
             })
             axis = `<ul class="y-axis-l">${axis}</ul>`
             bars += axis;
-
+            //build right x axis
             axis = ''
             xAxisRight.forEach((item) => {
                 axis += `<li>${item}</li>`
@@ -74,41 +74,6 @@ function ProblemTab(button, content) {
                     loadHomeWorkProblems(response.problems[attr.attribute]);
                 }
             });
-
-            // const correct_answer = {
-            //     x: response.names,
-            //     y: response.correct_answer,
-            //     data: response.problems,
-            //     name: django.gettext('Percent of the correct answers'),
-            //     type: 'bar',
-            //     marker:{
-            //         color: '#568ecc'
-            //     },
-            // };
-
-            // const attempts = {
-            //     x: response.names,
-            //     y: response.attempts,
-            //     data: response.problems,
-            //     name: django.gettext('Average count of attempts'),
-            //     type: 'bar',
-            //     marker:{
-            //         color: '#c14f84'
-            //     },
-
-            // };
-            // const layout = {
-            //     showlegend: false
-            // }
-            // const data = [correct_answer, attempts];
-            // console.log('data',data);
-
-            // Plotly.newPlot('problem-homeworks-stats-plot', data, layout, { displayModeBar: false});
-
-            // document.getElementById("problem-homeworks-stats-plot").on('plotly_click', function (data) {
-            //     $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
-            //     loadHomeWorkProblems(response.problems[data.points[0].pointNumber]);
-            // });
         }
 
         function onError() {
@@ -136,11 +101,11 @@ function ProblemTab(button, content) {
             const correct = response.correct;
             const incorrect = response.incorrect;
             const absIncorrect = incorrect.map(x => Math.abs(x));
-            const yAxis = Array.from(new Array(correct.length), (x, i) => i + 1)
+            const yAxis = Array.from(new Array(correct.length), (x, i) => i + 1);
             const maxCorrect = Math.max(...correct);
             const maxIncorrect = Math.max(...absIncorrect);
             const xAxis = [maxCorrect, maxCorrect / 2, 0, maxIncorrect / 2, maxIncorrect];
-            console.log(yAxis, xAxis);
+
             let index = 0;
             let bars = '';
 
@@ -156,21 +121,25 @@ function ProblemTab(button, content) {
                             style="width: ${(100 - yAxis.length) / yAxis.length}%; height: ${barHeight}"
                             data-attribute="${index}"
                         >
-                            <div class="correct-bar" style="height:${correctBar/2}%"></div>
-                            <div class="incorrect-bar" style="height:${incorrectBar/2}%"></div>
+                            <div class="correct-bar" style="height:${correctBar/2}%">
+                                <span>${correct[index]}</span>
+                            </div>
+                            <div class="incorrect-bar" style="height:${incorrectBar/2}%">
+                                <span>${Math.abs(incorrect[index])}</span>
+                            </div>
                         </li>
                         `
                 index++;
             }
             bars = `<ul class="plot-body">${bars}</ul>`;
-            
+            // build y axis
             let axis = '';
             yAxis.forEach(item=>{
                 axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%">${item}</li>`;
             })
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
-
+            // build x axis
             axis = '';
             xAxis.forEach(item=>{
                 axis += `<li>${item.toFixed(1)}</li>`
@@ -184,43 +153,9 @@ function ProblemTab(button, content) {
             $('#problems-stats-plot').on('click', function (e) {
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
-                    console.log(homeworsProblem[attr.attribute])
                     displayProblemView(homeworsProblem[attr.attribute]);
                 }
             });
-
-
-            // const incorrect = {
-            //     y: response.incorrect,
-            //     name: django.gettext('Incorrect answers'),
-            //     type: 'bar',
-            //     marker:{
-            //         color: '#c14f84'
-            //     }
-            // };
-
-            // const correct = {
-            //     y: response.correct,
-            //     name: django.gettext('Correct answers'),
-            //     type: 'bar',
-            //     marker:{
-            //         color: '#568ecc'
-            //     },
-            // };
-            // const data = [correct, incorrect];
-
-            // const layout = {
-            //     barmode: 'relative',
-            //     xaxis: {dtick: 1},
-            //     yaxis: {dtick: 1},
-            //     showlegend: false
-            // };
-
-            // Plotly.newPlot('problems-stats-plot', data, layout,{ displayModeBar: false});
-
-            // document.getElementById("problems-stats-plot").on('plotly_click', function (data) {
-            //     displayProblemView(homeworsProblem[data.points[0].pointNumber]);
-            // });
         }
 
         function onError() {
