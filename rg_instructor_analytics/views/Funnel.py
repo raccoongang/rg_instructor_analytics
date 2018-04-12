@@ -46,6 +46,8 @@ class GradeFunnelView(AccessMixin, View):
         """
         return (
             StudentModule.objects.filter(
+                course_id=course_key,
+                module_type=block_type,
                 modified__exact=RawSQL(
                     "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
                     "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
