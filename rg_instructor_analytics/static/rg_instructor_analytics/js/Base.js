@@ -1,16 +1,16 @@
-$(function () {
+$(function() {
     'use strict';
     var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
 
     var tabList = [];
 
     function toggleToTab(tab) {
-        tabList.forEach(function (t) {
+        tabList.forEach(function(t) {
             t.setActive(t === tab);
         });
     }
 
-    $(function () {
+    $(function() {
         var $content = $('.' + CSS_INSTRUCTOR_CONTENT);
         tabList = [
             EnrollmentTab(

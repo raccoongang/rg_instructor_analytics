@@ -87,7 +87,7 @@ function EnrollmentTab(button, content) {
                     shape: 'hv',
                     color: '#8BB22A',
                 },
-                type: 'scatter'
+                
             };
             var unenrollTrace = {
                 x: x,
@@ -106,8 +106,8 @@ function EnrollmentTab(button, content) {
             var layout = {
                 hovermode:'closest',
                 xaxis: {},
-                yaxis: {dtick: 1},
-                showlegend: false,
+                yaxis: {nticks: 4},
+                showlegend: false
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
 

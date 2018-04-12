@@ -1,50 +1,79 @@
 /**
- * Implementation of Tab for the problem tab
- * @returns {Tab}
- * @class old realisation
- */
+    * Implementation of Tab for the problem tab
+        * @returns {Tab}
+            * @class old realisation
+                */
 function ProblemTab(button, content) {
     var problemTab = new Tab(button, content);
     var problemDetail = problemTab.content.find("#problem-body");
 
     /**
-     * function for display general plot with homework`s stat
-     */
+        * function for display general plot with homework`s stat
+            */
     function updateHomeWork() {
         function onSuccess(response) {
+            let maxAttempts = Math.max(...response.attempts);
+            let countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
+            let correctAnswer = [...response.correct_answer];
+            let yAxis = [...response.names];
+            let xAxisRight = ['0', '50%', '100%'];
 
-            const correct_answer = {
-                x: response.names,
-                y: response.correct_answer,
-                data: response.problems,
-                name: django.gettext('Percent of the correct answers'),
-                type: 'bar',
-                marker:{
-                    color: '#568ecc',
-                },
-            };
+            let bars = '', index = 0;
+            for (let item in yAxis) {
+                let attempts = (100 * response.attempts[index]) / maxAttempts;
+                let percent = correctAnswer[index] * 100;
+                let barHeight = 'auto';
+                if (!percent && !attempts) {
+                    barHeight = 0;
+                }
+                bars += `
+                        <li
+                            class="plot-bar-vert"
+                            style="width: ${(100 - yAxis.length) / yAxis.length}%; height: ${barHeight}"
+                            data-attribute="${index}"
+                        >
+                            <div class="plot-bar-attempts" style="height: ${attempts}%">
+                                <span class="plot-bar-value">${response.attempts[index].toFixed(1)}</span>
+                            </div>
+                            <div class="plot-bar-percent" style="height: ${percent}%">
+                                <span class="plot-bar-value">${percent.toFixed(1)}%</span>
+                            </div>
+                            <div class="plot-click-me">Click Me</div>
+                        </li>
+                `
+                index++;
+            }
+            bars = `<ul class="plot-body">${bars}</ul>`;
+            //build y axis
+            let axis = ``;
+            yAxis.forEach((item) => {
+                axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%;">${item}</li>`
+            });
+            axis = `<ul class="x-axis">${axis}</ul>`
+            bars += axis;
+            // build left x axis
+            axis = ''
+            countAttempts.forEach((item) => {
+                axis += `<li>${item.toFixed(1)}</li>`
+            })
+            axis = `<ul class="y-axis-l">${axis}</ul>`
+            bars += axis;
+            //build right x axis
+            axis = ''
+            xAxisRight.forEach((item) => {
+                axis += `<li>${item}</li>`
+            })
+            axis = `<ul class="y-axis-r">${axis}</ul>`
+            bars += axis;
 
-            const attempts = {
-                x: response.names,
-                y: response.attempts,
-                data: response.problems,
-                name: django.gettext('Average count of attempts'),
-                type: 'bar',
-                marker:{
-                    color: '#c14f84',
-                },
+            $('#problem-homeworks-stats-plot').html(bars);
 
-            };
-            const layout = {
-                showlegend: false,
-            };
-            const data = [correct_answer, attempts];
-
-            Plotly.newPlot('problem-homeworks-stats-plot', data, layout, { displayModeBar: false});
-
-            document.getElementById("problem-homeworks-stats-plot").on('plotly_click', function (data) {
+            $('#problem-homeworks-stats-plot').on('click', function (e) {
                 $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
-                loadHomeWorkProblems(response.problems[data.points[0].pointNumber]);
+                if ($(e.target).closest('li').data()) {
+                    let attr = $(e.target).closest('li').data();
+                    loadHomeWorkProblems(response.problems[attr.attribute]);
+                }
             });
         }
 
@@ -64,42 +93,71 @@ function ProblemTab(button, content) {
     }
 
     /**
-     * function for display plot with homework problem statistics
-     * @param homeworsProblem string id of the problem
-     */
+        * function for display plot with homework problem statistics
+            * @param homeworsProblem string id of the problem
+                */
     function loadHomeWorkProblems(homeworsProblem) {
         function onSuccess(response) {
 
-            const incorrect = {
-                y: response.incorrect,
-                name: django.gettext('Incorrect answers'),
-                type: 'bar',
-                marker:{
-                    color: '#c14f84',
+
+            const correct = response.correct;
+            const incorrect = response.incorrect;
+            const absIncorrect = incorrect.map(x => Math.abs(x));
+            const yAxis = Array.from(new Array(correct.length), (x, i) => i + 1);
+            const maxCorrect = Math.max(...correct);
+            const maxIncorrect = Math.max(...absIncorrect);
+            const xAxis = [maxCorrect, maxCorrect / 2, 0, maxIncorrect / 2, maxIncorrect];
+
+            let index = 0;
+            let bars = '';
+
+            for (let item in yAxis) {
+                const correctBar = 100 * correct[index] / maxCorrect;
+                const incorrectBar = Math.abs(100 * incorrect[index] / maxIncorrect);
+                let barHeight = 'auto';
+                if (!correctBar && !incorrectBar) {
+                    barHeight = 0;
                 }
-            };
+                bars += `
+                        <li class="plot-bar-vertical"
+                            style="width: ${(100 - yAxis.length) / yAxis.length}%; height: ${barHeight}"
+                            data-attribute="${index}"
+                        >
+                            <div class="correct-bar" style="height:${correctBar/2}%">
+                                <span>${correct[index]}</span>
+                            </div>
+                            <div class="incorrect-bar" style="height:${incorrectBar/2}%">
+                                <span>${Math.abs(incorrect[index])}</span>
+                            </div>
+                            <div class="plot-click-me">Click Me</div>
+                        </li>
+                        `
+                index++;
+            }
+            bars = `<ul class="plot-body">${bars}</ul>`;
+            // build y axis
+            let axis = '';
+            yAxis.forEach(item=>{
+                axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%">${item}</li>`;
+            })
+            axis = `<ul class="x-axis">${axis}</ul>`;
+            bars += axis;
+            // build x axis
+            axis = '';
+            xAxis.forEach(item=>{
+                axis += `<li>${item.toFixed(1)}</li>`
+            })
+            axis = `<ul class="y-axis-l">${axis}</ul>`
+            bars += axis;
+            
+            $('#problems-stats-plot').html(bars);
 
-            const correct = {
-                y: response.correct,
-                name: django.gettext('Correct answers'),
-                type: 'bar',
-                marker:{
-                    color: '#568ecc'
-                },
-            };
-            const data = [correct, incorrect];
 
-            const layout = {
-                barmode: 'relative',
-                xaxis: {dtick: 1},
-                yaxis: {dtick: 1},
-                showlegend: false,
-            };
-
-            Plotly.newPlot('problems-stats-plot', data, layout,{ displayModeBar: false});
-
-            document.getElementById("problems-stats-plot").on('plotly_click', function (data) {
-                displayProblemView(homeworsProblem[data.points[0].pointNumber]);
+            $('#problems-stats-plot').on('click', function (e) {
+                if ($(e.target).closest('li').data()) {
+                    let attr = $(e.target).closest('li').data();
+                    displayProblemView(homeworsProblem[attr.attribute]);
+                }
             });
         }
 
@@ -111,7 +169,7 @@ function ProblemTab(button, content) {
             traditional: true,
             type: "POST",
             url: "api/problem_statics/homeworksproblems/",
-            data: {problems: homeworsProblem},
+            data: { problems: homeworsProblem },
             success: onSuccess,
             error: onError,
             dataType: "json"
@@ -120,9 +178,9 @@ function ProblemTab(button, content) {
     }
 
     /**
-     * function for the render problem body
-     * @param stringProblemID string problem id
-     */
+        * function for the render problem body
+            * @param stringProblemID string problem id
+                */
     function displayProblemView(stringProblemID) {
         function onSuccess(response) {
             problemDetail.html(response.html);
@@ -147,7 +205,7 @@ function ProblemTab(button, content) {
             traditional: true,
             type: "POST",
             url: "api/problem_statics/problem_detail/",
-            data: {problem: stringProblemID},
+            data: { problem: stringProblemID },
             success: onSuccess,
             error: onError,
             dataType: "json"
@@ -164,10 +222,10 @@ function ProblemTab(button, content) {
 }
 
 /**
- * add buttons for show plot for problem`s question
- * @param problem div with problem`s render
- * @param stringProblemID string problem id
- */
+    * add buttons for show plot for problem`s question
+        * @param problem div with problem`s render
+            * @param stringProblemID string problem id
+                */
 function bindPlotsPopupForProblem(problem, stringProblemID) {
     var avalivleQuestions = [OpetionQuestion, RadioOpetionQuestion, MultyChoseQuestion];
     var questionsDivs = problem.find(".wrapper-problem-response");
@@ -190,43 +248,43 @@ function bindPlotsPopupForProblem(problem, stringProblemID) {
 }
 
 /**
- * Base class for questions
- * @param questionHtml layout with question
- * @param stringProblemID string id of question`s problem
- * @class old realisation
- * @abstract
- */
+    * Base class for questions
+        * @param questionHtml layout with question
+            * @param stringProblemID string id of question`s problem
+                * @class old realisation
+                    * @abstract
+                        */
 function BaseQuestion(questionHtml, stringProblemID) {
     this.questionHtml = questionHtml;
     this.problemID = stringProblemID;
 
     /**
-     * abstract method for indicate, can instance of question correct parse given html
-     * @abstract
-     */
+        * abstract method for indicate, can instance of question correct parse given html
+            * @abstract
+                */
     this.isCanParse = function () {
         throw new Error("missing implementation")
     };
 
     /**
-     * abstract method, that provide information for question statistics request
-     * @return object with the body:
-     * return {
-         *       type: string // string marker for the given question
-         *       questionID: string, // id of the question
-         *       answerMap: JSON string // json with relation between the real data and its representation in the database
-         *  }
-     *
-     * @abstract
-     */
+        * abstract method, that provide information for question statistics request
+            * @return object with the body:
+                * return {
+                    *       type: string // string marker for the given question
+                        *       questionID: string, // id of the question
+                            *       answerMap: JSON string // json with relation between the real data and its representation in the database
+                                *  }
+                                    *
+                                        * @abstract
+                                            */
     this.getRequestMap = function () {
         throw new Error("missing implementation")
     };
 
     /**
-     * function for displaying server's as the bar plot
-     * @param data server response. Object with key - name of the position and value - value of the position
-     */
+        * function for displaying server's as the bar plot
+        * @param data server response. Object with key - name of the position and value - value of the position
+            */
     this.displayBar = function (data) {
         const plot_popup = $('#model_plot');
         plot_popup.show();
@@ -239,23 +297,6 @@ function BaseQuestion(questionHtml, stringProblemID) {
         });
         console.log('XXXxxxXX', x);
         console.log('YYYyyyYY', y);
-        // const answers = {
-        //     x: x,
-        //     y: y,
-        //     type: 'bar',
-        //     orientation: 'h',
-        //     marker:{
-        //         color: '#c14f84'
-        //     }
-            
-        // };
-        // const layout = {
-        //     margin: {
-        //         l: 150,
-        //     },
-        //     showlegend: false,
-        // };
-        // Plotly.newPlot('proble-question-plot', [answers], layout, { displayModeBar: false});
         let plot = '';
         idx = 0;
         let maxValue = Math.max(...x);
@@ -264,22 +305,22 @@ function BaseQuestion(questionHtml, stringProblemID) {
             let name = y[idx++];
             let value = x[item];
             plot += `
-            <li class="plot-row">
+              <li class="plot-row">
                 <span class="plot-name">${name}</span>
                 <div class="plot-bar-holder">
-                    <div class="plot-bar" style="width: ${(value*100)/maxValue}%"></div>
+                   <div class="plot-bar" style="width: ${(value * 100) / maxValue}%"></div>
                 </div>
-               <span class="plot-value">${value}</span> 
-            </li>`
+                <span class="plot-value">${value}</span>
+              </li>`
         }
         plot = `<ul>${plot}</ul>`;
         $('#proble-question-plot').html(plot);
     };
 
     /**
-     * call`s when receive response with statistics for the question
-     * @param response
-     */
+        * call`s when receive response with statistics for the question
+            * @param response
+                */
     this.onGettingStat = function (response) {
         switch (response.type) {
             case 'bar':
@@ -293,16 +334,15 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-     * apply given instance to some question of the problem
-     * @param html layout for inserting the button to display the plot
-     */
+        * apply given instance to some question of the problem
+            * @param html layout for inserting the button to display the plot
+                */
     this.applyToCurrentProblem = function (html) {
         const $plotBtn = $('<button>Show Plot</button>');
         $plotBtn.appendTo(html);
         $plotBtn.click((item) => {
             var requestMap = this.getRequestMap();
             requestMap.problemID = this.problemID;
-            
             $(item.target).toggleClass('active');
             if ($(item.target).hasClass('active')) {
                 $(item.target).html('Hide Plot');
@@ -311,7 +351,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
                 $(item.target).html('Show Plot');
                 $('#model_plot').addClass('hidden');
             }
-            
+
             $.ajax({
                 traditional: true,
                 type: "POST",
@@ -326,13 +366,13 @@ function BaseQuestion(questionHtml, stringProblemID) {
 }
 
 /**
- * Implementation for the drop down question
- * @param questionHtml
- * @param stringProblemID
- * @return {OpetionQuestion}
- * @class old realisation
- * @extends BaseQuestion
- */
+    * Implementation for the drop down question
+        * @param questionHtml
+            * @param stringProblemID
+                * @return {OpetionQuestion}
+                    * @class old realisation
+                        * @extends BaseQuestion
+                            */
 function OpetionQuestion(questionHtml, stringProblemID) {
     const optionQuestion = new BaseQuestion(questionHtml, stringProblemID);
     const question = optionQuestion.questionHtml.find('.option-input');
@@ -359,13 +399,13 @@ function OpetionQuestion(questionHtml, stringProblemID) {
 }
 
 /**
- * Implementation for the single choice question
- * @param questionHtml
- * @param stringProblemID
- * @return {RadioOpetionQuestion}
- * @class old realisation
- * @extends BaseQuestion
- */
+    * Implementation for the single choice question
+        * @param questionHtml
+            * @param stringProblemID
+                * @return {RadioOpetionQuestion}
+                    * @class old realisation
+                        * @extends BaseQuestion
+                            */
 function RadioOpetionQuestion(questionHtml, stringProblemID) {
     const optionQuestion = new BaseQuestion(questionHtml, stringProblemID);
     const question = optionQuestion.questionHtml.find('.choicegroup');
@@ -393,13 +433,13 @@ function RadioOpetionQuestion(questionHtml, stringProblemID) {
 
 
 /**
- * Implementation for the question with checkbox
- * @param questionHtml
- * @param stringProblemID
- * @return {MultyChoseQuestion}
- * @class old realisation
- * @extends RadioOpetionQuestion
- */
+    * Implementation for the question with checkbox
+        * @param questionHtml
+            * @param stringProblemID
+                * @return {MultyChoseQuestion}
+                    * @class old realisation
+                        * @extends RadioOpetionQuestion
+                            */
 function MultyChoseQuestion(questionHtml, stringProblemID) {
     const multyChooseQuestion = new RadioOpetionQuestion(questionHtml, stringProblemID);
     multyChooseQuestion.options = multyChooseQuestion.questionHtml.find('input[type="checkbox"]');
@@ -413,3 +453,4 @@ function MultyChoseQuestion(questionHtml, stringProblemID) {
 
     return multyChooseQuestion;
 }
+
