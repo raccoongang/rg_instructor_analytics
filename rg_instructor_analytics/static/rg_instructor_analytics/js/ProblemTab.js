@@ -38,6 +38,7 @@ function ProblemTab(button, content) {
                             <div class="plot-bar-percent" style="height: ${percent}%">
                                 <span class="plot-bar-value">${percent.toFixed(1)}%</span>
                             </div>
+                            <div class="plot-click-me">Click Me</div>
                         </li>
                 `
                 index++;
@@ -128,6 +129,7 @@ function ProblemTab(button, content) {
                             <div class="incorrect-bar" style="height:${incorrectBar/2}%">
                                 <span>${Math.abs(incorrect[index])}</span>
                             </div>
+                            <div class="plot-click-me">Click Me</div>
                         </li>
                         `
                 index++;

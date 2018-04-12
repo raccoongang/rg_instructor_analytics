@@ -10,11 +10,9 @@
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
-
 .show {
     display: block;
 }
-
 /* The Modal (background) */
 .modal-for-plot {
     display: none; /* Hidden by default */
@@ -28,7 +26,6 @@
     background-color: rgb(176, 194, 202); /* Fallback color */
     background-color: rgba(176, 194, 202, 0.4); /* Black w/ opacity */
 }
-
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
@@ -37,7 +34,6 @@
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
 }
-
 /* The Close Button */
 .close {
     color: #ee4900;
@@ -45,24 +41,20 @@
     font-size: 14px;
     font-weight: bold;
 }
-
 .close:hover,
 .close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
-
 .gradebook-table-row {
     display: table-row;
     font-size: 12px;
 }
-
 .name-table{
     float: left;
     width: 20%;
 }
-
 .grade-table-wrapper {
     position: relative;
     float: left;
@@ -73,7 +65,6 @@
 .grade-table {
     width: 100%;
 }
-
 .gradebook-plot {
     position: relative;
     width: 100%;
@@ -120,7 +111,7 @@
     overflow-y: auto;
 }
 .funnel-item.active > .content {
-    display: block
+    display: block;
 }
 .funnel-item > .content {
     display: none;
@@ -468,7 +459,6 @@
     transform: translate(0,-50%);
     transition: 0.3s;
 }
-
 .wrapper-problem-response button.active:before {
     transform: translate(0,-50%) rotate(180deg);
     transition: 0.3s;
@@ -476,7 +466,6 @@
 .show.problem-action-btn.btn-default.btn-small {
     display: none;
 }
-
 .plot-row {
     display: flex;
     width: 750px;
@@ -511,7 +500,6 @@
     display: flex;
     height: 100%;
     justify-content: space-between;
-    
     background: linear-gradient(
         to bottom, 
         #eee, #eee 0.4%, 
@@ -534,23 +522,33 @@
     cursor: pointer;
     z-index: 1;
     width: 100%;
-    height: calc(100% + 50px);
+    height: calc(100% + 100px);
     top: -5px;
     border: 1px solid #568ecc;
 }
-.plot-bar-vert:hover:after {
-    content: 'show details';
+.plot-bar-vert .plot-click-me,
+.plot-bar-vertical .plot-click-me {
+    display: none;
     border: 1px #568ecc solid;
     padding: 3px 5px;
     color: #568ecc;
     position: absolute;
-    bottom: -80px;
+    bottom: -124px;
     z-index: 2;
-    width: 110px;
+    min-width: 110px;
     height: 20px;
     text-align: center;
     text-transform: uppercase;
     font-size: 10px;
+    left: 50%;
+    transform: translate(-50%,0);
+}
+.plot-bar-vertical .plot-click-me {
+    bottom: -80px;
+}
+.plot-bar-vert:hover .plot-click-me,
+.plot-bar-vertical:hover .plot-click-me {
+    display: block;
 }
 .plot-bar-attempts {
     background: #0075b4;
@@ -565,13 +563,17 @@
 }
 #problem-homeworks-stats-plot .x-axis li {
     text-align: center;
+    transform: rotate(90deg);
+    white-space: nowrap;
+    width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .y-axis-l {
     position: absolute;
     top: 20px;
     left: 0;
     height: calc(100% - 40px);
-    
     display: flex;
     flex-direction: column-reverse;
     justify-content: space-between;
@@ -581,7 +583,6 @@
     top: 20px;
     right: 0;
     height: calc(100% - 40px);
-    
     display: flex;
     flex-direction: column-reverse;
     justify-content: space-between;
@@ -596,7 +597,6 @@
     display: flex;
     justify-content: space-between;
 }
-
 .y-axis-l li {
     text-align: right;
 }
@@ -612,7 +612,6 @@
 .plot-bar-vert>div>span {
     transform: rotate(-90deg);
 }
-
 .correct-bar,
 .incorrect-bar {
     background: #0075b4;
@@ -676,23 +675,7 @@
     border: 1px solid #568ecc;
     left: 0;
 }
-#problems-stats-plot .plot-bar-vertical:hover:after {
-    content: 'show details';
-    border: 1px #568ecc solid;
-    padding: 3px 5px;
-    color: #568ecc;
-    position: absolute;
-    bottom: -80px;
-    z-index: 2;
-    width: 110px;
-    height: 20px;
-    text-align: center;
-    text-transform: uppercase;
-    font-size: 10px;
-    left: 50%;
-    transform: translate(-50%);
-    cursor: pointer;
-}
+
 #problems-stats-plot .y-axis-l {
     flex-direction: column;
 }
