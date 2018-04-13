@@ -4,16 +4,14 @@ Module for the suggestion's tab logic.
 from abc import ABCMeta, abstractmethod
 from itertools import izip
 
-from django.views.generic import View
-
 from course_modes.models import CourseMode
-from django_comment_client.utils import JsonResponse
+from django.views.generic import View
+import numpy as np
 
+from django_comment_client.utils import JsonResponse
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
 from rg_instructor_analytics.views.Problem import ProblemHomeWorkStatisticView
-
-import numpy as np
 
 
 class BaseSuggestion(object):

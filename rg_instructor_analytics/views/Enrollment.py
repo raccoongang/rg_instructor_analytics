@@ -10,10 +10,9 @@ from django.db.models.expressions import RawSQL
 from django.db.models.fields import DateField
 from django.http.response import JsonResponse
 from django.views.generic import View
-from student.models import CourseEnrollment
 
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
-
+from student.models import CourseEnrollment
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
 CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)

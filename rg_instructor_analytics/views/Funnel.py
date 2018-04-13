@@ -59,8 +59,8 @@ class GradeFunnelView(AccessMixin, View):
         if len(self.user_enrollments_ignored_types):
             users = (
                 CourseEnrollment.objects.all()
-                    .filter(course_id=course_key, mode__in=self.user_enrollments_ignored_types)
-                    .values_list('user', flat=True)
+                                .filter(course_id=course_key, mode__in=self.user_enrollments_ignored_types)
+                                .values_list('user', flat=True)
             )
             result = result.exclude(student__in=users)
         return result
