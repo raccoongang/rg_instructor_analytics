@@ -11,6 +11,7 @@ from django.views.generic import View
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from student.models import CourseEnrollment
 
 
 def info_for_course_element(element, level):
@@ -40,20 +41,29 @@ class GradeFunnelView(AccessMixin, View):
     Api for get funnel for given course.
     """
 
+    user_enrollments_ignored_types = []
+
     def get_query_for_course_item_stat(self, course_key, block_type):
         """
         Return query set for select given block type for given course.
         """
-        return (
-            StudentModule.objects.filter(
-                course_id=course_key,
-                module_type=block_type,
-                modified__exact=RawSQL(
-                    "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
-                    "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
-                    "AND t2.module_type = %s)", (course_key, block_type))
-            )
+        modified_filter = RawSQL(
+            "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
+            "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
+            "AND t2.module_type = %s)", (course_key, block_type))
+        result = StudentModule.objects.filter(
+            course_id=course_key,
+            module_type=block_type,
+            modified__exact=modified_filter
         )
+        if len(self.user_enrollments_ignored_types):
+            users = (
+                CourseEnrollment.objects.all()
+                    .filter(course_id=course_key, mode__in=self.user_enrollments_ignored_types)
+                    .values_list('user', flat=True)
+            )
+            result = result.exclude(student__in=users)
+        return result
 
     def get_progress_info_for_subsection(self, course_key):
         """
@@ -66,7 +76,6 @@ class GradeFunnelView(AccessMixin, View):
                 .annotate(count=Count('module_state_key'))
                 .values('module_state_key', 'state', 'count')
         )
-
         result = {}
         for i in info:
             if i['module_state_key'] not in result:

@@ -5,11 +5,15 @@ from abc import ABCMeta, abstractmethod
 from itertools import izip
 
 from django.views.generic import View
+
+from course_modes.models import CourseMode
 from django_comment_client.utils import JsonResponse
 
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
 from rg_instructor_analytics.views.Problem import ProblemHomeWorkStatisticView
+
+import numpy as np
 
 
 class BaseSuggestion(object):
@@ -81,22 +85,23 @@ class FunnelSuggestion(BaseSuggestion):
         """
         Generate suggestion, based on the funnels tab information.
         """
-        units = list(self.filter_funnel(GradeFunnelView().get_funnel_info(course_key), lambda item: item['level'] == 2))
+        funnel = GradeFunnelView()
+        funnel.user_enrollments_ignored_types = [CourseMode.AUDIT]
+        units = list(self.filter_funnel(
+            funnel.get_funnel_info(course_key),
+            lambda item: item['level'] == 2 and item['student_count_in'] > 0))
 
         def get_percent(total, put):
-            return 0 if not (total and put) else float(put) / float(total)
+            return .0 if not (total and put) else float(put) / float(total)
 
-        total_stuck_percent, count = 0, 0
-        for unit in units:
-            if unit['student_count_in'] > 0:
-                total_stuck_percent += get_percent(unit['student_count'], unit['student_count_in'])
-                count += 1
-        stuck_percent = total_stuck_percent / count
+        subsections_percent = np.array([get_percent(u['student_count'], u['student_count_in']) for u in units])
+
+        threshold = subsections_percent.mean() + subsections_percent.std()
 
         description = 'Take a look at `{}`: the number of students that stuck there is {}% higher than average'
         for unit in units:
             percent = get_percent(unit['student_count_in'], unit['student_count'])
-            if unit['student_count_in'] > 0 and percent >= stuck_percent:
+            if unit['student_count_in'] > 0 and percent >= threshold:
                 self.add_suggestion_item(description.format(unit['name'], int(percent * 100.0)), unit['id'])
 
 
@@ -117,17 +122,16 @@ class ProblemSuggestion(BaseSuggestion):
             lambda (grade, attempts): attempts and attempts / grade,
             izip(problem_stat['correct_answer'], problem_stat['attempts'])
         )
-        count = 0
-        accomulated = 0
-        for i in range(len(problem_stat['success'])):
-            if problem_stat['success'][i] != 0 and problem_stat['is_graded'][i]:
-                count += 1
-                accomulated += problem_stat['success'][i]
-        mean = accomulated / count
+
+        problems = np.array([
+            problem_stat['success'][i] for i in range(len(problem_stat['success']))
+            if problem_stat['success'][i] != 0 and problem_stat['is_graded'][i]
+        ])
+        threshold = problems.mean() - problems.std()
 
         description = 'Take a look at `{}`: there is to big amount of the attempts and to small value of the mean grade'
         for i in range(len(problem_stat['success'])):
-            if problem_stat['success'][i] and problem_stat['success'][i] < mean and problem_stat['is_graded'][i]:
+            if problem_stat['success'][i] and problem_stat['success'][i] < threshold and problem_stat['is_graded'][i]:
                 self.add_suggestion_item(
                     description.format(problem_stat['names'][i]),
                     problem_stat['subsection_id'][i],
