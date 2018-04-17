@@ -695,3 +695,7 @@
     width: 100%;
     z-index: 2;
 }
+.x-axis li {
+    display: flex;
+    justify-content: center;
+}
