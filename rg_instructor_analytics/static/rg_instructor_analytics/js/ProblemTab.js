@@ -47,7 +47,7 @@ function ProblemTab(button, content) {
             //build y axis
             let axis = ``;
             yAxis.forEach((item) => {
-                axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%;">${item}</li>`
+                axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
             });
             axis = `<ul class="x-axis">${axis}</ul>`
             bars += axis;
@@ -145,7 +145,7 @@ function ProblemTab(button, content) {
             // build x axis
             axis = '';
             xAxis.forEach(item=>{
-                axis += `<li>${item.toFixed(1)}</li>`
+                axis += `<li><div>${item.toFixed(1)}</div></li>`
             })
             axis = `<ul class="y-axis-l">${axis}</ul>`
             bars += axis;
