@@ -8,6 +8,7 @@
 function Tab(button, content) {
     this.button = button;
     this.content = content;
+    this.tabHolder = undefined;
     /**
      * Called for mark this tab active and show content.
      * @param isActive
@@ -22,6 +23,8 @@ function Tab(button, content) {
             button.removeClass('active-section');
         }
     };
+
+
 
     /**
      * Called for loading date for some tab implementation.

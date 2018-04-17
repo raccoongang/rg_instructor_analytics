@@ -10,6 +10,17 @@ $(function() {
         });
     }
 
+    function TabHolder(tabList,associativeTabName) {
+        this.tabs = [];
+        for(let i=0;i<tabList.length;i++) {
+            this.tabs[associativeTabName[i]] = tabList[i];
+        }
+
+        this.run_on_tab  =function(tab_name,action){
+
+        }
+    }
+
     $(function() {
         var $content = $('.' + CSS_INSTRUCTOR_CONTENT);
         tabList = [
@@ -32,11 +43,14 @@ $(function() {
                 $content.find('#suggestion-btn'),
                 $content.find('#section-suggestion'))
         ];
+        const tabHolder = new TabHolder(tabList,['enrollment','problems','gradebook','cohort','funnel','suggestion',]);
         tabList.forEach(function (tab) {
+            tab.tabHolder = tabHolder;
             tab.button.click(function () {
                 toggleToTab(tab);
             });
         });
+
 
         toggleToTab(tabList[0]);
     });
