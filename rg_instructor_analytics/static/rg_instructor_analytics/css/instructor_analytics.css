@@ -555,11 +555,11 @@
 }
 .plot-bar-attempts {
     background: #0075b4;
-    flex: 1 0 20px;
+    flex: 1 1 20px;
 }
 .plot-bar-percent {
     background: #c14f84;
-    flex: 1 0 20px;
+    flex: 1 1 20px;
 }
 .plot-bar-value {
     color: #fff;

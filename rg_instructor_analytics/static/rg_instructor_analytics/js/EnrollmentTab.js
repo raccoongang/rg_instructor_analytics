@@ -54,6 +54,7 @@ function EnrollmentTab(button, content) {
         };
 
         function onSuccess(response) {
+            console.log("hello",response);
             var x = response.dates.map(function (x) {
                 var result = new Date(x * 1000);
                 result.setHours(0);
@@ -110,7 +111,7 @@ function EnrollmentTab(button, content) {
                 showlegend: false
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
-
+            console.log(data);
             Plotly.newPlot('enrollment-stats-plot', data, layout, {displayModeBar: false});
         }
 
