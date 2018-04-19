@@ -679,6 +679,9 @@
     border: 1px solid #568ecc;
     left: -1px;
 }
+.xtick {
+    margin-top: 20px;
+}
 
 #problems-stats-plot .y-axis-l {
     flex-direction: column;

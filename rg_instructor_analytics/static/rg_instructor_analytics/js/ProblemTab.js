@@ -26,6 +26,7 @@ function ProblemTab(button, content) {
                 if (!percent && !attempts) {
                     barHeight = 0;
                 }
+                console.log(response.attempts[index])
                 bars += `
                         <li
                             class="plot-bar-vert"
