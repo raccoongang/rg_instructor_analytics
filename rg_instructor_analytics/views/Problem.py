@@ -77,6 +77,8 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         hw_number = 0
 
         for subsection in chain.from_iterable(section.get_children() for section in course.get_children()):
+            if not subsection.graded:
+                continue
             hw_number += 1
             stat['correct_answer'].append(0)
             stat['attempts'].append(0)
