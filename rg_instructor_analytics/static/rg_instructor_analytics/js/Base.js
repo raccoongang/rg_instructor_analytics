@@ -39,9 +39,10 @@ $(function() {
             FunnelTab(
                 $content.find('#funnel-btn'),
                 $content.find('#section-funnel')),
-            SuggestionTab(
-                $content.find('#suggestion-btn'),
-                $content.find('#section-suggestion'))
+            // Hide suggestion tab from the user.
+            // SuggestionTab(
+            //     $content.find('#suggestion-btn'),
+            //     $content.find('#section-suggestion'))
         ];
         const tabHolder = new TabHolder(tabList,['enrollment','problems','gradebook','cohort','funnel','suggestion',]);
         tabList.forEach(function (tab) {

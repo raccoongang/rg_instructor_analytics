@@ -112,10 +112,7 @@ class ProblemSuggestion(BaseSuggestion):
         """
         Generate suggestion, based on the funnels tab information.
         """
-        problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(
-            course_key,
-            include_subsection_grade=True
-        )
+        problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(course_key)
         problem_stat['success'] = map(
             lambda (grade, attempts): attempts and attempts / grade,
             izip(problem_stat['correct_answer'], problem_stat['attempts'])
@@ -123,13 +120,13 @@ class ProblemSuggestion(BaseSuggestion):
 
         problems = np.array([
             problem_stat['success'][i] for i in range(len(problem_stat['success']))
-            if problem_stat['success'][i] != 0 and problem_stat['is_graded'][i]
+            if problem_stat['success'][i] != 0
         ])
         threshold = problems.mean() - problems.std()
 
         description = 'Take a look at `{}`: there is to big amount of the attempts and to small value of the mean grade'
         for i in range(len(problem_stat['success'])):
-            if problem_stat['success'][i] and problem_stat['success'][i] < threshold and problem_stat['is_graded'][i]:
+            if problem_stat['success'][i] and problem_stat['success'][i] < threshold:
                 self.add_suggestion_item(
                     description.format(problem_stat['names'][i]),
                     problem_stat['subsection_id'][i],

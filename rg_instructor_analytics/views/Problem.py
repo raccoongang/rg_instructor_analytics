@@ -60,20 +60,17 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
             for i in cls.academic_performance_request(course_key)
         }
 
-    def get_homework_stat(self, course_key, include_subsection_grade=False):
+    def get_homework_stat(self, course_key):
         """
         Provide statistic for given course.
 
         :param course_key:  object, that represent course.
-        :param include_subsection_grade: add new field in to result map with information about grading of the subsection
         :return: map with list of correct answers, attempts, list of the problems for unit and names.
         Each item of given list represent one unit.
         """
         academic_performance = ProblemHomeWorkStatisticView.get_academic_performance(course_key)
         course = get_course_by_id(course_key, depth=4)
         stat = {'correct_answer': [], 'attempts': [], 'problems': [], 'names': [], 'subsection_id': []}
-        if include_subsection_grade:
-            stat['is_graded'] = []
         hw_number = 0
 
         for subsection in chain.from_iterable(section.get_children() for section in course.get_children()):
@@ -85,8 +82,6 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
             stat['problems'].append([])
             stat['names'].append(subsection.display_name)
             stat['subsection_id'].append(subsection.location.to_deprecated_string())
-            if include_subsection_grade:
-                stat['is_graded'].append(subsection.graded)
 
             problems_in_hw = 0
 
