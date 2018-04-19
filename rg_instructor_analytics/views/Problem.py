@@ -5,9 +5,9 @@ from abc import ABCMeta, abstractmethod
 from itertools import chain
 import json
 
-from django.db.models import Avg, Sum
+from django.db.models import Avg, Sum, Q, Count
 from django.db.models import IntegerField
-from django.db.models.expressions import RawSQL
+from django.db.models.expressions import RawSQL, F, Case, When
 from django.http.response import JsonResponse
 from django.views.generic import View
 
@@ -118,14 +118,24 @@ class ProblemsStatisticView(AccessMixin, View):
         """
         course_key = kwargs['course_key']
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in request.POST.getlist('problems')]
+        # problems = [course_key.make_usage_key_from_deprecated_string('block-v1:edX+DemoX+Demo_Course+type@problem+block@a0effb954cca4759994f1ac9e9434bf4')]
         stats = (
             StudentModule.objects
-            .filter(module_state_key__in=problems)
-            .values('module_state_key')
-            .annotate(correct=Sum('grade'))
-            .annotate(incorrect=Sum('grade') - Sum('max_grade'))
-            .values('module_state_key', 'correct', 'incorrect')
+                .filter(module_state_key__in=problems)
+                .values('module_state_key')
+                .annotate(correct=Count(
+                    Case(
+                        When(Q(grade__exact=F('max_grade')), then=1),
+                        output_field=IntegerField(),
+                    )))
+                .annotate(incorrect=Count(
+                    Case(
+                        When(~Q(grade__exact=F('max_grade')), then=1),
+                        output_field=IntegerField(),
+                    )))
+                .values('module_state_key', 'correct', 'incorrect')
         )
+        # import ipdb;ipdb.set_trace()
         incorrect, correct = tuple(map(list, zip(*[(int(s['incorrect'] or 0), int(s['correct'] or 0)) for s in stats])))
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
