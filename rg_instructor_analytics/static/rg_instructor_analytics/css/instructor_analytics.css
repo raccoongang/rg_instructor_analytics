@@ -155,7 +155,7 @@
 }
 .js-plotly-plot {
     width: 900px;
-    transform: translate(-7%);
+    transform: translate(-7%, -12%);
 }
 #date-btn {
     padding-right: 20px;
@@ -191,6 +191,7 @@
     justify-content: space-around;
     position: relative;
     z-index: 1;
+    margin-top: 40px;
 }
 .enrollment-legend-item {
     position: relative;
@@ -517,6 +518,7 @@
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    padding: 0 3px;
 }
 .plot-bar-vert:hover:before {
     content: '';
@@ -525,9 +527,17 @@
     cursor: pointer;
     z-index: 1;
     width: 100%;
-    height: calc(100% + 100px);
+    height: calc(100% + 50px);
     top: -5px;
     border: 1px solid #568ecc;
+}
+.plot-bar-vert:hover::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100px;
+    bottom: -90px;
 }
 .plot-bar-vert .plot-click-me,
 .plot-bar-vertical .plot-click-me {
@@ -536,7 +546,7 @@
     padding: 3px 5px;
     color: #568ecc;
     position: absolute;
-    bottom: -124px;
+    bottom: -90px;
     z-index: 2;
     min-width: 110px;
     height: 20px;
@@ -545,13 +555,21 @@
     font-size: 10px;
     left: 50%;
     transform: translate(-50%,0);
+    align-items: center;
+    justify-content: center;
+}
+.plot-bar-vert .plot-click-me:hover,
+.plot-bar-vertical .plot-click-me:hover {
+    color: #fff;
+    background: #568ecc;
+    cursor: pointer;
 }
 .plot-bar-vertical .plot-click-me {
     bottom: -80px;
 }
 .plot-bar-vert:hover .plot-click-me,
 .plot-bar-vertical:hover .plot-click-me {
-    display: block;
+    display: flex;
 }
 .plot-bar-attempts {
     background: #0075b4;
@@ -566,8 +584,6 @@
 }
 #problem-homeworks-stats-plot .x-axis li div {
     text-align: left;
-    transform: rotate(90deg) translate(29%,75%);
-    width: 90px;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 10px;
@@ -614,7 +630,7 @@
     cursor: pointer;
 }
 .plot-bar-vert>div>span {
-    transform: rotate(-90deg);
+    transform: rotate(90deg);
 }
 .correct-bar,
 .incorrect-bar {
@@ -665,6 +681,7 @@
     display: flex;
     align-items: center;
     box-sizing: border-box;
+    padding: 0 3px;
 }
 #problems-stats-plot .plot-bar-vertical:hover:before {
     content: '';
@@ -676,7 +693,18 @@
     height: calc(100% + 50px);
     top: -5px;
     border: 1px solid #568ecc;
-    left: 0;
+    left: -1px;
+}
+#problems-stats-plot .plot-bar-vertical:hover:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100px;
+    bottom: -90px;
+}
+.xtick {
+    margin-top: 20px;
 }
 
 #problems-stats-plot .y-axis-l {
