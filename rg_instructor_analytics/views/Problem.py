@@ -30,6 +30,10 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
     _LABEL = 'label'
     _DESCRIPTION = 'label'
 
+    attempts_request = RawSQL("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)",
+                          (),
+                          output_field=IntegerField())
+
     @staticmethod
     def academic_performance_request(course_key):
         """
@@ -37,15 +41,11 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
 
         Return list, where each item contain id of the problem, average count of attempts and percent of correct answer.
         """
-        attempts = RawSQL("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)",
-                          (),
-                          output_field=IntegerField())
-
         return (
             StudentModule.objects
             .filter(course_id__exact=course_key, grade__isnull=False, module_type__exact="problem")
             .values('module_state_key')
-            .annotate(attempts_avg=Avg(attempts))
+            .annotate(attempts_avg=Avg(ProblemHomeWorkStatisticView.attempts_request))
             .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
             .values('module_state_key', 'attempts_avg', 'grade_avg')
         )
@@ -123,20 +123,14 @@ class ProblemsStatisticView(AccessMixin, View):
             StudentModule.objects
                 .filter(module_state_key__in=problems)
                 .values('module_state_key')
-                .annotate(correct=Count(
-                    Case(
-                        When(Q(grade__exact=F('max_grade')), then=1),
-                        output_field=IntegerField(),
-                    )))
-                .annotate(incorrect=Count(
-                    Case(
-                        When(~Q(grade__exact=F('max_grade')), then=1),
-                        output_field=IntegerField(),
-                    )))
-                .values('module_state_key', 'correct', 'incorrect')
+                .annotate(grades=Sum('grade'))
+                .annotate(max_grades=Sum('max_grade'))
+                .annotate(attempts=Sum(ProblemHomeWorkStatisticView.attempts_request))
+                .values('module_state_key', 'grades', 'max_grades','attempts')
         )
-        # import ipdb;ipdb.set_trace()
-        incorrect, correct = tuple(map(list, zip(*[(int(s['incorrect'] or 0), int(s['correct'] or 0)) for s in stats])))
+        import ipdb;ipdb.set_trace()
+        def record
+        correct = [ s['attempts'] for s in stats]
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
 
