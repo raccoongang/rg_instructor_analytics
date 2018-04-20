@@ -86,6 +86,7 @@ function EnrollmentTab(button, content) {
                     shape: 'hv',
                     color: '#8BB22A',
                 },
+                yaxis: 'y2', 
                 type: 'scatter'
             };
             var unenrollTrace = {
@@ -95,6 +96,7 @@ function EnrollmentTab(button, content) {
                 name: django.gettext('unenroll'),
                 fill: 'tozeroy',
                 fillcolor: "rgba(204,70,48,0.25)",
+                yaxis: 'y2', 
                 line: {
                     shape: 'hv',
                     color: '#CC4630',
@@ -109,6 +111,10 @@ function EnrollmentTab(button, content) {
                     margin: {t: 10}
                 },
                 yaxis: {nticks: 4},
+                yaxis2: {
+                    overlaying: 'y',
+                    side: 'right'
+                },
                 showlegend: false
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
