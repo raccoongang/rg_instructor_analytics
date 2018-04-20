@@ -3,9 +3,12 @@ function CohortTab(button, content) {
 
     cohortTab.cohortList = content.find('#cohort-check-list');
     cohortTab.emailBody = cohortTab.content.find('#email-body');
-    cohortTab.emailBody.froalaEditor({
-        toolbarButtons: ['undo', 'redo' , 'bold', '|', 'alert', 'clear', 'insert']
-    });
+    // cohortTab.emailBody.froalaEditor({
+    //     toolbarButtons: ['undo', 'redo' , 'bold', '|', 'alert', 'clear', 'insert']
+    // });
+    
+    $('#email-body').richText();
+
 
     content.find('#cohort-send-email-btn').click(function () {
         var ids = '';
@@ -74,24 +77,24 @@ function CohortTab(button, content) {
     }
 
     cohortTab.loadTabData = updateCohort;
-    cohortTab.emailBody.on('froalaEditor.image.beforeUpload', function (e, editor, files) {
-        if (files.length) {
-            // Create a File Reader.
-            var reader = new FileReader();
+    // cohortTab.emailBody.on('froalaEditor.image.beforeUpload', function (e, editor, files) {
+    //     if (files.length) {
+    //         // Create a File Reader.
+    //         var reader = new FileReader();
 
-            // Set the reader to insert images when they are loaded.
-            reader.onload = function (e) {
-                var result = e.target.result;
-                editor.image.insert(result, null, null, editor.image.get());
-            };
+    //         // Set the reader to insert images when they are loaded.
+    //         reader.onload = function (e) {
+    //             var result = e.target.result;
+    //             editor.image.insert(result, null, null, editor.image.get());
+    //         };
 
-            // Read image as base64.
-            reader.readAsDataURL(files[0]);
-        }
+    //         // Read image as base64.
+    //         reader.readAsDataURL(files[0]);
+    //     }
 
-        // Stop default upload chain.
-        return false;
-    });
+    //     // Stop default upload chain.
+    //     return false;
+    // });
 
     return cohortTab;
 }

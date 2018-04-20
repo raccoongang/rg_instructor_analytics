@@ -20,11 +20,7 @@ function ProblemTab(button, content) {
 
             let bars = '', index = 0;
             for (let item in yAxis) {
-                if (maxAttempts) {
-                    let attempts = (100 * response.attempts[index]) / maxAttempts;
-                } else {
-                    let attempts = (100 * response.attempts[index]) / 1;
-                }
+                let attempts = (100 * response.attempts[index]) / maxAttempts;
                 
                 let percent = correctAnswer[index] * 100;
                 let barHeight = 'auto';
@@ -110,8 +106,8 @@ function ProblemTab(button, content) {
             const incorrect = response.incorrect;
             const absIncorrect = incorrect.map(x => Math.abs(x));
             const yAxis = Array.from(new Array(correct.length), (x, i) => i + 1);
-            const maxCorrect = Math.max(...correct);
-            const maxIncorrect = Math.max(...absIncorrect);
+            const maxCorrect = Math.max(...correct) || 1;
+            const maxIncorrect = Math.max(...absIncorrect) || 1;
             const xAxis = [maxCorrect, maxCorrect / 2, 0, maxIncorrect / 2, maxIncorrect];
 
             let index = 0;

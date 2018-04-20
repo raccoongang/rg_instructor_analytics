@@ -727,3 +727,9 @@
     display: flex;
     justify-content: center;
 }
+.plot-bar-value {
+    display: none;
+}
+.plot-bar-vert:hover .plot-bar-value {
+    display: flex;
+}
