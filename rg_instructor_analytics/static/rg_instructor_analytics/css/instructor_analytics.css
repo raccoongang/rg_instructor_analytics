@@ -531,6 +531,14 @@
     top: -5px;
     border: 1px solid #568ecc;
 }
+.plot-bar-vert:hover::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100px;
+    bottom: -90px;
+}
 .plot-bar-vert .plot-click-me,
 .plot-bar-vertical .plot-click-me {
     display: none;
@@ -547,13 +555,21 @@
     font-size: 10px;
     left: 50%;
     transform: translate(-50%,0);
+    align-items: center;
+    justify-content: center;
+}
+.plot-bar-vert .plot-click-me:hover,
+.plot-bar-vertical .plot-click-me:hover {
+    color: #fff;
+    background: #568ecc;
+    cursor: pointer;
 }
 .plot-bar-vertical .plot-click-me {
     bottom: -80px;
 }
 .plot-bar-vert:hover .plot-click-me,
 .plot-bar-vertical:hover .plot-click-me {
-    display: block;
+    display: flex;
 }
 .plot-bar-attempts {
     background: #0075b4;
@@ -614,7 +630,7 @@
     cursor: pointer;
 }
 .plot-bar-vert>div>span {
-    transform: rotate(-90deg);
+    transform: rotate(90deg);
 }
 .correct-bar,
 .incorrect-bar {
@@ -678,6 +694,14 @@
     top: -5px;
     border: 1px solid #568ecc;
     left: -1px;
+}
+#problems-stats-plot .plot-bar-vertical:hover:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100px;
+    bottom: -90px;
 }
 .xtick {
     margin-top: 20px;
