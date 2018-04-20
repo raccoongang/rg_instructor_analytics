@@ -10,11 +10,9 @@
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
-
 .show {
     display: block;
 }
-
 /* The Modal (background) */
 .modal-for-plot {
     display: none; /* Hidden by default */
@@ -23,12 +21,10 @@
     left: 0;
     top: 0;
     width: 100%; /* Full width */
-    height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(176, 194, 202); /* Fallback color */
     background-color: rgba(176, 194, 202, 0.4); /* Black w/ opacity */
 }
-
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
@@ -37,7 +33,6 @@
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
 }
-
 /* The Close Button */
 .close {
     color: #ee4900;
@@ -45,24 +40,20 @@
     font-size: 14px;
     font-weight: bold;
 }
-
 .close:hover,
 .close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
-
 .gradebook-table-row {
     display: table-row;
     font-size: 12px;
 }
-
 .name-table{
     float: left;
     width: 20%;
 }
-
 .grade-table-wrapper {
     position: relative;
     float: left;
@@ -73,7 +64,6 @@
 .grade-table {
     width: 100%;
 }
-
 .gradebook-plot {
     position: relative;
     width: 100%;
@@ -91,7 +81,7 @@
 .gradebook-table-cell {
     box-sizing: border-box;
     padding: 7px 5px;
-    flex: 1 1 50%;
+    flex: 1 0 48px;
     background: #f1f1f1;
     margin: 0 1px 1px;
     text-align: center;
@@ -111,13 +101,15 @@
     flex: 0 0 250px;
     text-align: left;
     padding: 0;
+    position: relative;
 }
 #gradebook_table_header .gradebook-table-cell {
     background: rgb(210,210,210);
 }
 #gradebook_table_body {
-    max-height: 100px;
+    max-height: 200px;
     overflow-y: auto;
+    padding-top: 40px;
 }
 .funnel-item.active > .content {
     display: block;
@@ -137,7 +129,7 @@
         transition: 0.2s;
         box-shadow: none;
         text-shadow: none;
-        border-radius: 0;
+        border-radius: 0; 
 }
 .idash-section button:hover,
 .idash-section button:focus {
@@ -163,7 +155,7 @@
 }
 .js-plotly-plot {
     width: 900px;
-    transform: translate(-7%);
+    transform: translate(-7%, -12%);
 }
 #date-btn {
     padding-right: 20px;
@@ -198,8 +190,8 @@
     display: flex;
     justify-content: space-around;
     position: relative;
-    bottom: -40px;
     z-index: 1;
+    margin-top: 40px;
 }
 .enrollment-legend-item {
     position: relative;
@@ -422,6 +414,7 @@
 .modal-for-plot {
     position: static;
     width: 750px;
+    height: auto;
 }
 .modal-for-plot .js-plotly-plot {
     width: 750px;
@@ -469,7 +462,6 @@
     transform: translate(0,-50%);
     transition: 0.3s;
 }
-
 .wrapper-problem-response button.active:before {
     transform: translate(0,-50%) rotate(180deg);
     transition: 0.3s;
@@ -477,7 +469,6 @@
 .show.problem-action-btn.btn-default.btn-small {
     display: none;
 }
-
 .plot-row {
     display: flex;
     width: 750px;
@@ -495,8 +486,244 @@
     flex: 0 0 70px;
     overflow: hidden;
     padding: 5px;
+    text-overflow: ellipsis;
 }
 .plot-value {
     flex: 0 0 50px;
     text-align: center;
+}
+
+#problem-homeworks-stats-plot {
+    height: 400px;
+    position: relative;
+    padding: 30px 50px;
+    margin-bottom: 100px;
+    text-align: center;
+}
+#problem-homeworks-stats-plot .plot-body {
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+    background: linear-gradient(
+        to bottom, 
+        #eee, #eee 0.4%, 
+        white 0.4%, white 50%, 
+        #eee 50%, #eee 50.4%, 
+        white 50.4%, white 99.6%,
+        black 99.6%, black 100%
+    );
+}
+.plot-bar-vert {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0 3px;
+}
+.plot-bar-vert:hover:before {
+    content: '';
+    position: absolute;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 1;
+    width: 100%;
+    height: calc(100% + 50px);
+    top: -5px;
+    border: 1px solid #568ecc;
+}
+.plot-bar-vert:hover::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100px;
+    bottom: -90px;
+}
+.plot-bar-vert .plot-click-me,
+.plot-bar-vertical .plot-click-me {
+    display: none;
+    border: 1px #568ecc solid;
+    padding: 3px 5px;
+    color: #568ecc;
+    position: absolute;
+    bottom: -90px;
+    z-index: 2;
+    min-width: 110px;
+    height: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 10px;
+    left: 50%;
+    transform: translate(-50%,0);
+    align-items: center;
+    justify-content: center;
+}
+.plot-bar-vert .plot-click-me:hover,
+.plot-bar-vertical .plot-click-me:hover {
+    color: #fff;
+    background: #568ecc;
+    cursor: pointer;
+}
+.plot-bar-vertical .plot-click-me {
+    bottom: -80px;
+}
+.plot-bar-vert:hover .plot-click-me,
+.plot-bar-vertical:hover .plot-click-me {
+    display: flex;
+}
+.plot-bar-attempts {
+    background: #0075b4;
+    flex: 1 1 20px;
+}
+.plot-bar-percent {
+    background: #c14f84;
+    flex: 1 1 20px;
+}
+.plot-bar-value {
+    color: #fff;
+}
+#problem-homeworks-stats-plot .x-axis li div {
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 10px;
+    line-height: 1.3;
+}
+.y-axis-l {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    height: calc(100% - 40px);
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+}
+.y-axis-r {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    height: calc(100% - 40px);
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+}
+.y-axis-l li:before {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background: gainsboro;
+}
+.x-axis {
+    display: flex;
+    justify-content: space-between;
+}
+.y-axis-l li {
+    text-align: right;
+}
+.plot-bar-vert>div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    overflow: hidden;
+    margin: 0 1px;
+    cursor: pointer;
+}
+.plot-bar-vert>div>span {
+    transform: rotate(90deg);
+}
+.correct-bar,
+.incorrect-bar {
+    background: #0075b4;
+    transform: translate(0,-50%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.incorrect-bar {
+    background: #c14f84;
+    transform: translate(-100%,50%);
+}
+#problems-stats-plot {
+    height: 400px;
+    position: relative;
+    padding: 30px 50px;
+    margin-bottom: 100px;
+    text-align: center;
+}
+#problems-stats-plot .plot-body {
+    display: flex;
+    height: 100%;
+    justify-content: space-between;
+    
+    background: linear-gradient(
+        to bottom, 
+        #eee, #eee 0.4%, 
+        white 0.4%, white 25%,
+        #eee 25%, #eee 25.4%,
+        white 25.4%, white 50%,
+        black 50%, black 50.4%, 
+        white 50.4%, white 75%,
+        #eee 75%, #eee 75.4%,
+        white 75.4%, white 99.6%,
+        #eee 99.6%, #eee 100%
+    );
+}
+
+#problems-stats-plot li>div {
+    flex: 0 0 100%;
+}
+
+#problems-stats-plot .plot-bar-vertical {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 3px;
+}
+#problems-stats-plot .plot-bar-vertical:hover:before {
+    content: '';
+    position: absolute;
+    background: rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 1;
+    width: 100%;
+    height: calc(100% + 50px);
+    top: -5px;
+    border: 1px solid #568ecc;
+    left: -1px;
+}
+#problems-stats-plot .plot-bar-vertical:hover:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100px;
+    bottom: -90px;
+}
+.xtick {
+    margin-top: 20px;
+}
+
+#problems-stats-plot .y-axis-l {
+    flex-direction: column;
+}
+#problems-stats-plot .plot-bar-vertical span {
+    display: none;
+    color: #fff;
+}
+#problems-stats-plot .plot-bar-vertical:hover span {
+    display: block;
+}
+
+#gradebook_table_header {
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+}
+.x-axis li {
+    display: flex;
+    justify-content: center;
 }

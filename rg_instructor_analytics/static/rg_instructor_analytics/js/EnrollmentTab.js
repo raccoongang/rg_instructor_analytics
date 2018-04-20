@@ -67,14 +67,13 @@ function EnrollmentTab(button, content) {
                 name: django.gettext('total'),
                 line: {
                     color: '#70A3FF',
-                    shape: 'spline',
                     width: 2.3,
                     smoothing: 1.25
                 },
                 hovermode:'closest',
                 hoverdistance:1000,
                 spikedistance:1000,
-                type: 'scatter',
+                type: 'scatter'
             };
             var enrollTrace = {
                 x: x,
@@ -105,12 +104,15 @@ function EnrollmentTab(button, content) {
             };
             var layout = {
                 hovermode:'closest',
-                xaxis: {},
-                yaxis: {dtick: 1},
-                showlegend: false,
+                xaxis: {
+                    type: "date",
+                    margin: {t: 10}
+                },
+                yaxis: {nticks: 4},
+                showlegend: false
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
-
+            
             Plotly.newPlot('enrollment-stats-plot', data, layout, {displayModeBar: false});
         }
 

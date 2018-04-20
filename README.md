@@ -15,6 +15,8 @@ url(
 * Add in to the settings file (i.e. in `edx-platform/lms/envs/common.py`): 
 ```python
 FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
+
+INSTALLED_APPS += ('rg_instructor_analytics',)
 ```
 * Run in the console:
 ```bash
