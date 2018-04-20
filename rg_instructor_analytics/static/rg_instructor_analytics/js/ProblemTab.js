@@ -1,15 +1,15 @@
 /**
-    * Implementation of Tab for the problem tab
-        * @returns {Tab}
-            * @class old realisation
-                */
+* Implementation of Tab for the problem tab
+* @returns {Tab}
+* @class old realisation
+*/
 function ProblemTab(button, content) {
     var problemTab = new Tab(button, content);
     var problemDetail = problemTab.content.find("#problem-body");
 
     /**
-        * function for display general plot with homework`s stat
-            */
+    * function for display general plot with homework`s stat
+    */
     function updateHomeWork() {
         function onSuccess(response) {
             let maxAttempts = Math.max(...response.attempts);
@@ -26,6 +26,7 @@ function ProblemTab(button, content) {
                 if (!percent && !attempts) {
                     barHeight = 0;
                 }
+                
                 bars += `
                         <li
                             class="plot-bar-vert"
@@ -93,9 +94,9 @@ function ProblemTab(button, content) {
     }
 
     /**
-        * function for display plot with homework problem statistics
-            * @param homeworsProblem string id of the problem
-                */
+    * function for display plot with homework problem statistics
+    * @param homeworsProblem string id of the problem
+    */
     function loadHomeWorkProblems(homeworsProblem) {
         function onSuccess(response) {
 
@@ -178,9 +179,9 @@ function ProblemTab(button, content) {
     }
 
     /**
-        * function for the render problem body
-            * @param stringProblemID string problem id
-                */
+    * function for the render problem body
+    * @param stringProblemID string problem id
+    */
     function displayProblemView(stringProblemID) {
         function onSuccess(response) {
             problemDetail.html(response.html);
@@ -222,10 +223,10 @@ function ProblemTab(button, content) {
 }
 
 /**
-    * add buttons for show plot for problem`s question
-        * @param problem div with problem`s render
-            * @param stringProblemID string problem id
-                */
+* add buttons for show plot for problem`s question
+* @param problem div with problem`s render
+* @param stringProblemID string problem id
+*/
 function bindPlotsPopupForProblem(problem, stringProblemID) {
     var avalivleQuestions = [OpetionQuestion, RadioOpetionQuestion, MultyChoseQuestion];
     var questionsDivs = problem.find(".wrapper-problem-response");
@@ -248,12 +249,12 @@ function bindPlotsPopupForProblem(problem, stringProblemID) {
 }
 
 /**
-    * Base class for questions
-        * @param questionHtml layout with question
-            * @param stringProblemID string id of question`s problem
-                * @class old realisation
-                    * @abstract
-                        */
+* Base class for questions
+* @param questionHtml layout with question
+* @param stringProblemID string id of question`s problem
+* @class old realisation
+* @abstract
+*/
 function BaseQuestion(questionHtml, stringProblemID) {
     this.questionHtml = questionHtml;
     this.problemID = stringProblemID;
@@ -267,24 +268,24 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-        * abstract method, that provide information for question statistics request
-            * @return object with the body:
-                * return {
-                    *       type: string // string marker for the given question
-                        *       questionID: string, // id of the question
-                            *       answerMap: JSON string // json with relation between the real data and its representation in the database
-                                *  }
-                                    *
-                                        * @abstract
-                                            */
+    * abstract method, that provide information for question statistics request
+    * @return object with the body:
+    * return {
+    *       type: string // string marker for the given question
+    *       questionID: string, // id of the question
+    *       answerMap: JSON string // json with relation between the real data and its representation in the database
+    *  }
+    *
+    * @abstract
+    */
     this.getRequestMap = function () {
         throw new Error("missing implementation")
     };
 
     /**
-        * function for displaying server's as the bar plot
-        * @param data server response. Object with key - name of the position and value - value of the position
-            */
+    * function for displaying server's as the bar plot
+    * @param data server response. Object with key - name of the position and value - value of the position
+    */
     this.displayBar = function (data) {
         const plot_popup = $('#model_plot');
         plot_popup.show();
@@ -295,8 +296,6 @@ function BaseQuestion(questionHtml, stringProblemID) {
             y.push(key);
             x.push(data[key]);
         });
-        console.log('XXXxxxXX', x);
-        console.log('YYYyyyYY', y);
         let plot = '';
         idx = 0;
         let maxValue = Math.max(...x);
@@ -318,9 +317,9 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-        * call`s when receive response with statistics for the question
-            * @param response
-                */
+    * call`s when receive response with statistics for the question
+    * @param response
+    */
     this.onGettingStat = function (response) {
         switch (response.type) {
             case 'bar':
@@ -334,9 +333,9 @@ function BaseQuestion(questionHtml, stringProblemID) {
     };
 
     /**
-        * apply given instance to some question of the problem
-            * @param html layout for inserting the button to display the plot
-                */
+    * apply given instance to some question of the problem
+    * @param html layout for inserting the button to display the plot
+    */
     this.applyToCurrentProblem = function (html) {
         const $plotBtn = $('<button>Show Plot</button>');
         $plotBtn.appendTo(html);
@@ -366,13 +365,13 @@ function BaseQuestion(questionHtml, stringProblemID) {
 }
 
 /**
-    * Implementation for the drop down question
-        * @param questionHtml
-            * @param stringProblemID
-                * @return {OpetionQuestion}
-                    * @class old realisation
-                        * @extends BaseQuestion
-                            */
+* Implementation for the drop down question
+* @param questionHtml
+* @param stringProblemID
+* @return {OpetionQuestion}
+* @class old realisation
+* @extends BaseQuestion
+*/
 function OpetionQuestion(questionHtml, stringProblemID) {
     const optionQuestion = new BaseQuestion(questionHtml, stringProblemID);
     const question = optionQuestion.questionHtml.find('.option-input');
@@ -399,13 +398,13 @@ function OpetionQuestion(questionHtml, stringProblemID) {
 }
 
 /**
-    * Implementation for the single choice question
-        * @param questionHtml
-            * @param stringProblemID
-                * @return {RadioOpetionQuestion}
-                    * @class old realisation
-                        * @extends BaseQuestion
-                            */
+* Implementation for the single choice question
+* @param questionHtml
+* @param stringProblemID
+* @return {RadioOpetionQuestion}
+* @class old realisation
+* @extends BaseQuestion
+*/
 function RadioOpetionQuestion(questionHtml, stringProblemID) {
     const optionQuestion = new BaseQuestion(questionHtml, stringProblemID);
     const question = optionQuestion.questionHtml.find('.choicegroup');
@@ -433,13 +432,13 @@ function RadioOpetionQuestion(questionHtml, stringProblemID) {
 
 
 /**
-    * Implementation for the question with checkbox
-        * @param questionHtml
-            * @param stringProblemID
-                * @return {MultyChoseQuestion}
-                    * @class old realisation
-                        * @extends RadioOpetionQuestion
-                            */
+* Implementation for the question with checkbox
+* @param questionHtml
+* @param stringProblemID
+* @return {MultyChoseQuestion}
+* @class old realisation
+* @extends RadioOpetionQuestion
+*/
 function MultyChoseQuestion(questionHtml, stringProblemID) {
     const multyChooseQuestion = new RadioOpetionQuestion(questionHtml, stringProblemID);
     multyChooseQuestion.options = multyChooseQuestion.questionHtml.find('input[type="checkbox"]');
