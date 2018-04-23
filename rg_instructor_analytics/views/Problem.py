@@ -30,12 +30,11 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
     _LABEL = 'label'
     _DESCRIPTION = 'label'
 
-    attempts_request = RawSQL(
+    ATTEMPTS_REQUEST = RawSQL(
         "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)", (), output_field=IntegerField()
     )
 
-    @staticmethod
-    def academic_performance_request(course_key):
+    def academic_performance_request(self, course_key):
         """
         Make request to db for academic performance.
 
@@ -45,19 +44,18 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
             StudentModule.objects
             .filter(course_id__exact=course_key, grade__isnull=False, module_type__exact="problem")
             .values('module_state_key')
-            .annotate(attempts_avg=Avg(ProblemHomeWorkStatisticView.attempts_request))
+            .annotate(attempts_avg=Avg(self.ATTEMPTS_REQUEST))
             .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
             .values('module_state_key', 'attempts_avg', 'grade_avg')
         )
 
-    @classmethod
-    def get_academic_performance(cls, course_key):
+    def get_academic_performance(self, course_key):
         """
         Provide map, where key - course and value - map with average grade and attempt.
         """
         return {
             i['module_state_key']: {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
-            for i in cls.academic_performance_request(course_key)
+            for i in self.academic_performance_request(course_key)
         }
 
     def get_homework_stat(self, course_key):
@@ -68,7 +66,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         :return: map with list of correct answers, attempts, list of the problems for unit and names.
         Each item of given list represent one unit.
         """
-        academic_performance = ProblemHomeWorkStatisticView.get_academic_performance(course_key)
+        academic_performance = self.get_academic_performance(course_key)
         course = get_course_by_id(course_key, depth=4)
         stat = {'correct_answer': [], 'attempts': [], 'problems': [], 'names': []}
         hw_number = 0
@@ -125,7 +123,7 @@ class ProblemsStatisticView(AccessMixin, View):
             .values('module_state_key')
             .annotate(grades=Sum('grade'))
             .annotate(max_grades=Sum('max_grade'))
-            .annotate(attempts=Sum(ProblemHomeWorkStatisticView.attempts_request))
+            .annotate(attempts=Sum(ProblemHomeWorkStatisticView.ATTEMPTS_REQUEST))
             .values('module_state_key', 'grades', 'max_grades', 'attempts')
         )
 
