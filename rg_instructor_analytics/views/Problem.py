@@ -118,7 +118,6 @@ class ProblemsStatisticView(AccessMixin, View):
         """
         course_key = kwargs['course_key']
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in request.POST.getlist('problems')]
-        # problems = [course_key.make_usage_key_from_deprecated_string('block-v1:edX+DemoX+Demo_Course+type@problem+block@a0effb954cca4759994f1ac9e9434bf4')]
         stats = (
             StudentModule.objects
                 .filter(module_state_key__in=problems)
@@ -128,9 +127,14 @@ class ProblemsStatisticView(AccessMixin, View):
                 .annotate(attempts=Sum(ProblemHomeWorkStatisticView.attempts_request))
                 .values('module_state_key', 'grades', 'max_grades','attempts')
         )
-        import ipdb;ipdb.set_trace()
-        def record
-        correct = [ s['attempts'] for s in stats]
+
+        def record(stat_item):
+            if not stat_item['attempts']:
+                return 0, 0
+            correct = int((float(stat_item['grades']) / float(stat_item['max_grades'] * stat_item['attempts'])) * 100)
+            incorrect = 100 - correct
+            return incorrect, correct
+        incorrect, correct = tuple(map(list, zip(*[record(s) for s in stats])))
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
 
