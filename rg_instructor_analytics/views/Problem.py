@@ -30,34 +30,32 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
     _LABEL = 'label'
     _DESCRIPTION = 'label'
 
-    @staticmethod
-    def academic_performance_request(course_key):
+    ATTEMPTS_REQUEST = RawSQL(
+        "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)", (), output_field=IntegerField()
+    )
+
+    def academic_performance_request(self, course_key):
         """
         Make request to db for academic performance.
 
         Return list, where each item contain id of the problem, average count of attempts and percent of correct answer.
         """
-        attempts = RawSQL("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)",
-                          (),
-                          output_field=IntegerField())
-
         return (
             StudentModule.objects
             .filter(course_id__exact=course_key, grade__isnull=False, module_type__exact="problem")
             .values('module_state_key')
-            .annotate(attempts_avg=Avg(attempts))
+            .annotate(attempts_avg=Avg(self.ATTEMPTS_REQUEST))
             .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
             .values('module_state_key', 'attempts_avg', 'grade_avg')
         )
 
-    @classmethod
-    def get_academic_performance(cls, course_key):
+    def get_academic_performance(self, course_key):
         """
         Provide map, where key - course and value - map with average grade and attempt.
         """
         return {
             i['module_state_key']: {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
-            for i in cls.academic_performance_request(course_key)
+            for i in self.academic_performance_request(course_key)
         }
 
     def get_homework_stat(self, course_key):
@@ -68,7 +66,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         :return: map with list of correct answers, attempts, list of the problems for unit and names.
         Each item of given list represent one unit.
         """
-        academic_performance = ProblemHomeWorkStatisticView.get_academic_performance(course_key)
+        academic_performance = self.get_academic_performance(course_key)
         course = get_course_by_id(course_key, depth=4)
         stat = {'correct_answer': [], 'attempts': [], 'problems': [], 'names': []}
         hw_number = 0
@@ -117,16 +115,31 @@ class ProblemsStatisticView(AccessMixin, View):
         Process post request.
         """
         course_key = kwargs['course_key']
-        problems = [course_key.make_usage_key_from_deprecated_string(p) for p in request.POST.getlist('problems')]
+        problems_ids = request.POST.getlist('problems')
+        problems = [course_key.make_usage_key_from_deprecated_string(p) for p in problems_ids]
         stats = (
             StudentModule.objects
             .filter(module_state_key__in=problems)
             .values('module_state_key')
-            .annotate(correct=Sum('grade'))
-            .annotate(incorrect=Sum('grade') - Sum('max_grade'))
-            .values('module_state_key', 'correct', 'incorrect')
+            .annotate(grades=Sum('grade'))
+            .annotate(max_grades=Sum('max_grade'))
+            .annotate(attempts=Sum(ProblemHomeWorkStatisticView.ATTEMPTS_REQUEST))
+            .values('module_state_key', 'grades', 'max_grades', 'attempts')
         )
-        incorrect, correct = tuple(map(list, zip(*[(int(s['incorrect'] or 0), int(s['correct'] or 0)) for s in stats])))
+
+        problems_stat = [None] * len(stats)
+        for s in stats:
+            problems_stat[problems_ids.index(s['module_state_key'])] = s
+
+        def record(stat_item):
+            if not stat_item['attempts']:
+                return 0, 0
+            correct = int((float(stat_item['grades']) / float(stat_item['max_grades'] * stat_item['attempts'])) * 100)
+            incorrect = 100 - correct
+            return incorrect, correct
+
+        incorrect, correct = tuple(map(list, zip(*[record(s) for s in problems_stat]))) or ([], [])
+
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
 
