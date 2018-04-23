@@ -630,7 +630,7 @@
     cursor: pointer;
 }
 .plot-bar-vert>div>span {
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
 }
 .correct-bar,
 .incorrect-bar {

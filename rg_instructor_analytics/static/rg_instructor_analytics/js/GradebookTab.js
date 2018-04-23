@@ -102,7 +102,7 @@ function GradebookTab(button, content) {
     $tbody.on('scroll',()=>{
 
         let scrollLeft = $tbody.scrollLeft();
-        console.log('hit',scrollLeft);
+    
         $('#gradebook_table_header').css("left", -scrollLeft);
         $('.gradebook-table-cell:first-child').css("left", scrollLeft)
     });
