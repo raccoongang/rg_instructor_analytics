@@ -138,7 +138,8 @@ class ProblemsStatisticView(AccessMixin, View):
             incorrect = 100 - correct
             return incorrect, correct
 
-        incorrect, correct = tuple(map(list, zip(*[record(s) for s in problems_stat])))
+        incorrect, correct = tuple(map(list, zip(*[record(s) for s in problems_stat]))) or ([], [])
+
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
 
