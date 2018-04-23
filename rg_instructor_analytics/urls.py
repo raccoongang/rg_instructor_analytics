@@ -3,14 +3,25 @@ Url config file.
 """
 from django.conf.urls import url
 
-from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
-from rg_instructor_analytics.views.Enrollment import EnrollmentStatisticView
-from rg_instructor_analytics.views.Funnel import GradeFunnelView
-from rg_instructor_analytics.views.Gradebook import GradebookView
-from rg_instructor_analytics.views.Problem import (
-    ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
-)
+from django.conf import settings
 from rg_instructor_analytics.views.TabFragment import InstructorAnalyticsFragmentView
+from rg_instructor_analytics.views.Funnel import GradeFunnelView
+
+if settings.FAKE_DATA_FOR_RG_INSIGHTS_ENABLE:
+    from rg_instructor_analytics.fake_views.Cohort import CohortSendMessage, CohortView
+    from rg_instructor_analytics.fake_views.Enrollment import EnrollmentStatisticView
+    from rg_instructor_analytics.fake_views.Gradebook import GradebookView
+    from rg_instructor_analytics.fake_views.Problem import (
+        ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
+    )
+else:
+    from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
+    from rg_instructor_analytics.views.Enrollment import EnrollmentStatisticView
+    from rg_instructor_analytics.views.Gradebook import GradebookView
+    from rg_instructor_analytics.views.Problem import (
+        ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
+    )
+
 
 urlpatterns = [
     url(r'^api/enroll_statics/$', EnrollmentStatisticView.as_view(), name='enrollment_statistic_view'),
