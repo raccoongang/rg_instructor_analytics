@@ -117,7 +117,8 @@ class ProblemsStatisticView(AccessMixin, View):
         Process post request.
         """
         course_key = kwargs['course_key']
-        problems = [course_key.make_usage_key_from_deprecated_string(p) for p in request.POST.getlist('problems')]
+        problems_ids = request.POST.getlist('problems')
+        problems = [course_key.make_usage_key_from_deprecated_string(p) for p in problems_ids]
         stats = (
             StudentModule.objects
                 .filter(module_state_key__in=problems)
@@ -128,13 +129,18 @@ class ProblemsStatisticView(AccessMixin, View):
                 .values('module_state_key', 'grades', 'max_grades','attempts')
         )
 
+        problems_stat = [None] * len(stats)
+        for s in stats:
+            problems_stat[problems_ids.index(s['module_state_key'])] = s
+
         def record(stat_item):
             if not stat_item['attempts']:
                 return 0, 0
             correct = int((float(stat_item['grades']) / float(stat_item['max_grades'] * stat_item['attempts'])) * 100)
             incorrect = 100 - correct
             return incorrect, correct
-        incorrect, correct = tuple(map(list, zip(*[record(s) for s in stats])))
+
+        incorrect, correct = tuple(map(list, zip(*[record(s) for s in problems_stat])))
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
 
