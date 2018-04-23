@@ -5,9 +5,9 @@ from abc import ABCMeta, abstractmethod
 from itertools import chain
 import json
 
-from django.db.models import Avg, Sum, Q, Count
+from django.db.models import Avg, Sum
 from django.db.models import IntegerField
-from django.db.models.expressions import RawSQL, F, Case, When
+from django.db.models.expressions import RawSQL
 from django.http.response import JsonResponse
 from django.views.generic import View
 
@@ -30,9 +30,9 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
     _LABEL = 'label'
     _DESCRIPTION = 'label'
 
-    attempts_request = RawSQL("SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)",
-                          (),
-                          output_field=IntegerField())
+    attempts_request = RawSQL(
+        "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)", (), output_field=IntegerField()
+    )
 
     @staticmethod
     def academic_performance_request(course_key):
@@ -121,12 +121,12 @@ class ProblemsStatisticView(AccessMixin, View):
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in problems_ids]
         stats = (
             StudentModule.objects
-                .filter(module_state_key__in=problems)
-                .values('module_state_key')
-                .annotate(grades=Sum('grade'))
-                .annotate(max_grades=Sum('max_grade'))
-                .annotate(attempts=Sum(ProblemHomeWorkStatisticView.attempts_request))
-                .values('module_state_key', 'grades', 'max_grades','attempts')
+            .filter(module_state_key__in=problems)
+            .values('module_state_key')
+            .annotate(grades=Sum('grade'))
+            .annotate(max_grades=Sum('max_grade'))
+            .annotate(attempts=Sum(ProblemHomeWorkStatisticView.attempts_request))
+            .values('module_state_key', 'grades', 'max_grades', 'attempts')
         )
 
         problems_stat = [None] * len(stats)
