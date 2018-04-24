@@ -49,8 +49,10 @@ function ProblemTab(button, content) {
             bars = `<ul class="plot-body">${bars}</ul>`;
             //build y axis
             let axis = ``;
+            let small = '';
+            if (yAxis.length > 10) {small = 'small'}
             yAxis.forEach((item) => {
-                axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
+                axis += `<li class="hw-xaxis ${small}" style="width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
             });
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
@@ -77,6 +79,17 @@ function ProblemTab(button, content) {
                     let attr = $(e.target).closest('li').data();
                     loadHomeWorkProblems(response.problems[attr.attribute]);
                 }
+            });
+            $('.plot-bar-vert').on('mouseover', function (e) {
+
+                    let attr = $(this).data('attribute');
+
+                    $('.hw-xaxis').removeClass('hover');
+                    $('.hw-xaxis')[attr].classList.add('hover');
+
+            });
+            $('.plot-bar-vert').on('mouseout', function (e) {
+                $('.hw-xaxis').removeClass('hover');
             });
         }
 
