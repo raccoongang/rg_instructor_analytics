@@ -412,6 +412,7 @@
     color: #fff;
 }
 .modal-for-plot {
+    margin-top: 30px;
     position: static;
     width: 750px;
     height: auto;
@@ -630,7 +631,7 @@
     cursor: pointer;
 }
 .plot-bar-vert>div>span {
-    transform: rotate(90deg);
+    transform: rotate(-90deg);
 }
 .correct-bar,
 .incorrect-bar {
@@ -726,4 +727,10 @@
 .x-axis li {
     display: flex;
     justify-content: center;
+}
+.plot-bar-value {
+    display: none;
+}
+.plot-bar-vert:hover .plot-bar-value {
+    display: flex;
 }

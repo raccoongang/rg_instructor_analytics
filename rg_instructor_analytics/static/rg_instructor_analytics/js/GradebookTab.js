@@ -56,14 +56,14 @@ function GradebookTab(button, content) {
         }
         greadebookTab.gradebookTableHeader.append(htmlTemp);
         greadebookTab.studentsTable.empty();
-        
+
         for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
             var htmlStringResults = '';
             for (var g = 0; g < greadebookTab.studentInfo[i].grades.length; g++) {
                 htmlStringResults += `<div class="gradebook-table-cell">${greadebookTab.studentInfo[i].grades[g]}</div>`;
             }
-            
-            htmlStringStudents += 
+
+            htmlStringStudents +=
                 `<div class="gradebook-table-row">
                     <div class="gradebook-table-cell">
                         <a data-position="${i}">${greadebookTab.studentInfo[i].username}</a>
@@ -71,10 +71,10 @@ function GradebookTab(button, content) {
                     ${htmlStringResults}
                 </div>`;
         }
-    
+
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
-        
-        
+
+
         $(greadebookTab.gradebookTableBody).click(function (element) {
             var stat = {
                 y: greadebookTab.studentInfo[element.target.dataset['position']].grades,
@@ -102,9 +102,9 @@ function GradebookTab(button, content) {
     $tbody.on('scroll',()=>{
 
         let scrollLeft = $tbody.scrollLeft();
-        console.log('hit',scrollLeft);
+    
         $('#gradebook_table_header').css("left", -scrollLeft);
         $('.gradebook-table-cell:first-child').css("left", scrollLeft)
     });
     return greadebookTab;
-};
+}
