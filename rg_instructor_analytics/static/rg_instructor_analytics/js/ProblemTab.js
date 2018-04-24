@@ -219,7 +219,7 @@ function ProblemTab(button, content) {
         updateHomeWork()
     };
 
-    problemTab.content.find('.close').click(item => problemTab.content.find('#model_plot').hide());
+    problemTab.content.find('.close').click(item => problemTab.content.find('.modal-for-plot').hide());
 
     return problemTab;
 }
@@ -240,6 +240,12 @@ function bindPlotsPopupForProblem(problem, stringProblemID) {
             var question = avalivleQuestions[i](html, stringProblemID);
             if (question.isCanParse()) {
                 question.applyToCurrentProblem(html);
+                html.append(`
+                <div id="model_plot" class="modal-for-plot">
+                    <div>
+                        <div id="problem-question-plot"></div>
+                    </div>
+                </div>`);
                 isAdded = true;
                 break;
             }
@@ -289,7 +295,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
     * @param data server response. Object with key - name of the position and value - value of the position
     */
     this.displayBar = function (data) {
-        const plot_popup = $('#model_plot');
+        const plot_popup = this.questionHtml.parent().find('.modal-for-plot');
         plot_popup.show();
 
         var x = [];
@@ -315,7 +321,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
               </li>`
         }
         plot = `<ul>${plot}</ul>`;
-        $('#proble-question-plot').html(plot);
+        this.questionHtml.parent().find('#problem-question-plot').html(plot);
     };
 
     /**
@@ -323,9 +329,10 @@ function BaseQuestion(questionHtml, stringProblemID) {
     * @param response
     */
     this.onGettingStat = function (response) {
+        console.log(this.questionHtml);
         switch (response.type) {
             case 'bar':
-                this.displayBar(response.stats)
+                this.displayBar(response.stats);
                 break;
         }
     };
@@ -347,21 +354,20 @@ function BaseQuestion(questionHtml, stringProblemID) {
             $(item.target).toggleClass('active');
             if ($(item.target).hasClass('active')) {
                 $(item.target).html('Hide Plot');
-                $('#model_plot').removeClass('hidden');
+                this.questionHtml.parent().find('.modal-for-plot').removeClass('hidden');
+                $.ajax({
+                    traditional: true,
+                    type: "POST",
+                    url: "api/problem_statics/problem_question_stat/",
+                    data: requestMap,
+                    success: (response) => this.onGettingStat(response),
+                    error: () => this.onGettingStatFail(),
+                    dataType: "json"
+                });
             } else {
                 $(item.target).html('Show Plot');
-                $('#model_plot').addClass('hidden');
+                this.questionHtml.parent().find('.modal-for-plot').addClass('hidden');
             }
-
-            $.ajax({
-                traditional: true,
-                type: "POST",
-                url: "api/problem_statics/problem_question_stat/",
-                data: requestMap,
-                success: (response) => this.onGettingStat(response),
-                error: () => this.onGettingStatFail(),
-                dataType: "json"
-            });
         });
     };
 }

@@ -412,6 +412,7 @@
     color: #fff;
 }
 .modal-for-plot {
+    margin-top: 30px;
     position: static;
     width: 750px;
     height: auto;
