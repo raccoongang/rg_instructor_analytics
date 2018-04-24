@@ -17,13 +17,14 @@ function ProblemTab(button, content) {
             let correctAnswer = [...response.correct_answer];
             let yAxis = [...response.names];
             let xAxisRight = ['0', '50%', '100%'];
+            let $homework = $('#problem-homeworks-stats-plot');
 
             let bars = '', index = 0;
             for (let item in yAxis) {
                 let attempts = (100 * response.attempts[index]) / maxAttempts;
-                
                 let percent = correctAnswer[index] * 100;
                 let barHeight = 'auto';
+
                 if (!percent && !attempts) {
                     barHeight = 0;
                 }
@@ -51,26 +52,26 @@ function ProblemTab(button, content) {
             yAxis.forEach((item) => {
                 axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
             });
-            axis = `<ul class="x-axis">${axis}</ul>`
+            axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
             // build left x axis
-            axis = ''
+            axis = '';
             countAttempts.forEach((item) => {
                 axis += `<li>${item.toFixed(1)}</li>`
-            })
-            axis = `<ul class="y-axis-l">${axis}</ul>`
+            });
+            axis = `<ul class="y-axis-l">${axis}</ul>`;
             bars += axis;
             //build right x axis
-            axis = ''
+            axis = '';
             xAxisRight.forEach((item) => {
                 axis += `<li>${item}</li>`
-            })
-            axis = `<ul class="y-axis-r">${axis}</ul>`
+            });
+            axis = `<ul class="y-axis-r">${axis}</ul>`;
             bars += axis;
 
-            $('#problem-homeworks-stats-plot').html(bars);
+            $homework.html(bars);
 
-            $('#problem-homeworks-stats-plot').on('click', function (e) {
+            $homework.on('click', function (e) {
                 $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
