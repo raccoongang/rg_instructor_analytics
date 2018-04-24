@@ -41,6 +41,25 @@ function EnrollmentTab(button, content) {
      * Update select date button according to selection of date range
      */
     function updateStatPeriod() {
+
+        if (new Date(fromDate.val()) == 'Invalid Date')
+            fromDate.datepicker("setDate", dateStart);
+        if (new Date(toDate.val()) == 'Invalid Date')
+            toDate.datepicker("setDate", dateEnd);
+
+        if (new Date(fromDate.val()) < dateStart)
+            fromDate.datepicker("setDate", dateStart);
+        if (new Date(toDate.val()) > dateEnd)
+            toDate.datepicker("setDate", dateEnd);
+
+        if (new Date(fromDate.val()) > dateEnd)
+            fromDate.datepicker("setDate", dateEnd);
+        if (new Date(toDate.val()) < dateStart)
+            toDate.datepicker("setDate", dateStart);
+
+        if (new Date(fromDate.val()) > new Date(toDate.val()))
+            fromDate.datepicker("setDate", new Date(toDate.val()));
+
         selectDateBtn.html(fromDate.val() + ' - ' + toDate.val())
     }
 
