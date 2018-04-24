@@ -47,23 +47,23 @@ function ProblemTab(button, content) {
                 index++;
             }
             bars = `<ul class="plot-body">${bars}</ul>`;
-            //build y axis
+            //build x axis
             let axis = ``;
             let small = '';
             if (yAxis.length > 10) {small = 'small'}
             yAxis.forEach((item) => {
-                axis += `<li class="hw-xaxis ${small}" style="width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
+                axis += `<li class="hw-xaxis ${small}" style="min-width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
             });
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
-            // build left x axis
+            // build left y axis
             axis = '';
             countAttempts.forEach((item) => {
                 axis += `<li>${item.toFixed(1)}</li>`
             });
             axis = `<ul class="y-axis-l">${axis}</ul>`;
             bars += axis;
-            //build right x axis
+            //build right y axis
             axis = '';
             xAxisRight.forEach((item) => {
                 axis += `<li>${item}</li>`
@@ -82,13 +82,12 @@ function ProblemTab(button, content) {
             });
             $('.plot-bar-vert').on('mouseover', function (e) {
 
-                    let attr = $(this).data('attribute');
+                let attr = $(this).data('attribute');
 
-                    $('.hw-xaxis').removeClass('hover');
-                    $('.hw-xaxis')[attr].classList.add('hover');
-
+                $('.hw-xaxis').removeClass('hover');
+                $('.hw-xaxis')[attr].classList.add('hover');
             });
-            $('.plot-bar-vert').on('mouseout', function (e) {
+            $('.plot-bar-vert').on('mouseleave', function (e) {
                 $('.hw-xaxis').removeClass('hover');
             });
         }

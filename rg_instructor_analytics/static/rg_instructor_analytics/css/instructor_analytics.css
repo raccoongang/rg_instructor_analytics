@@ -522,7 +522,7 @@
     transition: 0.2s;
 }
 .plot-bar-vert:hover {
-    min-width: 10% !important;
+    min-width: 8% !important;
     transition: 0.2s;
     position: relative;
     height: 100% !important;
@@ -536,7 +536,7 @@
     cursor: pointer;
     z-index: 1;
     width: 100%;
-    height: calc(100% + 70px);
+    height: calc(100% + 90px);
     top: -5px;
     border: 1px solid #568ecc;
 }
@@ -555,7 +555,7 @@
     padding: 3px 5px;
     color: #568ecc;
     position: absolute;
-    bottom: -110px;
+    bottom: -130px;
     z-index: 2;
     min-width: 110px;
     height: 20px;
@@ -757,7 +757,8 @@
     transform-origin: 13% 0;
 }
 .hover {
-    min-width: 10% !important;
+    min-width: 8% !important;
+    margin-right: 8px;
     transition: 0.2s;
 }
 .hover > div {
