@@ -76,8 +76,8 @@ function GradebookTab(button, content) {
 
 
         $(greadebookTab.gradebookTableBody).click(function (element) {
-            let colorArray = greadebookTab.examNames.map((item, idx, arr)=>{
-                if (idx === arr.length - 1){
+            let colorArray = greadebookTab.examNames.map((item, idx, arr) => {
+                if (idx === arr.length - 1) {
                     return '#c14f84';
                 }
                 return '#568ecc';
@@ -90,7 +90,7 @@ function GradebookTab(button, content) {
                 marker:{
                     color: colorArray
                 },
-                width: 0.6
+                width: 0.6,
             };
             var data = [stat];
 

@@ -52,7 +52,13 @@ function ProblemTab(button, content) {
             let small;
             if (yAxis.length > 10) {small = 'small'}
             yAxis.forEach((item) => {
-                axis += `<li class="hw-xaxis ${small}" style="min-width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
+                axis += `
+                <li 
+                    class="hw-xaxis ${small}" 
+                    style="min-width: ${(100 - yAxis.length) / yAxis.length}%;"
+                    >
+                        <div>${item}</div>
+                </li>`
             });
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
