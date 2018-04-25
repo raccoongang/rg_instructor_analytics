@@ -83,7 +83,7 @@ function GradebookTab(button, content) {
                 marker:{
                     color: ['#568ecc', '#568ecc','#568ecc','#568ecc','#568ecc','#c14f84']
                 },
-                width: 0.6
+                width: 0.6,
             };
             var data = [stat];
 
