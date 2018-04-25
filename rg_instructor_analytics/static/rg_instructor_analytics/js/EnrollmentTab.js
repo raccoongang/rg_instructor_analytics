@@ -99,8 +99,6 @@ function EnrollmentTab(button, content) {
                 y: response.enroll,
                 mode: 'lines',
                 name: django.gettext('enroll'),
-                fill: 'tozeroy',
-                fillcolor: "rgba(139,178,42,0.25)",
                 line: {
                     shape: 'hv',
                     color: '#8BB22A',
@@ -113,14 +111,11 @@ function EnrollmentTab(button, content) {
                 y: response.unenroll,
                 mode: 'lines',
                 name: django.gettext('unenroll'),
-                fill: 'tozeroy',
-                fillcolor: "rgba(204,70,48,0.25)",
-                yaxis: 'y2', 
+                yaxis: 'y2',
                 line: {
                     shape: 'hv',
                     color: '#CC4630',
                 },
-                hoveron:'points+fills',
                 type: 'scatter'
             };
             var layout = {
