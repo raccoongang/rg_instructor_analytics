@@ -49,7 +49,7 @@ function ProblemTab(button, content) {
             bars = `<ul class="plot-body">${bars}</ul>`;
             //build x axis
             let axis = ``;
-            let small = '';
+            let small;
             if (yAxis.length > 10) {small = 'small'}
             yAxis.forEach((item) => {
                 axis += `<li class="hw-xaxis ${small}" style="min-width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
@@ -80,16 +80,18 @@ function ProblemTab(button, content) {
                     loadHomeWorkProblems(response.problems[attr.attribute]);
                 }
             });
-            $('.plot-bar-vert').on('mouseover', function (e) {
+            if (small) {
+                $('.plot-bar-vert').on('mouseover', function (e) {
 
-                let attr = $(this).data('attribute');
+                    let attr = $(this).data('attribute');
 
-                $('.hw-xaxis').removeClass('hover');
-                $('.hw-xaxis')[attr].classList.add('hover');
-            });
-            $('.plot-bar-vert').on('mouseleave', function (e) {
-                $('.hw-xaxis').removeClass('hover');
-            });
+                    $('.hw-xaxis').removeClass('hover');
+                    $('.hw-xaxis')[attr].classList.add('hover');
+                });
+                $('.plot-bar-vert').on('mouseleave', function (e) {
+                    $('.hw-xaxis').removeClass('hover');
+                });
+            }
         }
 
         function onError() {

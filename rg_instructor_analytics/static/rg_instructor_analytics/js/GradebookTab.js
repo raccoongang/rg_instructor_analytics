@@ -82,7 +82,7 @@ function GradebookTab(button, content) {
                 }
                 return '#568ecc';
             })
-            console.log(colorArray);
+
             var stat = {
                 y: greadebookTab.studentInfo[element.target.dataset['position']].grades,
                 x: greadebookTab.examNames,
