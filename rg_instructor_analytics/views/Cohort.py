@@ -63,6 +63,8 @@ class CohortView(AccessMixin, View):
         if mean + 3 * s < 1:
             thresholds.append(mean + 3 * s)
         thresholds.append(1)
+        if thresholds[0] != 0:
+            thresholds.insert(0, 0)
         return CohortView.split_students(student_info, thresholds)
 
     @staticmethod
@@ -82,7 +84,7 @@ class CohortView(AccessMixin, View):
         gistogram = {t: {'students_id': [], 'students_names': [], 'count': 0} for t in thresholds}
         for s in student_info:
             for t in thresholds:
-                if s['grade'] < t:
+                if (s['grade'] < t) or (s['grade'] == t and (t in [0, 1])):
                     gistogram[t]['students_id'].append(s['id'])
                     gistogram[t]['students_names'].append(s['username'])
                     gistogram[t]['count'] += 1
@@ -122,7 +124,15 @@ class CohortView(AccessMixin, View):
                 ]
             )
 
-        labels = [_('to ') + str(i['max_progress']) + ' %' for i in cohorts]
+        labels = []
+        for i in range(len(cohorts)):
+            if cohorts[i]['max_progress'] == 0:
+                labels.append(_('zero progress'))
+            else:
+                labels.append(
+                    _('from ') + str(cohorts[i-1]['max_progress']) + ' %' +
+                    _(' to ') + str(cohorts[i]['max_progress']) + ' %'
+                )
         values = [i['percent'] for i in cohorts]
         return JsonResponse(data={'labels': labels, 'values': values, 'cohorts': cohorts})
 
