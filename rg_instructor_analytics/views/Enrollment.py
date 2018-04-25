@@ -59,7 +59,7 @@ class EnrollmentStatisticView(AccessMixin, View):
             if s['is_active']:
                 enrollment_count += s['count']
             else:
-                un_enrollment_count -= s['count']
+                un_enrollment_count += s['count']
         return enrollment_count, un_enrollment_count
 
     @staticmethod
@@ -101,7 +101,7 @@ class EnrollmentStatisticView(AccessMixin, View):
 
         dates, counts_total, counts_enroll, counts_unenroll = ([], [], [], [])
 
-        total = enrollment_count + un_enrollment_count
+        total = enrollment_count - un_enrollment_count
         enrollment_count = 0
         un_enrollment_count = 0
 
@@ -114,9 +114,9 @@ class EnrollmentStatisticView(AccessMixin, View):
             if enroll['is_active']:
                 enrollment_count = enroll['count']
             else:
-                un_enrollment_count = -enroll['count']
+                un_enrollment_count = enroll['count']
 
-            total += enrollment_count + un_enrollment_count
+            total += enrollment_count - un_enrollment_count
             stat_date = int(mktime(enroll['date'].timetuple()))
             if dates[-1] != stat_date:
                 dates.append(stat_date)
