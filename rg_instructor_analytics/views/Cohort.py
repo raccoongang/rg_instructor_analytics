@@ -130,7 +130,7 @@ class CohortView(AccessMixin, View):
                 labels.append(_('zero progress'))
             else:
                 labels.append(
-                    _('from ') + str(cohorts[i-1]['max_progress']) + ' %' +
+                    _('from ') + str(cohorts[i - 1]['max_progress']) + ' %' +
                     _(' to ') + str(cohorts[i]['max_progress']) + ' %'
                 )
         values = [i['percent'] for i in cohorts]
