@@ -76,12 +76,19 @@ function GradebookTab(button, content) {
 
 
         $(greadebookTab.gradebookTableBody).click(function (element) {
+            let colorArray = greadebookTab.examNames.map((item, idx, arr) => {
+                if (idx === arr.length - 1) {
+                    return '#c14f84';
+                }
+                return '#568ecc';
+            })
+
             var stat = {
                 y: greadebookTab.studentInfo[element.target.dataset['position']].grades,
                 x: greadebookTab.examNames,
                 type: 'bar',
                 marker:{
-                    color: ['#568ecc', '#568ecc','#568ecc','#568ecc','#568ecc','#c14f84']
+                    color: colorArray
                 },
                 width: 0.6,
             };
@@ -91,7 +98,7 @@ function GradebookTab(button, content) {
                 title: greadebookTab.studentInfo[element.target.dataset['position']].username,
                 showlegend: false
             };
-            $('gradebook-table-row').removeClass('active');
+            $('.gradebook-table-row').removeClass('active');
             $(element.target).closest('.gradebook-table-row').toggleClass('active');
             $('.enrollment-title-1.hidden').removeClass('hidden');
             $('.enrollment-title-text-1.hidden').removeClass('hidden');
