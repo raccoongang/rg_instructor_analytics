@@ -1,28 +1,24 @@
 """
 Module for celery tasks.
 """
-import json
+from datetime import datetime
 import logging
-
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.db import transaction
-from django.db.models import Max
-from django.db.models.query_utils import Q
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-
-from lms import CELERY_APP
-from opaque_keys.edx.keys import CourseKey
-from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-from datetime import timedelta, datetime
 
 from celery.schedules import crontab
 from celery.task import periodic_task
 from django.conf import settings
-
-from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache, TotalEnrollmentByCourse
+from django.core.mail import EmailMultiAlternatives
+from django.db import transaction
+from django.db.models.query_utils import Q
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from opaque_keys.edx.keys import CourseKey
 from student.models import CourseEnrollment
+
+from lms import CELERY_APP
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache, TotalEnrollmentByCourse
+
 
 log = logging.getLogger(__name__)
 
@@ -56,12 +52,16 @@ cron_settings = getattr(
 
 @periodic_task(run_every=crontab(**cron_settings))
 def enrollment_collector_date():
+    """
+    Task for update enrollment cache.
+    """
     last_cachce = EnrollmentByStudent.objects.all().order_by('-last_update')
     if last_cachce.exists():
         last_update = last_cachce.first().last_update
     else:
         last_update = datetime(2000, 01, 01, 0, 0)
-    enrollments_history = (CourseEnrollment.history
+    enrollments_history = (
+        CourseEnrollment.history
         .filter(~Q(history_type='+'))
         .filter(history_date__gt=last_update)
         .values("history_date", "is_active", "user", "course_id")
@@ -116,7 +116,7 @@ def enrollment_collector_date():
                 },
             )
 
-        for (course,total) in total_stat.iteritems():
+        for (course, total) in total_stat.iteritems():
             TotalEnrollmentByCourse.objects.update_or_create(
                 course_id=CourseKey.from_string(course),
                 defaults={

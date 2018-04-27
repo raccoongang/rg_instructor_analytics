@@ -2,18 +2,12 @@
 Module for enrollment subtab.
 """
 from datetime import datetime
-from time import mktime
 
 from django.conf import settings
-from django.db.models import Count, Q
-from django.db.models.expressions import RawSQL
-from django.db.models.fields import DateField
 from django.http.response import JsonResponse
 from django.views.generic import View
 
 from rg_instructor_analytics.models import EnrollmentTabCache
-from student.models import CourseEnrollment
-
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 
 
@@ -29,35 +23,31 @@ class EnrollmentStatisticView(AccessMixin, View):
     Api for getting enrollment statistic.
     """
 
-
     @staticmethod
     def get_state_before(course_key, date):
         """
-        Provide tuple with count of enroll and unenroll users.
+        Provide dict with count of  unenroll, enroll and total users.
 
-        For example - if database store 5 enrolled users and 2 unenrolled the result will be next: (5,-2)
+        For example `{'unenroll': 1, 'enroll': 2, 'total': 3}`
         """
         previous_stat = (
             EnrollmentTabCache.objects
-                .filter(course_id=course_key, created__lt=date)
-                .values('unenroll', 'enroll', 'total')
-                .order_by('-created')
+            .filter(course_id=course_key, created__lt=date)
+            .values('unenroll', 'enroll', 'total')
+            .order_by('-created')
         )
         return previous_stat.first() if previous_stat.exists() else {'unenroll': 0, 'enroll': 0, 'total': 0}
 
     @staticmethod
     def get_state_in_period(course_key, from_date, to_date):
         """
-        Provide list of tuples(date, is_active, count).
-
-        List contains next fields: date - day of activity, is_active - enrollment status,
-        count - the number of student with given activity in given day.
+        Provide list of dict with count of  unenroll, enroll, total and change date.
         """
         enrollment_stat = (
             EnrollmentTabCache.objects
-                .filter(course_id=course_key, created__range=(from_date, to_date))
-                .values('unenroll', 'enroll', 'total', 'created')
-                .order_by('created')
+            .filter(course_id=course_key, created__range=(from_date, to_date))
+            .values('unenroll', 'enroll', 'total', 'created')
+            .order_by('created')
         )
         return enrollment_stat
 
