@@ -209,12 +209,12 @@
     transform: translate(0,-50%);
 }
 .enrollment-legend-item:first-child:before {
-    background: #c14f84;
-    border-color: #eccada;
-}
-.enrollment-legend-item:nth-child(2):before {
     background: #68b22c;
     border-bottom: 4px solid #d1e8bf;
+}
+.enrollment-legend-item:nth-child(2):before {
+    background: #c14f84;
+    border-color: #eccada;
 }
 .enrollment-legend-item:nth-child(3):before {
     background: #568ecc;
@@ -520,7 +520,16 @@
     align-items: flex-end;
     justify-content: center;
     padding: 0 3px;
+    transition: 0.2s;
 }
+.plot-bar-vert:hover {
+    min-width: 8% !important;
+    transition: 0.2s;
+    position: relative;
+    height: 100% !important;
+    z-index: 10;
+}
+
 .plot-bar-vert:hover:before {
     content: '';
     position: absolute;
@@ -528,7 +537,7 @@
     cursor: pointer;
     z-index: 1;
     width: 100%;
-    height: calc(100% + 50px);
+    height: calc(100% + 90px);
     top: -5px;
     border: 1px solid #568ecc;
 }
@@ -547,7 +556,7 @@
     padding: 3px 5px;
     color: #568ecc;
     position: absolute;
-    bottom: -90px;
+    bottom: -130px;
     z-index: 2;
     min-width: 110px;
     height: 20px;
@@ -733,4 +742,33 @@
 }
 .plot-bar-vert:hover .plot-bar-value {
     display: flex;
+}
+.x-axis li.small {
+    display: block;
+}
+.small > div {
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 10px;
+    line-height: 1.3;
+    transform: rotate(90deg);
+    white-space: nowrap;
+    width: 90px;
+    transform-origin: 13% 0;
+}
+.hover {
+    min-width: 8% !important;
+    margin-right: 8px;
+    transition: 0.2s;
+}
+.hover > div {
+    text-align: center !important;
+    transition: 0.2s;
+}
+.hover > div {
+    transform: rotate(0deg);
+    width: auto;
+    transform-origin: initial;
+    white-space: pre-wrap;
 }

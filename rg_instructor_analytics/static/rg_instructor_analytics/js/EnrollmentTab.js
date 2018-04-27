@@ -133,7 +133,10 @@ function EnrollmentTab(button, content) {
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
             
-            Plotly.newPlot('enrollment-stats-plot', data, layout, {displayModeBar: false});
+            Plotly.newPlot('enrollment-stats-plot', data, layout, {
+                displayModeBar: false,
+                scrollZoom: false
+            });
         }
 
         function onError() {
