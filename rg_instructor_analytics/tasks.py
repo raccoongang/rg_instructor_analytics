@@ -42,10 +42,6 @@ cron_settings = getattr(
     settings, 'RG_ANALYTICS_ENROLLMENT_STAT_UPDATE',
     {
         'minute': '*/1',
-        'hour': '*',
-        'day_of_week': '*',
-        'day_of_month': '*',
-        'month_of_year': '*',
     }
 )
 
@@ -53,13 +49,13 @@ cron_settings = getattr(
 @periodic_task(run_every=crontab(**cron_settings))
 def enrollment_collector_date():
     """
-    Task for update enrollment cache.
+    Task for update enrollment statistic.
     """
-    last_cachce = EnrollmentByStudent.objects.all().order_by('-last_update')
-    if last_cachce.exists():
-        last_update = last_cachce.first().last_update
+    last_stat = EnrollmentByStudent.objects.all().order_by('-last_update')
+    if last_stat.exists():
+        last_update = last_stat.first().last_update
     else:
-        last_update = datetime(2000, 01, 01, 0, 0)
+        last_update = datetime(2000, 1, 1, 0, 0)
     enrollments_history = (
         CourseEnrollment.history
         .filter(~Q(history_type='+'))
@@ -68,36 +64,37 @@ def enrollment_collector_date():
         .order_by('history_date')
     )
     users_state = {
-        (u['student'], u['course_id']): {'last_update': u['last_update'], 'state': u['state']}
-        for u in EnrollmentByStudent.objects.all().values("course_id", "student", "last_update", "state", )
+        (enrol['student'], enrol['course_id']): {'last_update': enrol['last_update'], 'state': enrol['state']}
+        for enrol in EnrollmentByStudent.objects.all().values("course_id", "student", "last_update", "state", )
     }
     total_stat = {
-        t['course_id']: t['total'] for t in TotalEnrollmentByCourse.objects.all().values("course_id", "total", )
+        total_enroll['course_id']: total_enroll['total']
+        for total_enroll in TotalEnrollmentByCourse.objects.all().values("course_id", "total", )
     }
     result_stat = {}
-    for e in enrollments_history:
-        key = e['user'], e['course_id']
-        if key in users_state and users_state[key]['state'] == e['is_active']:
+    for history_item in enrollments_history:
+        key = history_item['user'], history_item['course_id']
+        if key in users_state and users_state[key]['state'] == history_item['is_active']:
             continue
         users_state[key] = {
-            'last_update': e['history_date'],
-            'state': e['is_active'],
+            'last_update': history_item['history_date'],
+            'state': history_item['is_active'],
         }
-        total_key = e['history_date'].date(), e['course_id']
+        total_key = (history_item['history_date'].date(), history_item['course_id'])
         if total_key not in result_stat:
             result_stat[total_key] = {
                 'unenroll': 0,
                 'enroll': 0,
                 'total': 0,
             }
-            if e['course_id'] not in total_stat:
-                total_stat[e['course_id']] = 0
-        unenroll = 1 if e['is_active'] == 0 else 0
-        enroll = 1 if e['is_active'] == 1 else 0
-        total_stat[e['course_id']] += (enroll - unenroll)
+            if history_item['course_id'] not in total_stat:
+                total_stat[history_item['course_id']] = 0
+        unenroll = 1 if history_item['is_active'] == 0 else 0
+        enroll = 1 if history_item['is_active'] == 1 else 0
+        total_stat[history_item['course_id']] += (enroll - unenroll)
         result_stat[total_key]['unenroll'] += unenroll
         result_stat[total_key]['enroll'] += enroll
-        result_stat[total_key]['total'] = total_stat[e['course_id']]
+        result_stat[total_key]['total'] = total_stat[history_item['course_id']]
 
     with transaction.atomic():
         for (user, course), value in users_state.iteritems():
