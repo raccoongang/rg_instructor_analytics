@@ -40,8 +40,8 @@ class EnrollmentStatisticView(AccessMixin, View):
         previous_stat = (
             EnrollmentTabCache.objects
                 .filter(course_id=course_key, created__lt=date)
-                .order_by('-created')
                 .values('unenroll', 'enroll', 'total')
+                .order_by('-created')
         )
         return previous_stat.first() if previous_stat.exists() else {'unenroll': 0, 'enroll': 0, 'total': 0}
 
@@ -56,8 +56,8 @@ class EnrollmentStatisticView(AccessMixin, View):
         enrollment_stat = (
             EnrollmentTabCache.objects
                 .filter(course_id=course_key, created__range=(from_date, to_date))
-                .order_by('-created')
                 .values('unenroll', 'enroll', 'total', 'created')
+                .order_by('created')
         )
         return enrollment_stat
 
@@ -86,7 +86,7 @@ class EnrollmentStatisticView(AccessMixin, View):
             counts_enroll.append(e['enroll'])
             counts_unenroll.append(e['unenroll'])
 
-        dates.append(dates[-1])
+        dates.append(to_date)
         counts_total.append(counts_total[-1])
         counts_enroll.append(counts_enroll[-1])
         counts_unenroll.append(counts_unenroll[-1])

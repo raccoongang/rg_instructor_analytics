@@ -42,9 +42,19 @@ def send_email_to_cohort(subject, message, students):
     msg.send(fail_silently=False)
 
 
-# TODO move crontab to the stting?
-# @periodic_task(run_every=crontab(minute='*/1'))
-@periodic_task(run_every=timedelta(seconds=10))
+cron_settings = getattr(
+    settings, 'RG_ANALYTICS_ENROLLMENT_STAT_UPDATE',
+    {
+        'minute': '*/1',
+        'hour': '*',
+        'day_of_week': '*',
+        'day_of_month': '*',
+        'month_of_year': '*',
+    }
+)
+
+
+@periodic_task(run_every=crontab(**cron_settings))
 def enrollment_collector_date():
     last_cachce = EnrollmentByStudent.objects.all().order_by('-last_update')
     if last_cachce.exists():
