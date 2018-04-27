@@ -74,7 +74,7 @@ function EnrollmentTab(button, content) {
 
         function onSuccess(response) {
             var x = response.dates.map(function (x) {
-                var result = new Date(x * 1000);
+                var result = new Date(x);
                 result.setHours(0);
                 result.setMinutes(0);
                 return result;
