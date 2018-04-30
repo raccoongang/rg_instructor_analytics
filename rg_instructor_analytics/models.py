@@ -14,7 +14,7 @@ class EnrollmentTabCache(Model):
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    created = DateField(auto_now_add=False, db_index=True)
+    created = DateField(db_index=True)
     unenroll = IntegerField(default=0)
     enroll = IntegerField(default=0)
     total = IntegerField(default=0)
@@ -33,8 +33,8 @@ class EnrollmentByStudent(Model):
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    student = ForeignKey(User, db_index=True)
-    last_update = DateTimeField(auto_now_add=False, db_index=True)
+    student = ForeignKey(User)
+    last_update = DateTimeField(db_index=True)
     state = BooleanField()
 
     class Meta:
@@ -43,12 +43,3 @@ class EnrollmentByStudent(Model):
         """
 
         unique_together = ('course_id', 'student',)
-
-
-class TotalEnrollmentByCourse(Model):
-    """
-    Model for store last count of active students on the course.
-    """
-
-    course_id = CourseKeyField(max_length=255, db_index=True, unique=True)
-    total = IntegerField(default=0)

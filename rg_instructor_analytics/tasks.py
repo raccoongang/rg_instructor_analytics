@@ -7,6 +7,7 @@ import logging
 from celery.schedules import crontab
 from celery.task import periodic_task
 from django.conf import settings
+from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.db.models.query_utils import Q
@@ -17,10 +18,11 @@ from student.models import CourseEnrollment
 
 from lms import CELERY_APP
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache, TotalEnrollmentByCourse
+from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache
 
 
 log = logging.getLogger(__name__)
+ENROLLMENT_STAT_CACHE_BY_COURSE_KEY = 'ENROLLLMENT_STAT_CACHE_BY_COURSE_KEY'
 
 
 @CELERY_APP.task
@@ -67,10 +69,8 @@ def enrollment_collector_date():
         (enrol['student'], enrol['course_id']): {'last_update': enrol['last_update'], 'state': enrol['state']}
         for enrol in EnrollmentByStudent.objects.all().values("course_id", "student", "last_update", "state", )
     }
-    total_stat = {
-        total_enroll['course_id']: total_enroll['total']
-        for total_enroll in TotalEnrollmentByCourse.objects.all().values("course_id", "total", )
-    }
+
+    total_stat = cache.get(ENROLLMENT_STAT_CACHE_BY_COURSE_KEY, {})
     result_stat = {}
     for history_item in enrollments_history:
         key = history_item['user'], history_item['course_id']
@@ -87,8 +87,12 @@ def enrollment_collector_date():
                 'enroll': 0,
                 'total': 0,
             }
-            if history_item['course_id'] not in total_stat:
+        if history_item['course_id'] not in total_stat:
+            last_enrol = EnrollmentByStudent.objects.filter(course_id=CourseKey.from_string(history_item['course_id']))
+            if not last_enrol.exists():
                 total_stat[history_item['course_id']] = 0
+            else:
+                total_stat[history_item['course_id']] = last_enrol.last().total
         unenroll = 1 if history_item['is_active'] == 0 else 0
         enroll = 1 if history_item['is_active'] == 1 else 0
         total_stat[history_item['course_id']] += (enroll - unenroll)
@@ -113,10 +117,4 @@ def enrollment_collector_date():
                 },
             )
 
-        for (course, total) in total_stat.iteritems():
-            TotalEnrollmentByCourse.objects.update_or_create(
-                course_id=CourseKey.from_string(course),
-                defaults={
-                    'total': total,
-                },
-            )
+    cache.set(ENROLLMENT_STAT_CACHE_BY_COURSE_KEY, total_stat)

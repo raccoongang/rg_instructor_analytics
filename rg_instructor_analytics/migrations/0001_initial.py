@@ -34,14 +34,6 @@ class Migration(migrations.Migration):
                 ('total', models.IntegerField(default=0)),
             ],
         ),
-        migrations.CreateModel(
-            name='TotalEnrollmentByCourse',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('course_id', openedx.core.djangoapps.xmodule_django.models.CourseKeyField(unique=True, max_length=255, db_index=True)),
-                ('total', models.IntegerField(default=0)),
-            ],
-        ),
         migrations.AlterUniqueTogether(
             name='enrollmenttabcache',
             unique_together=set([('course_id', 'created')]),
