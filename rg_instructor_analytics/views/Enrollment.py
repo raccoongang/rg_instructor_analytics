@@ -67,8 +67,8 @@ class EnrollmentStatisticView(AccessMixin, View):
 
         dates = [from_date]
         counts_total = [previous_info['total']]
-        counts_enroll = [previous_info['enroll']]
-        counts_unenroll = [previous_info['unenroll']]
+        counts_enroll = [0]
+        counts_unenroll = [0]
 
         for e in EnrollmentStatisticView.get_state_in_period(course_key, from_date, to_date):
             dates.append(e['created'])
@@ -78,8 +78,8 @@ class EnrollmentStatisticView(AccessMixin, View):
 
         dates.append(to_date)
         counts_total.append(counts_total[-1])
-        counts_enroll.append(counts_enroll[-1])
-        counts_unenroll.append(counts_unenroll[-1])
+        counts_enroll.append(0)
+        counts_unenroll.append(0)
 
         return {'dates': dates, 'total': counts_total, 'enroll': counts_enroll, 'unenroll': counts_unenroll, }
 

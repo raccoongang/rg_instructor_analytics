@@ -99,9 +99,8 @@ function EnrollmentTab(button, content) {
                 y: response.enroll,
                 mode: 'lines',
                 name: django.gettext('enroll'),
-                line: {
-                    shape: 'hv',
-                    color: '#8BB22A',
+                marker: {
+                    color: '#8BB22A'
                 },
                 yaxis: 'y2', 
                 type: 'scatter'
@@ -112,9 +111,8 @@ function EnrollmentTab(button, content) {
                 mode: 'lines',
                 name: django.gettext('unenroll'),
                 yaxis: 'y2',
-                line: {
-                    shape: 'hv',
-                    color: '#CC4630',
+                marker: {
+                    color: '#CC4630'
                 },
                 type: 'scatter'
             };
@@ -124,18 +122,20 @@ function EnrollmentTab(button, content) {
                     type: "date",
                     margin: {t: 10}
                 },
-                yaxis: {nticks: 4},
+                yaxis: {
+                    nticks: 4,
+                    overlaying: 'y2',
+                },
                 yaxis2: {
-                    overlaying: 'y',
                     side: 'right'
                 },
-                showlegend: false
+                showlegend: false,
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
             
             Plotly.newPlot('enrollment-stats-plot', data, layout, {
                 displayModeBar: false,
-                scrollZoom: false
+                scrollZoom: false,
             });
         }
 
