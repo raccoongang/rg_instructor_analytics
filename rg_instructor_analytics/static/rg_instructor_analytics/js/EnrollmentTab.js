@@ -99,8 +99,9 @@ function EnrollmentTab(button, content) {
                 y: response.enroll,
                 mode: 'lines',
                 name: django.gettext('enroll'),
-                marker: {
-                    color: '#8BB22A'
+                line: {
+                    shape: 'hv',
+                    color: '#8BB22A',
                 },
                 yaxis: 'y2', 
                 type: 'scatter'
@@ -111,8 +112,9 @@ function EnrollmentTab(button, content) {
                 mode: 'lines',
                 name: django.gettext('unenroll'),
                 yaxis: 'y2',
-                marker: {
-                    color: '#CC4630'
+                line: {
+                    shape: 'hv',
+                    color: '#CC4630',
                 },
                 type: 'scatter'
             };
