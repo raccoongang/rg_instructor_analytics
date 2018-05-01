@@ -2,8 +2,7 @@
 Models of the rg analytics.
 """
 
-from django.contrib.auth.models import User
-from django.db.models import BooleanField, DateField, DateTimeField, ForeignKey, IntegerField, Model, TextField
+from django.db.models import BooleanField, DateField, DateTimeField, IntegerField, Model
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
 
