@@ -3,7 +3,7 @@ Models of the rg analytics.
 """
 
 from django.contrib.auth.models import User
-from django.db.models import BooleanField, DateField, DateTimeField, ForeignKey, IntegerField, Model
+from django.db.models import BooleanField, DateField, DateTimeField, ForeignKey, IntegerField, Model, TextField
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
 
@@ -33,7 +33,7 @@ class EnrollmentByStudent(Model):
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    student = ForeignKey(User)
+    student = IntegerField()
     last_update = DateTimeField(db_index=True)
     state = BooleanField()
 
