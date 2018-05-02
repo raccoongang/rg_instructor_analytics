@@ -11,14 +11,17 @@
     from openedx.core.lib.url_utils import quote_slashes
     from openedx.core.lib.xblock_utils import wrap_xblock
 %>
-<h1>${_("Cohort")}</h1>
-<h2 class="enrollment-title">${_("Lorem ipsum dolor sit amet")}</h2>
-<span class="enrollment-title-text">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
+<h1>${_("Clusters")}</h1>
+<h2 class="enrollment-title">${_("Keep an eye on your students’ progress")}</h2>
+<span class="enrollment-title-text">${_("This report constantly divides your students’ progress in clusters: from low-"
+    "performing to high-performing groups. You can take action right away - send appropriate email to clusters in coup"
+    "le of clicks.")}</span>
 <div id="cohort-plot">
 
 </div>
-<h2 class="enrollment-title">${_("Lorem ipsum dolor sit amet")}</h2>
-<span class="enrollment-title-text">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
+<h2 class="enrollment-title">${_("Send Email")}</h2>
+<span class="enrollment-title-text">${_("Choose clusters you want to send emails to, create email and send. Exactly tha"
+    "t simple.")}</span>
 <form id="cohort-form">
     <label>
         ${_("Subject: ")}
@@ -31,12 +34,16 @@
     </textarea>
     <!--# TODO: we need to put it locally-->
     <script src="/static/rg_instructor_analytics/plugins/jquery.richtext.min.js"></script>
-    <link rel="stylesheet" href="/static/rg_instructor_analytics/plugins/richtext.min.css" type="text/css" media="screen" charset="utf-8">
+    <link
+        rel="stylesheet"
+        href="/static/rg_instructor_analytics/plugins/richtext.min.css"
+        type="text/css"
+        media="screen"
+        charset="utf-8"
+    >
 
-    <ul id="cohort-check-list">
-
-    </ul>
-    <button type="button" id="cohort-send-email-btn">Send mail</button>
+    <ul id="cohort-check-list"></ul>
+    <button type="button" id="cohort-send-email-btn">${_("SEND EMAIL(S)")}</button>
 </form>
 
 

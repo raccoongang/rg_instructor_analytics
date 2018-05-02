@@ -83,7 +83,7 @@ function EnrollmentTab(button, content) {
                 x: x,
                 y: response.total,
                 mode: 'lines',
-                name: django.gettext('total'),
+                name: django.gettext('Total'),
                 line: {
                     color: '#70A3FF',
                     width: 2.3,
@@ -98,7 +98,7 @@ function EnrollmentTab(button, content) {
                 x: x,
                 y: response.enroll,
                 mode: 'lines',
-                name: django.gettext('enroll'),
+                name: django.gettext('Enrollments'),
                 line: {
                     shape: 'hv',
                     color: '#8BB22A',
@@ -110,7 +110,7 @@ function EnrollmentTab(button, content) {
                 x: x,
                 y: response.unenroll,
                 mode: 'lines',
-                name: django.gettext('unenroll'),
+                name: django.gettext('Unenrollments'),
                 yaxis: 'y2',
                 line: {
                     shape: 'hv',

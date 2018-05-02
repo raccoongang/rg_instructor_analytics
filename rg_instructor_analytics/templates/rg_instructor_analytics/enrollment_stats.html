@@ -3,15 +3,16 @@
     from django.utils.translation import ugettext as _
 %>
 <h1>${_("Enrollment stats")}</h1>
-<h2 class="enrollment-title">${_("This report shows the dynamics of the following metrics:")}</h2>
-<ul>
-    <li>Enrollments: Number of students that enrolled in the course</li>
-    <li>Unenrollments: Number of students that unenrolled from the course</li>
-    <li>Total: Total number of students that are currently passing the course</li>
+<span class="enrollment-title-text">${_("This report shows the dynamics of the following metrics:")}</span>
+<ul class="disc-list">
+    <li class="enrollment-title-text">${_("Enrollments: Number of students that enrolled in the course")}</li>
+    <li class="enrollment-title-text">${_("Unenrollments: Number of students that unenrolled from the course")}</li>
+    <li class="enrollment-title-text">${_("Total: Total number of students that are currently passing the course")}</li>
 </ul>
-<span class="enrollment-title-text">You can choose the predefined periods of time to see the dynamics (Last Week, Last 2 Weeks, Last Month) or you can choose custom time period.</span>
+<span class="enrollment-title-text">${_("You can choose the predefined periods of time to see the dynamics (Last Week, "
+    "Last 2 Weeks, Last Month) or you can choose custom time period.")}</span>
 <div class="enroll-buttons-holder">
-    <button id="date-btn">Select period</button>
+    <button id="date-btn">${_("Select period")}</button>
     <div id="date_dropdown" class="dropdown-content"
         data-start=${section_data['enroll_start']} data-end=${section_data['enroll_end']}>
         <div>
@@ -26,15 +27,15 @@
         </div>
     </div>
 
-    <button id="select-1-week">Last week</button>
-    <button id="select-2-week">Last two week</button>
-    <button id="select-4-week">Last month</button>
+    <button id="select-1-week">${_("Last Week")}</button>
+    <button id="select-2-week">${_("Last 2 Weeks")}</button>
+    <button id="select-4-week">${_("Last Month")}</button>
 </div>
 
 <div class="enrollment-legend-holder">
-    <div class="enrollment-legend-item">Enrollments (Green)</div>
-    <div class="enrollment-legend-item">Unenrollments (Red)</div>
-    <div class="enrollment-legend-item">Total (blue)</div>
+    <div class="enrollment-legend-item">${_("Enrollments")}</div>
+    <div class="enrollment-legend-item">${_("Unenrollments")}</div>
+    <div class="enrollment-legend-item">${_("Total")}</div>
 </div>
 <div id="enrollment-stats-plot">
 
