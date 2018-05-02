@@ -499,7 +499,7 @@
     height: 400px;
     position: relative;
     padding: 30px 50px;
-    margin-bottom: 100px;
+    margin-bottom: 140px;
     text-align: center;
 }
 #problem-homeworks-stats-plot .plot-body {
@@ -548,7 +548,7 @@
     width: 100%;
     cursor: pointer;
     height: 100px;
-    bottom: -90px;
+    bottom: -130px;
 }
 .plot-bar-vert .plot-click-me,
 .plot-bar-vertical .plot-click-me {
@@ -772,4 +772,18 @@
     width: auto;
     transform-origin: initial;
     white-space: pre-wrap;
+}
+.idash-section.active-section .disc-list {
+    list-style: disc;
+    padding-left: 40px;
+}
+.disc-list li {
+    display: list-item;
+}
+#email-subject {
+    width: 50%;
+    margin-right: 15px;
+}
+#section-cohort .js-plotly-plot {
+    transform: translate(-7%, 0);
 }

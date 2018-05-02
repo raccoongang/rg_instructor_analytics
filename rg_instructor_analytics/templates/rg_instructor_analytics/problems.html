@@ -5,28 +5,43 @@
 %>
 
 <h1>${_("Problems")}</h1>
-<h2 class="enrollment-title">${_("Lorem ipsum dolor sit amet")}</h2>
-<span class="enrollment-title-text">${_("This reports gives an overview of all students’ progress in a simple spreadsheet form. You can take a look at a progress details of any student by clicking on corresponding row of the spreadsheet. You can also search for some particular student in the spreadsheet by using “Search Student…” field. You can search by first name, last name or email (non-case-sensitive).")}</span>
+
+<span class="enrollment-title-text">${_("This report helps detect assessments that are most problematic for students.")}
+</span>
+<span class="enrollment-title-text">${_("Blue columns represent average count of attempts for all assessments in a subs"
+    "ection.")}</span>
+<span class="enrollment-title-text">${_("Red columns represent average level of student’s success in a subsection (in %"
+    ")")}</span>
+<span class="enrollment-title-text">${_("Click on the area that represents a subsection (only subsections that contain "
+    "graded assessments are displayed) to get more detailed information.")}</span>
 <div class="enrollment-legend-holder enrollment-legend-holder__square">
-    <div class="enrollment-legend-item">Average count of attempts</div>
-    <div class="enrollment-legend-item">Percent of correct answers</div>
+    <div class="enrollment-legend-item">Average attempts count</div>
+    <div class="enrollment-legend-item">Average success level, %</div>
 </div>
 <div id="problem-homeworks-stats-plot">
     Loading ...
 </div>
 
 <h2 class="enrollment-title enrollment-title-1 hidden">${_("Details")}</h2>
-<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("This graph shows the current progress details for the student you’ve clicked on the spreadsheet above. It contains progress on each Homework (blue columns) and total current progress for the whole course (red column)")}</span>
+<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("This level of the report indexes units from ass"
+    "essments success perspective")}</span>
+<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("Blue column = 100% if students gave correct ans"
+    "wers with 1st attempt")}</span>
+<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("Red column = 100% if students gave incorrect an"
+    "swers and used all the attempts")}</span>
+<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("Click on the area that represents a unit to get"
+    " detailed information.")}</span>
 <div class="enrollment-legend-holder enrollment-legend-holder__square enrollment-legend-holder__square-1 hidden">
-    <div class="enrollment-legend-item">Correct Answers</div>
-    <div class="enrollment-legend-item">Incorrect Answers</div>
+    <div class="enrollment-legend-item">${_("Correct Answers")}</div>
+    <div class="enrollment-legend-item">${_("Incorrect Answers")}</div>
 </div>
 <div id="problems-stats-plot">
     
 </div>
 
 <h2 class="enrollment-title enrollment-title-2 hidden">${_("Details")}</h2>
-<span class="enrollment-title-text enrollment-title-text-2 hidden">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
+<span class="enrollment-title-text enrollment-title-text-2 hidden">${_("This level of the report indexes units from ass"
+    "essments success perspective")}</span>
 <div id="problem-body">
 
 </div>

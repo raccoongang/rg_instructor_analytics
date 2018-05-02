@@ -2,19 +2,20 @@
 <%
     from django.utils.translation import ugettext as _
 %>
-<h1>${_("Grading funnel")}</h1>
+<h1>${_("Progress Funnel")}</h1>
 
 <div id = "course-structure">
-    <span class="enrollment-title-text">This report shows which stages of your course prevent students from moving forward.
-        By stages we mean the hierarchical parts of Open edX course:
-    </span>
-    <ul>
-        <li>Section</li>
-        <li>Subsection</li>
-        <li>Unit</li>
+    <span class="enrollment-title-text">${_("This report shows which stages of your course prevent students from moving"
+        " forward. ")}</span>
+    <span class="enrollment-title-text">${_("By stages we mean the hierarchical parts of Open edX course:")}</span>
+    <ul class="disc-list">
+        <li class="enrollment-title-text">${_("Section")}</li>
+        <li class="enrollment-title-text">${_("Subsection")}</li>
+        <li class="enrollment-title-text">${_("Unit")}</li>
     </ul>
-    <span class="enrollment-title-text">See how many students entered each stage, how many passed to another one and how many stuck.<br>
-        Click on each stage to see the breakdown by available sub-stages.
+    <span class="enrollment-title-text">${_("See how many students entered each stage, how many passed to another one a"
+        "nd how many stuck.")}<br>
+        ${_("Click on each stage to see the breakdown by available sub-stages.")}
     </span>
     <div class="content">
 
