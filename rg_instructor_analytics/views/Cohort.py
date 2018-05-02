@@ -56,7 +56,7 @@ class CohortView(AccessMixin, View):
         thresholds = [0]
 
         def add_thresholds(value):
-            if value < 0.0 or value > 1.0 or (len(thresholds) > 0 and (abs(thresholds[-1] - value) < (1.0 / 100.0))):
+            if value < 0.0 or value > 1.0 or (abs(thresholds[-1] - value) < (1.0 / 100.0)):
                 return
             thresholds.append(value)
 
