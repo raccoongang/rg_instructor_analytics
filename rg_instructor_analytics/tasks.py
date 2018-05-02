@@ -88,7 +88,7 @@ def enrollment_collector_date():
                 'total': 0,
             }
         if history_item['course_id'] not in total_stat:
-            last_enrol = EnrollmentByStudent.objects.filter(course_id=CourseKey.from_string(history_item['course_id']))
+            last_enrol = EnrollmentTabCache.objects.filter(course_id=CourseKey.from_string(history_item['course_id']))
             if not last_enrol.exists():
                 total_stat[history_item['course_id']] = 0
             else:
@@ -103,7 +103,7 @@ def enrollment_collector_date():
     with transaction.atomic():
         for (user, course), value in users_state.iteritems():
             EnrollmentByStudent.objects.update_or_create(
-                course_id=CourseKey.from_string(course), student_id=user,
+                course_id=CourseKey.from_string(course), student=user,
                 defaults={'last_update': value['last_update'], 'state': value['state']},
             )
 
