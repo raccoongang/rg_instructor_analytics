@@ -6,22 +6,24 @@
 
 <h1>${_("Gradebook")}</h1>
 
-<span class="enrollment-title-text">${_("This reports gives an overview of all students’ progress in a simple spreadsheet form. You can take a look at a progress details of any student by clicking on corresponding row of the spreadsheet. You can also search for some particular student in the spreadsheet by using “Search Student…” field. You can search by first name, last name or email (non-case-sensitive). ")}</span>
-
+<span class="enrollment-title-text">${_("This reports gives an overview of all students’ progress in a simple spreadshe"
+    "et form.")}</span>
+<span class="enrollment-title-text">${_("You can take a look at a progress details of any student by clicking on corres"
+    "ponding row of the spreadsheet.")}</span>
+<span class="enrollment-title-text">${_("You can also search for some particular student in the spreadsheet by using “S"
+    "earch Student…” field. You can search by first name, last name or email (non-case-sensitive).")}</span>
 <div class="grades grade-table-wrapper" >
     <div class="grade-table">
-        <div class="gradebook-table-row" id="gradebook_table_header">
-           
-        </div>
-        <div id="gradebook_table_body"></div>
+        <div class="gradebook-table-row" id="gradebook_table_header"></div>
+        <div id="gradebook_table_body">Loading ...</div>
     </div>
 </div>
 
 
 <div class="gradebook-plot">
-        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Details")}</h2>
-        <span class="enrollment-title-text enrollment-title-text-1 hidden">${_("Lorem ipsum, dolor sit amet consectetur adipisicing elit. Adipisci ad perspiciatis culpa molestiae dolorem omnis quis maxime consequuntur. Ipsam, ratione.")}</span>
-    <div id = "gradebook-stats-plot">
-
-    </div>
+    <h2 class="enrollment-title enrollment-title-1 hidden">${_("Progress Graph")}</h2>
+    <span class="enrollment-title-text enrollment-title-text-1 hidden">${_("This graph shows the current progress detai"
+        "ls for the student you’ve clicked on the spreadsheet above. It contains progress on each Homework (blue column"
+        "s) and total current progress for the whole course (red column)")}</span>
+    <div id = "gradebook-stats-plot"></div>
 </div>
