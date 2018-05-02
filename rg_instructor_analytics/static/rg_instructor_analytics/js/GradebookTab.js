@@ -74,6 +74,20 @@ function GradebookTab(button, content) {
 
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
 
+        //Make cells width equal to biggest cell
+        let maxLength = 0;
+        let $tableCells = $('.gradebook-table-cell:not(:first-child)');
+
+        $tableCells.each((item) => {
+            let width = $tableCells[item].clientWidth;
+            if (maxLength < width) {
+                maxLength = width;
+            }
+        });
+
+        $tableCells.each((item) => {
+            $tableCells[item].style.width = maxLength;
+        });
 
         $(greadebookTab.gradebookTableBody).click(function (element) {
             let colorArray = greadebookTab.examNames.map((item, idx, arr) => {
@@ -106,7 +120,7 @@ function GradebookTab(button, content) {
         })
     }
     let $tbody = $('#gradebook_table_body');
-    $tbody.on('scroll',()=>{
+    $tbody.on('scroll',() => {
 
         let scrollLeft = $tbody.scrollLeft();
     
