@@ -86,7 +86,7 @@ function GradebookTab(button, content) {
         });
 
         $tableCells.each((item) => {
-            $tableCells[item].style.width = maxLength;
+            $tableCells[item].style.flex = `0 0 ${maxLength}px`;
         });
 
         $(greadebookTab.gradebookTableBody).click(function (element) {
@@ -110,7 +110,8 @@ function GradebookTab(button, content) {
 
             var layout = {
                 title: greadebookTab.studentInfo[element.target.dataset['position']].username,
-                showlegend: false
+                showlegend: false,
+                xaxis: {domain: [0, 0.97]},
             };
             $('.gradebook-table-row').removeClass('active');
             $(element.target).closest('.gradebook-table-row').toggleClass('active');
