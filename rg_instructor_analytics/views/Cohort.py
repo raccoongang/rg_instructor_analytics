@@ -57,7 +57,8 @@ class CohortView(AccessMixin, View):
 
         def add_thresholds(value):
             """
-            Function for prevent invalid values of the threshold.
+            Prevent invalid values of the threshold.
+
             Invalid values - negative, positive and more than 1 or values with diff less than 1 percent.
             """
             if value < 0.0 or value > 1.0 or abs(thresholds[-1] - value) < (1.0 / 100.0):
