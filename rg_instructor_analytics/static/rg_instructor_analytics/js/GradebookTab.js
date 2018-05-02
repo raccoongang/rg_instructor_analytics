@@ -43,7 +43,12 @@ function GradebookTab(button, content) {
         var htmlStringResults = '';
 
         var htmlTemp = `<div class="gradebook-table-cell"><form class="student-search">
-            <input value="${inputValue}" type="search" class="student-search-field" placeholder="Search students"/>
+            <input 
+                value="${django.gettext(inputValue)}" 
+                type="search" 
+                class="student-search-field" 
+                placeholder="Search students"
+            />
             </form></div>`;
 
         greadebookTab.gradebookTableHeader.empty();
@@ -59,7 +64,7 @@ function GradebookTab(button, content) {
         greadebookTab.gradebookTableHeader.append(htmlTemp);
 
         let $input = $('.student-search-field');
-        $input[0].addEventListener('keyup',function(e){
+        $input[0].addEventListener('keyup', function(e){
             if (e.keyCode == 13) {
                 e.preventDefault();
                 this.blur();
