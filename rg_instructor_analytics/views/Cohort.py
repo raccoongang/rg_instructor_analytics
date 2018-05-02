@@ -53,18 +53,19 @@ class CohortView(AccessMixin, View):
         mark_count = len(marks)
         mean = sum(marks) / mark_count
         s = math.sqrt(sum([(x - mean) ** 2 for x in marks]) / mark_count)
-        thresholds = []
-        if mean - 3 * s > 0:
-            thresholds.append(mean - 3 * s)
-        if mean - 0.5 * s > 0:
-            thresholds.append(mean - 0.5 * s)
-        if mean + 0.5 * s < 1:
-            thresholds.append(mean + 0.5 * s)
-        if mean + 3 * s < 1:
-            thresholds.append(mean + 3 * s)
-        thresholds.append(1)
-        if thresholds[0] != 0:
-            thresholds.insert(0, 0)
+        thresholds = [0]
+
+        def add_thresholds(value):
+            if value < 0.0 or value > 1.0 or (len(thresholds) > 0 and (abs(thresholds[-1] - value) < (1.0 / 100.0))):
+                return
+            thresholds.append(value)
+
+        add_thresholds(0.0)
+        add_thresholds(mean - 3 * s)
+        add_thresholds(mean - 0.5 * s)
+        add_thresholds(mean + 0.5 * s)
+        add_thresholds(mean + 3 * s)
+        add_thresholds(1.0)
         return CohortView.split_students(student_info, thresholds)
 
     @staticmethod
