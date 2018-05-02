@@ -21,15 +21,27 @@ INSTALLED_APPS += ('rg_instructor_analytics',)
 * Apply migration
 * Ensure that celerybeat is running
 * Set setting for enrollment cache update, for example:
-```python
-RG_ANALYTICS_ENROLLMENT_STAT_UPDATE = {
-    'minute': '*/1',
-    'hour': '*',
-    'day_of_week': '*',
-    'day_of_month': '*',
-    'month_of_year': '*',
-}
-```
+    * for common.py
+    ```python
+    RG_ANALYTICS_ENROLLMENT_STAT_UPDATE = {
+        'minute': '*',
+        'hour': '*/6',
+        'day_of_week': '*',
+        'day_of_month': '*',
+        'month_of_year': '*',
+    }
+    ```
+    * for json config:
+
+    ```json
+    "RG_ANALYTICS_ENROLLMENT_STAT_UPDATE":{
+        "minute": "*",
+        "hour": "*/6",
+        "day_of_week": "*",
+        "day_of_month": "*",
+        "month_of_year": "*"
+    }
+    ```
 * Run in the console:
 ```bash
 sudo -sHu edxapp

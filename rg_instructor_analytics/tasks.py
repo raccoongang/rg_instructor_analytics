@@ -43,7 +43,7 @@ def send_email_to_cohort(subject, message, students):
 cron_settings = getattr(
     settings, 'RG_ANALYTICS_ENROLLMENT_STAT_UPDATE',
     {
-        'minute': '*/1',
+        'hour': '*/6',
     }
 )
 
