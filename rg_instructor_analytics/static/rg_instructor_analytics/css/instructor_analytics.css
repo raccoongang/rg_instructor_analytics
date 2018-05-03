@@ -58,8 +58,7 @@
     position: relative;
     float: left;
     width: 80%;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 .grade-table {
     width: 100%;
@@ -154,9 +153,12 @@
     margin: 0 auto;
     width: 100%;
 }
-.js-plotly-plot {
-    width: 900px;
+#section-enrollment-stats .js-plotly-plot {
     transform: translate(-7%, -12%);
+}
+.js-plotly-plot {
+    transform: translate(-7%, 0);
+    width: 900px;
 }
 #date-btn {
     padding-right: 20px;
@@ -773,6 +775,10 @@
     transform-origin: initial;
     white-space: pre-wrap;
 }
+
+body .xmodule_display.xmodule_CapaModule div.problem ul {
+    margin: 16px 0;
+
 .idash-section.active-section .disc-list {
     list-style: disc;
     padding-left: 40px;
@@ -786,4 +792,5 @@
 }
 #section-cohort .js-plotly-plot {
     transform: translate(-7%, 0);
+
 }
