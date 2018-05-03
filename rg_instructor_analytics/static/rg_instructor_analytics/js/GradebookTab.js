@@ -10,10 +10,6 @@ function GradebookTab(button, content) {
     greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
 
-    content.find('.student-search-field').on('change', function postinput() {
-        updateData($(this).val());
-    });
-
     greadebookTab.filterString = '';
     greadebookTab.loadTabData = function () {
         updateData()
@@ -40,27 +36,57 @@ function GradebookTab(button, content) {
             dataType: "json"
         });
     }
+    let inputValue = '';
 
     function updateTables() {
         var htmlStringStudents = '';
         var htmlStringResults = '';
+
         var htmlTemp = `<div class="gradebook-table-cell"><form class="student-search">
-            <input type="search" class="student-search-field" placeholder="Search students"/>
+            <input 
+                value="${django.gettext(inputValue)}" 
+                type="search" 
+                class="student-search-field" 
+                placeholder="Search students"
+            />
             </form></div>`;
 
         greadebookTab.gradebookTableHeader.empty();
         greadebookTab.gradebookTableBody.empty();
 
         for (var i = 0; i < greadebookTab.examNames.length; i++) {
-            htmlTemp += `<div class="gradebook-table-cell"><div class="assignment-label">${greadebookTab.examNames[i]}</div></div>`;
+            htmlTemp += `
+                <div class="gradebook-table-cell">
+                    <div class="assignment-label">${greadebookTab.examNames[i]}</div>
+                </div>
+            `;
         }
         greadebookTab.gradebookTableHeader.append(htmlTemp);
+
+        let $input = $('.student-search-field');
+        $input[0].addEventListener('keyup', function(e){
+            if (e.keyCode == 13) {
+                e.preventDefault();
+                this.blur();
+            }
+        });
+
+        $(".student-search").submit(function(e) {
+            e.preventDefault();
+        });
+
+        $input.on('change', (e) => {
+            inputValue = e.target.value;
+            updateData(inputValue);
+            e.target.value = inputValue;
+        });
+
         greadebookTab.studentsTable.empty();
 
         for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
             var htmlStringResults = '';
             for (var g = 0; g < greadebookTab.studentInfo[i].grades.length; g++) {
-                htmlStringResults += `<div class="gradebook-table-cell">${greadebookTab.studentInfo[i].grades[g]}</div>`;
+                htmlStringResults += `<div class="gradebook-table-cell">${greadebookTab.studentInfo[i].grades[g]}</div>`
             }
 
             htmlStringStudents +=
