@@ -531,6 +531,7 @@
     position: relative;
     height: 100% !important;
     z-index: 10;
+    cursor: pointer;
 }
 
 .plot-bar-vert:hover:before {
@@ -696,6 +697,10 @@
     box-sizing: border-box;
     padding: 0 3px;
 }
+#problems-stats-plot .plot-bar-vertical {
+    cursor: pointer
+}
+
 #problems-stats-plot .plot-bar-vertical:hover:before {
     content: '';
     position: absolute;
