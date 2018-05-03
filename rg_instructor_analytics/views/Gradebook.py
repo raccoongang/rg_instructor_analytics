@@ -1,6 +1,7 @@
 """
 Module for gradebook subtab.
 """
+from collections import OrderedDict
 import json
 
 from django.db.models import Q
@@ -31,8 +32,17 @@ class GradebookView(AccessMixin, View):
                 Q(student__last_name__icontains=filter_string) |
                 Q(student__email__icontains=filter_string)
             )
-        enrolled_students = enrolled_students.order_by('student__username').values('student__username','exam_info')
-
-        student_info = [json.loads(student['exam_info']) for student in enrolled_students]
+        enrolled_students = enrolled_students.order_by('student__username').values('student__username', 'exam_info')
+        student_info = [
+            json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student['exam_info'])
+            for student in enrolled_students
+        ]
+        students_names = [student['student__username'] for student in enrolled_students]
         exam_names = list(student_info[0].keys()) if len(student_info) > 0 else []
-        return JsonResponse(data={'student_info': student_info, 'exam_names': exam_names})
+        return JsonResponse(
+            data={
+                'student_info': student_info,
+                'exam_names': exam_names,
+                'students_names': students_names,
+            }
+        )

@@ -1,10 +1,10 @@
 """
 Module for celery tasks.
 """
-import json
-import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta
+import json
+import logging
 
 from celery.schedules import crontab
 from celery.task import periodic_task
@@ -18,16 +18,16 @@ from django.db.models.query_utils import Q
 from django.http.response import Http404
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from lms import CELERY_APP
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-from xmodule.modulestore.django import modulestore
 
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
-from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache, LastGradeStatUpdate, GradeStatistic
+from lms import CELERY_APP
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache, GradeStatistic, LastGradeStatUpdate
 from student.models import CourseEnrollment
+from xmodule.modulestore.django import modulestore
 
 try:
     from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
@@ -137,11 +137,14 @@ def enrollment_collector_date():
 
 
 def get_items_for_grade_update():
+    """
+    Return aggregate list of the users by course, those grades need be recalculated.
+    """
     last_update_info = LastGradeStatUpdate.objects.all()
     if last_update_info.exists():
         item_for_update = (
             StudentModule.objects
-            .filter(module_type__exact='problem', modified__gt=last_update_info.last()['last_update'])
+            .filter(module_type__exact='problem', modified__gt=last_update_info.last().last_update)
             .values('student__id', 'course_id')
             .order_by('student__id', 'course_id')
             .distinct()
@@ -149,12 +152,12 @@ def get_items_for_grade_update():
     else:
         item_for_update = (
             CourseEnrollment.objects
-                .filter(is_active=True)
-                .values('user__id', 'course_id')
-                .order_by('user__id', 'course_id')
-                .distinct()
-                .annotate(student__id=F('user__id'))
-                .values('student__id', 'course_id')
+            .filter(is_active=True)
+            .values('user__id', 'course_id')
+            .order_by('user__id', 'course_id')
+            .distinct()
+            .annotate(student__id=F('user__id'))
+            .values('student__id', 'course_id')
         )
         log.error(item_for_update)
 
@@ -167,12 +170,18 @@ def get_items_for_grade_update():
 
 
 def get_grade_summary(user_id, course):
+    """
+    Return grade of the given user for the given course.
+    """
     return CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
 
 
 # @periodic_task(run_every=crontab(**cron_settings))
 @periodic_task(run_every=timedelta(seconds=10))
 def grade_collector_stat():
+    """
+    Task for update user grades.
+    """
     this_update_date = datetime.now()
     users_by_course = get_items_for_grade_update()
     log.error(users_by_course)
@@ -182,7 +191,7 @@ def grade_collector_stat():
         try:
             course_key = CourseKey.from_string(course_string_id)
             course = get_course_by_id(course_key, depth=0)
-        except (InvalidKeyError,Http404):
+        except (InvalidKeyError, Http404):
             continue
 
         with modulestore().bulk_operations(course_key):

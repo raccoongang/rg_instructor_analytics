@@ -2,10 +2,10 @@
 Models of the rg analytics.
 """
 
-from django.db.models import BooleanField, DateField, DateTimeField, IntegerField, Model, TextField, ForeignKey
+from django.contrib.auth.models import User
+from django.db.models import BooleanField, DateField, DateTimeField, ForeignKey, IntegerField, Model, TextField
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
-from django.contrib.auth.models import User
 
 
 class EnrollmentTabCache(Model):
@@ -47,7 +47,7 @@ class EnrollmentByStudent(Model):
 
 class GradeStatistic(Model):
     """
-    Model for store grades of the student for each course
+    Model for store grades of the student for each course.
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)

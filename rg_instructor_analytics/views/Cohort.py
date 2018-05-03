@@ -7,10 +7,10 @@ from django.contrib.auth.models import User
 from django.http.response import JsonResponse
 from django.utils.translation import ugettext as _
 from django.views.generic import View
-from xmodule.modulestore.django import modulestore
 
 from rg_instructor_analytics import tasks
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from xmodule.modulestore.django import modulestore
 
 try:
     from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
