@@ -106,10 +106,18 @@ class CohortView(AccessMixin, View):
         """
         Process post request.
         """
+        grade_stat = (
+            GradeStatistic.objects
+            .filter(course_id=kwargs['course_key'])
+            .values('student_id', 'student__username', 'total')
+        )
         cohorts = self.generate_cohort_by_mean_and_dispersion(
             [
-                {'id': student['student'].id, 'username': student['student'].username, 'grade': student['total']}
-                for student in GradeStatistic.objects.filter(course_id=kwargs['course_key']).values('student', 'total')
+                {
+                    'id': grade['student_id'],
+                    'username': grade['student__username'],
+                    'grade': grade['total']}
+                for grade in grade_stat
             ]
         )
 
