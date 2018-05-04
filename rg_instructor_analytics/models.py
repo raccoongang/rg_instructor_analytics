@@ -63,10 +63,10 @@ class GradeStatistic(Model):
         unique_together = ('course_id', 'student',)
 
 
-# TODO replace this table with redis.
+# TODO replace this table with the Redis.
 class LastGradeStatUpdate(Model):
     """
-    Used for calculate diffs for update.
+    For the calculation diffs for the update.
     """
 
     last_update = DateTimeField(db_index=True)

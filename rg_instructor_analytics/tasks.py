@@ -137,11 +137,13 @@ def enrollment_collector_date():
 
 def get_items_for_grade_update():
     """
-    Return aggregate list of the users by course, those grades need be recalculated.
+    Return an aggregate list of the users by the course, those grades need to be recalculated.
     """
     last_update_info = LastGradeStatUpdate.objects.all()
+    # For first update we what get statistic for all enrollments,
+    # otherwise - generate diff, based on the student activity.
     if last_update_info.exists():
-        item_for_update = (
+        items_for_update = (
             StudentModule.objects
             .filter(module_type__exact='problem', modified__gt=last_update_info.last().last_update)
             .values('student__id', 'course_id')
@@ -149,7 +151,7 @@ def get_items_for_grade_update():
             .distinct()
         )
     else:
-        item_for_update = (
+        items_for_update = (
             CourseEnrollment.objects
             .filter(is_active=True)
             .values('user__id', 'course_id')
@@ -160,7 +162,7 @@ def get_items_for_grade_update():
         )
 
     users_by_course = {}
-    for item in item_for_update:
+    for item in items_for_update:
         if item['course_id'] not in users_by_course:
             users_by_course[item['course_id']] = []
         users_by_course[item['course_id']].append(item['student__id'])
@@ -169,7 +171,7 @@ def get_items_for_grade_update():
 
 def get_grade_summary(user_id, course):
     """
-    Return grade of the given user for the given course.
+    Return the grade for the given student in the addressed course.
     """
     return CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
 
@@ -210,13 +212,13 @@ def grade_collector_stat():
                 collected_stat.append(
                     (
                         {'course_id': course_key, 'student_id': user},
-                        {'exam_info': json.dumps(exam_info), 'total': int(grades['percent'] * 100.0)}
+                        {'exam_info': json.dumps(exam_info), 'total': total}
                     )
                 )
 
     with transaction.atomic():
-        for key_values, additiona_info in collected_stat:
-            key_values['defaults'] = additiona_info
+        for key_values, additional_info in collected_stat:
+            key_values['defaults'] = additional_info
             GradeStatistic.objects.update_or_create(**key_values)
 
         LastGradeStatUpdate(last_update=this_update_date).save()
