@@ -2,7 +2,7 @@
 Module for celery tasks.
 """
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import datetime
 import json
 import logging
 
@@ -56,7 +56,7 @@ def send_email_to_cohort(subject, message, students):
     msg.send(fail_silently=False)
 
 
-cron_settings = getattr(
+cron_enroll_settings = getattr(
     settings, 'RG_ANALYTICS_ENROLLMENT_STAT_UPDATE',
     {
         'hour': '*/6',
@@ -64,7 +64,7 @@ cron_settings = getattr(
 )
 
 
-@periodic_task(run_every=crontab(**cron_settings))
+@periodic_task(run_every=crontab(**cron_enroll_settings))
 def enrollment_collector_date():
     """
     Task for update enrollment statistic.
@@ -159,7 +159,6 @@ def get_items_for_grade_update():
             .annotate(student__id=F('user__id'))
             .values('student__id', 'course_id')
         )
-        log.error(item_for_update)
 
     users_by_course = {}
     for item in item_for_update:
@@ -176,15 +175,21 @@ def get_grade_summary(user_id, course):
     return CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
 
 
-# @periodic_task(run_every=crontab(**cron_settings))
-@periodic_task(run_every=timedelta(seconds=10))
+cron_grade_settings = getattr(
+    settings, 'RG_ANALYTICS_GRADE_STAT_UPDATE',
+    {
+        'hour': '*/12',
+    }
+)
+
+
+@periodic_task(run_every=crontab(**cron_grade_settings))
 def grade_collector_stat():
     """
     Task for update user grades.
     """
     this_update_date = datetime.now()
     users_by_course = get_items_for_grade_update()
-    log.error(users_by_course)
 
     collected_stat = []
     for course_string_id, users in users_by_course.iteritems():
@@ -213,7 +218,6 @@ def grade_collector_stat():
     with transaction.atomic():
         for key_values, additiona_info in collected_stat:
             key_values['defaults'] = additiona_info
-            log.error(key_values)
             GradeStatistic.objects.update_or_create(**key_values)
 
         LastGradeStatUpdate(last_update=this_update_date).save()
