@@ -31,13 +31,12 @@ from xmodule.modulestore.django import modulestore
 
 try:
     from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
-except Exception:
+except ImportError:
     from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
 
 
 log = logging.getLogger(__name__)
 ENROLLMENT_STAT_CACHE_BY_COURSE_KEY = 'ENROLLLMENT_STAT_CACHE_BY_COURSE_KEY'
-GRADE_STAT_CACHE_BY_COURSE_KEY = 'GRADE_STAT_CACHE_BY_COURSE_KEY'
 DEFAULT_DATE_TIME = datetime(2000, 1, 1, 0, 0)
 
 
