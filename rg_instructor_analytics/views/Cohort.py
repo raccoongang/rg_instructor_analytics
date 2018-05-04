@@ -11,6 +11,7 @@ from django.views.generic import View
 from rg_instructor_analytics import tasks
 from rg_instructor_analytics.models import GradeStatistic
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from xmodule.modulestore.django import modulestore
 
 
 class CohortView(AccessMixin, View):
