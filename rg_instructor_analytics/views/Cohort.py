@@ -9,13 +9,8 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 
 from rg_instructor_analytics import tasks
+from rg_instructor_analytics.models import GradeStatistic
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
-from xmodule.modulestore.django import modulestore
-
-try:
-    from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
-except Exception:
-    from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
 
 
 class CohortView(AccessMixin, View):
@@ -111,24 +106,20 @@ class CohortView(AccessMixin, View):
         """
         Process post request.
         """
-        course_key = kwargs['course_key']
-        enrolled_students = User.objects.filter(
-            courseenrollment__course_id=course_key,
-            courseenrollment__is_active=1,
+        grade_stat = (
+            GradeStatistic.objects
+            .filter(course_id=kwargs['course_key'])
+            .values('student_id', 'student__username', 'total')
         )
-        enrolled_students = enrolled_students.order_by('username').select_related("profile")
-
-        with modulestore().bulk_operations(course_key):
-            cohorts = self.generate_cohort_by_mean_and_dispersion(
-                [
-                    {
-                        'id': student.id,
-                        'username': student.username,
-                        'grade': CourseGradeFactory().create(student, kwargs['course']).summary['percent']
-                    }
-                    for student in enrolled_students
-                ]
-            )
+        cohorts = self.generate_cohort_by_mean_and_dispersion(
+            [
+                {
+                    'id': grade['student_id'],
+                    'username': grade['student__username'],
+                    'grade': grade['total']}
+                for grade in grade_stat
+            ]
+        )
 
         labels = []
         for i in range(len(cohorts)):

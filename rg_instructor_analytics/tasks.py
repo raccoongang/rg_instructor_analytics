@@ -206,13 +206,12 @@ def grade_collector_stat():
                 exam_info = OrderedDict()
                 for grade in grades['section_breakdown']:
                     exam_info[grade['label']] = int(grade['percent'] * 100.0)
-                total = int(grades['percent'] * 100.0)
-                exam_info['total'] = total
+                exam_info['total'] = int(grades['percent'] * 100.0)
 
                 collected_stat.append(
                     (
                         {'course_id': course_key, 'student_id': user},
-                        {'exam_info': json.dumps(exam_info), 'total': total}
+                        {'exam_info': json.dumps(exam_info), 'total': grades['percent']}
                     )
                 )
 
