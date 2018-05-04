@@ -212,7 +212,7 @@ def grade_collector_stat():
                 collected_stat.append(
                     (
                         {'course_id': course_key, 'student_id': user},
-                        {'exam_info': json.dumps(exam_info), 'total': total}
+                        {'exam_info': json.dumps(exam_info), 'total': float(total) / 100.0}
                     )
                 )
 

@@ -3,7 +3,9 @@ Models of the rg analytics.
 """
 
 from django.contrib.auth.models import User
-from django.db.models import BooleanField, DateField, DateTimeField, ForeignKey, IntegerField, Model, TextField
+from django.db.models import (
+    BooleanField, DateField, DateTimeField, FloatField, ForeignKey, IntegerField, Model, TextField
+)
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
 
@@ -53,7 +55,8 @@ class GradeStatistic(Model):
     course_id = CourseKeyField(max_length=255, db_index=True)
     student = ForeignKey(User)
     exam_info = TextField()
-    total = IntegerField()
+    # Represent total grade in range from 0 to 1; [0; 1]
+    total = FloatField()
 
     class Meta:
         """
