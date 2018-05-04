@@ -19,6 +19,7 @@ function GradebookTab(button, content) {
         function onSuccess(response) {
             greadebookTab.studentInfo = response.student_info;
             greadebookTab.examNames = response.exam_names;
+            greadebookTab.studentsNames = response.students_names;
             updateTables()
         }
 
@@ -85,14 +86,18 @@ function GradebookTab(button, content) {
 
         for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
             var htmlStringResults = '';
-            for (var g = 0; g < greadebookTab.studentInfo[i].grades.length; g++) {
-                htmlStringResults += `<div class="gradebook-table-cell">${greadebookTab.studentInfo[i].grades[g]}</div>`
+            for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
+                htmlStringResults += `
+                    <div class="gradebook-table-cell">
+                        ${greadebookTab.studentInfo[i][greadebookTab.examNames[nameIndex]]}
+                    </div>
+                `
             }
 
             htmlStringStudents +=
                 `<div class="gradebook-table-row">
                     <div class="gradebook-table-cell">
-                        <a data-position="${i}">${greadebookTab.studentInfo[i].username}</a>
+                        <a data-position="${i}">${greadebookTab.studentsNames[i]}</a>
                     </div>
                     ${htmlStringResults}
                 </div>`;

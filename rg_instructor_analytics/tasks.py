@@ -1,28 +1,43 @@
 """
 Module for celery tasks.
 """
+from collections import OrderedDict
 from datetime import datetime
+import json
 import logging
 
 from celery.schedules import crontab
 from celery.task import periodic_task
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
+from django.db.models import F
 from django.db.models.query_utils import Q
+from django.http.response import Http404
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from student.models import CourseEnrollment
 
+from courseware.courses import get_course_by_id
+from courseware.models import StudentModule
 from lms import CELERY_APP
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache
+from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache, GradeStatistic, LastGradeStatUpdate
+from student.models import CourseEnrollment
+from xmodule.modulestore.django import modulestore
+
+try:
+    from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
+except ImportError:
+    from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
 
 
 log = logging.getLogger(__name__)
 ENROLLMENT_STAT_CACHE_BY_COURSE_KEY = 'ENROLLLMENT_STAT_CACHE_BY_COURSE_KEY'
+DEFAULT_DATE_TIME = datetime(2000, 1, 1, 0, 0)
 
 
 @CELERY_APP.task
@@ -40,7 +55,7 @@ def send_email_to_cohort(subject, message, students):
     msg.send(fail_silently=False)
 
 
-cron_settings = getattr(
+cron_enroll_settings = getattr(
     settings, 'RG_ANALYTICS_ENROLLMENT_STAT_UPDATE',
     {
         'hour': '*/6',
@@ -48,7 +63,7 @@ cron_settings = getattr(
 )
 
 
-@periodic_task(run_every=crontab(**cron_settings))
+@periodic_task(run_every=crontab(**cron_enroll_settings))
 def enrollment_collector_date():
     """
     Task for update enrollment statistic.
@@ -57,7 +72,7 @@ def enrollment_collector_date():
     if last_stat.exists():
         last_update = last_stat.first().last_update
     else:
-        last_update = datetime(2000, 1, 1, 0, 0)
+        last_update = DEFAULT_DATE_TIME
     enrollments_history = (
         CourseEnrollment.history
         .filter(~Q(history_type='+'))
@@ -118,3 +133,92 @@ def enrollment_collector_date():
             )
 
     cache.set(ENROLLMENT_STAT_CACHE_BY_COURSE_KEY, total_stat)
+
+
+def get_items_for_grade_update():
+    """
+    Return an aggregate list of the users by the course, those grades need to be recalculated.
+    """
+    last_update_info = LastGradeStatUpdate.objects.all()
+    # For first update we what get statistic for all enrollments,
+    # otherwise - generate diff, based on the student activity.
+    if last_update_info.exists():
+        items_for_update = (
+            StudentModule.objects
+            .filter(module_type__exact='problem', modified__gt=last_update_info.last().last_update)
+            .values('student__id', 'course_id')
+            .order_by('student__id', 'course_id')
+            .distinct()
+        )
+    else:
+        items_for_update = (
+            CourseEnrollment.objects
+            .filter(is_active=True)
+            .values('user__id', 'course_id')
+            .order_by('user__id', 'course_id')
+            .distinct()
+            .annotate(student__id=F('user__id'))
+            .values('student__id', 'course_id')
+        )
+
+    users_by_course = {}
+    for item in items_for_update:
+        if item['course_id'] not in users_by_course:
+            users_by_course[item['course_id']] = []
+        users_by_course[item['course_id']].append(item['student__id'])
+    return users_by_course
+
+
+def get_grade_summary(user_id, course):
+    """
+    Return the grade for the given student in the addressed course.
+    """
+    return CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
+
+
+cron_grade_settings = getattr(
+    settings, 'RG_ANALYTICS_GRADE_STAT_UPDATE',
+    {
+        'hour': '*/12',
+    }
+)
+
+
+@periodic_task(run_every=crontab(**cron_grade_settings))
+def grade_collector_stat():
+    """
+    Task for update user grades.
+    """
+    this_update_date = datetime.now()
+    users_by_course = get_items_for_grade_update()
+
+    collected_stat = []
+    for course_string_id, users in users_by_course.iteritems():
+        try:
+            course_key = CourseKey.from_string(course_string_id)
+            course = get_course_by_id(course_key, depth=0)
+        except (InvalidKeyError, Http404):
+            continue
+
+        with modulestore().bulk_operations(course_key):
+            for user in users:
+                grades = get_grade_summary(user, course)
+                exam_info = OrderedDict()
+                for grade in grades['section_breakdown']:
+                    exam_info[grade['label']] = int(grade['percent'] * 100.0)
+                total = int(grades['percent'] * 100.0)
+                exam_info['total'] = total
+
+                collected_stat.append(
+                    (
+                        {'course_id': course_key, 'student_id': user},
+                        {'exam_info': json.dumps(exam_info), 'total': total}
+                    )
+                )
+
+    with transaction.atomic():
+        for key_values, additional_info in collected_stat:
+            key_values['defaults'] = additional_info
+            GradeStatistic.objects.update_or_create(**key_values)
+
+        LastGradeStatUpdate(last_update=this_update_date).save()

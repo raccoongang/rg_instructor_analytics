@@ -2,7 +2,8 @@
 Models of the rg analytics.
 """
 
-from django.db.models import BooleanField, DateField, DateTimeField, IntegerField, Model
+from django.contrib.auth.models import User
+from django.db.models import BooleanField, DateField, DateTimeField, ForeignKey, IntegerField, Model, TextField
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
 
@@ -42,3 +43,30 @@ class EnrollmentByStudent(Model):
         """
 
         unique_together = ('course_id', 'student',)
+
+
+class GradeStatistic(Model):
+    """
+    Model for store grades of the student for each course.
+    """
+
+    course_id = CourseKeyField(max_length=255, db_index=True)
+    student = ForeignKey(User)
+    exam_info = TextField()
+    total = IntegerField()
+
+    class Meta:
+        """
+        Meta class.
+        """
+
+        unique_together = ('course_id', 'student',)
+
+
+# TODO replace this table with the Redis.
+class LastGradeStatUpdate(Model):
+    """
+    For the calculation diffs for the update.
+    """
+
+    last_update = DateTimeField(db_index=True)
