@@ -51,7 +51,7 @@ class GradeStatistic(Model):
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    student = ForeignKey(User, db_index=True)
+    student = ForeignKey(User)
     exam_info = TextField()
     total = IntegerField()
 
