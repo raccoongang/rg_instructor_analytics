@@ -7,15 +7,10 @@ from django.contrib.auth.models import User
 from django.http.response import JsonResponse
 from django.utils.translation import ugettext as _
 from django.views.generic import View
-from xmodule.modulestore.django import modulestore
 
 from rg_instructor_analytics import tasks
+from rg_instructor_analytics.models import GradeStatistic
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
-
-try:
-    from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
-except Exception:
-    from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
 
 
 class CohortView(AccessMixin, View):
@@ -53,16 +48,24 @@ class CohortView(AccessMixin, View):
         mark_count = len(marks)
         mean = sum(marks) / mark_count
         s = math.sqrt(sum([(x - mean) ** 2 for x in marks]) / mark_count)
-        thresholds = []
-        if mean - 3 * s > 0:
-            thresholds.append(mean - 3 * s)
-        if mean - 0.5 * s > 0:
-            thresholds.append(mean - 0.5 * s)
-        if mean + 0.5 * s < 1:
-            thresholds.append(mean + 0.5 * s)
-        if mean + 3 * s < 1:
-            thresholds.append(mean + 3 * s)
-        thresholds.append(1)
+        thresholds = [0]
+
+        def add_thresholds(value):
+            """
+            Prevent invalid values of the threshold.
+
+            Invalid values - negative, positive and more than 1 or values with diff less than 1 percent.
+            """
+            if value < 0.0 or value > 1.0 or abs(thresholds[-1] - value) < (1.0 / 100.0):
+                return
+            thresholds.append(value)
+
+        add_thresholds(0.0)
+        add_thresholds(mean - 3 * s)
+        add_thresholds(mean - 0.5 * s)
+        add_thresholds(mean + 0.5 * s)
+        add_thresholds(mean + 3 * s)
+        add_thresholds(1.0)
         return CohortView.split_students(student_info, thresholds)
 
     @staticmethod
@@ -82,7 +85,7 @@ class CohortView(AccessMixin, View):
         gistogram = {t: {'students_id': [], 'students_names': [], 'count': 0} for t in thresholds}
         for s in student_info:
             for t in thresholds:
-                if s['grade'] < t:
+                if (s['grade'] < t) or (s['grade'] == t and (t in [0, 1])):
                     gistogram[t]['students_id'].append(s['id'])
                     gistogram[t]['students_names'].append(s['username'])
                     gistogram[t]['count'] += 1
@@ -103,26 +106,30 @@ class CohortView(AccessMixin, View):
         """
         Process post request.
         """
-        course_key = kwargs['course_key']
-        enrolled_students = User.objects.filter(
-            courseenrollment__course_id=course_key,
-            courseenrollment__is_active=1,
+        grade_stat = (
+            GradeStatistic.objects
+            .filter(course_id=kwargs['course_key'])
+            .values('student_id', 'student__username', 'total')
         )
-        enrolled_students = enrolled_students.order_by('username').select_related("profile")
+        cohorts = self.generate_cohort_by_mean_and_dispersion(
+            [
+                {
+                    'id': grade['student_id'],
+                    'username': grade['student__username'],
+                    'grade': grade['total']}
+                for grade in grade_stat
+            ]
+        )
 
-        with modulestore().bulk_operations(course_key):
-            cohorts = self.generate_cohort_by_mean_and_dispersion(
-                [
-                    {
-                        'id': student.id,
-                        'username': student.username,
-                        'grade': CourseGradeFactory().create(student, kwargs['course']).summary['percent']
-                    }
-                    for student in enrolled_students
-                ]
-            )
-
-        labels = [_('to ') + str(i['max_progress']) + ' %' for i in cohorts]
+        labels = []
+        for i in range(len(cohorts)):
+            if cohorts[i]['max_progress'] == 0:
+                labels.append(_('zero progress'))
+            else:
+                labels.append(
+                    _('from ') + str(cohorts[i - 1]['max_progress']) + ' %' +
+                    _(' to ') + str(cohorts[i]['max_progress']) + ' %'
+                )
         values = [i['percent'] for i in cohorts]
         return JsonResponse(data={'labels': labels, 'values': values, 'cohorts': cohorts})
 

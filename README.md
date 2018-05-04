@@ -18,6 +18,30 @@ FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 
 INSTALLED_APPS += ('rg_instructor_analytics',)
 ```
+* Apply migration
+* Ensure that celerybeat is running
+* Set setting for enrollment cache update, for example:
+    * for common.py
+    ```python
+    RG_ANALYTICS_ENROLLMENT_STAT_UPDATE = {
+        'minute': '*',
+        'hour': '*/6',
+        'day_of_week': '*',
+        'day_of_month': '*',
+        'month_of_year': '*',
+    }
+    ```
+    * for json config:
+
+    ```json
+    "RG_ANALYTICS_ENROLLMENT_STAT_UPDATE":{
+        "minute": "*",
+        "hour": "*/6",
+        "day_of_week": "*",
+        "day_of_month": "*",
+        "month_of_year": "*"
+    }
+    ```
 * Run in the console:
 ```bash
 sudo -sHu edxapp
@@ -37,3 +61,4 @@ All tests could be run only in local.
 * Ensure that the source placed in one of the edx-platform subdirectory.
 * cd rg_instructor_analytics
 * sh ./test_tool/run_test.sh
+

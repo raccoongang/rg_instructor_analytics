@@ -41,6 +41,25 @@ function EnrollmentTab(button, content) {
      * Update select date button according to selection of date range
      */
     function updateStatPeriod() {
+
+        if (new Date(fromDate.val()) == 'Invalid Date')
+            fromDate.datepicker("setDate", dateStart);
+        if (new Date(toDate.val()) == 'Invalid Date')
+            toDate.datepicker("setDate", dateEnd);
+
+        if (new Date(fromDate.val()) < dateStart)
+            fromDate.datepicker("setDate", dateStart);
+        if (new Date(toDate.val()) > dateEnd)
+            toDate.datepicker("setDate", dateEnd);
+
+        if (new Date(fromDate.val()) > dateEnd)
+            fromDate.datepicker("setDate", dateEnd);
+        if (new Date(toDate.val()) < dateStart)
+            toDate.datepicker("setDate", dateStart);
+
+        if (new Date(fromDate.val()) > new Date(toDate.val()))
+            fromDate.datepicker("setDate", new Date(toDate.val()));
+
         selectDateBtn.html(fromDate.val() + ' - ' + toDate.val())
     }
 
@@ -55,7 +74,7 @@ function EnrollmentTab(button, content) {
 
         function onSuccess(response) {
             var x = response.dates.map(function (x) {
-                var result = new Date(x * 1000);
+                var result = new Date(x);
                 result.setHours(0);
                 result.setMinutes(0);
                 return result;
@@ -64,7 +83,7 @@ function EnrollmentTab(button, content) {
                 x: x,
                 y: response.total,
                 mode: 'lines',
-                name: django.gettext('total'),
+                name: django.gettext('Total'),
                 line: {
                     color: '#70A3FF',
                     width: 2.3,
@@ -79,27 +98,24 @@ function EnrollmentTab(button, content) {
                 x: x,
                 y: response.enroll,
                 mode: 'lines',
-                name: django.gettext('enroll'),
-                fill: 'tozeroy',
-                fillcolor: "rgba(139,178,42,0.25)",
+                name: django.gettext('Enrollments'),
                 line: {
                     shape: 'hv',
                     color: '#8BB22A',
                 },
+                yaxis: 'y2', 
                 type: 'scatter'
             };
             var unenrollTrace = {
                 x: x,
                 y: response.unenroll,
                 mode: 'lines',
-                name: django.gettext('unenroll'),
-                fill: 'tozeroy',
-                fillcolor: "rgba(204,70,48,0.25)",
+                name: django.gettext('Unenrollments'),
+                yaxis: 'y2',
                 line: {
                     shape: 'hv',
                     color: '#CC4630',
                 },
-                hoveron:'points+fills',
                 type: 'scatter'
             };
             var layout = {
@@ -108,12 +124,21 @@ function EnrollmentTab(button, content) {
                     type: "date",
                     margin: {t: 10}
                 },
-                yaxis: {nticks: 4},
-                showlegend: false
+                yaxis: {
+                    nticks: 4,
+                    overlaying: 'y2',
+                },
+                yaxis2: {
+                    side: 'right'
+                },
+                showlegend: false,
             };
             var data = [unenrollTrace, enrollTrace, totalTrace];
             
-            Plotly.newPlot('enrollment-stats-plot', data, layout, {displayModeBar: false});
+            Plotly.newPlot('enrollment-stats-plot', data, layout, {
+                displayModeBar: false,
+                scrollZoom: false,
+            });
         }
 
         function onError() {

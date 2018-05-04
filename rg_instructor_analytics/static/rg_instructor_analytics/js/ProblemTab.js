@@ -17,12 +17,14 @@ function ProblemTab(button, content) {
             let correctAnswer = [...response.correct_answer];
             let yAxis = [...response.names];
             let xAxisRight = ['0', '50%', '100%'];
+            let $homework = $('#problem-homeworks-stats-plot');
 
             let bars = '', index = 0;
             for (let item in yAxis) {
                 let attempts = (100 * response.attempts[index]) / maxAttempts;
                 let percent = correctAnswer[index] * 100;
                 let barHeight = 'auto';
+
                 if (!percent && !attempts) {
                     barHeight = 0;
                 }
@@ -39,43 +41,63 @@ function ProblemTab(button, content) {
                             <div class="plot-bar-percent" style="height: ${percent}%">
                                 <span class="plot-bar-value">${percent.toFixed(1)}%</span>
                             </div>
-                            <div class="plot-click-me">Click Me</div>
+                            <div class="plot-click-me">${django.gettext('DETAILS')}</div>
                         </li>
                 `
                 index++;
             }
             bars = `<ul class="plot-body">${bars}</ul>`;
-            //build y axis
+            //build x axis
             let axis = ``;
+            let small;
+            if (yAxis.length > 10) {small = 'small'}
             yAxis.forEach((item) => {
-                axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%;"><div>${item}</div></li>`
+                axis += `
+                <li 
+                    class="hw-xaxis ${small}" 
+                    style="min-width: ${(100 - yAxis.length) / yAxis.length}%;"
+                    >
+                        <div>${item}</div>
+                </li>`
             });
-            axis = `<ul class="x-axis">${axis}</ul>`
+            axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
-            // build left x axis
-            axis = ''
+            // build left y axis
+            axis = '';
             countAttempts.forEach((item) => {
                 axis += `<li>${item.toFixed(1)}</li>`
-            })
-            axis = `<ul class="y-axis-l">${axis}</ul>`
+            });
+            axis = `<ul class="y-axis-l">${axis}</ul>`;
             bars += axis;
-            //build right x axis
-            axis = ''
+            //build right y axis
+            axis = '';
             xAxisRight.forEach((item) => {
                 axis += `<li>${item}</li>`
-            })
-            axis = `<ul class="y-axis-r">${axis}</ul>`
+            });
+            axis = `<ul class="y-axis-r">${axis}</ul>`;
             bars += axis;
 
-            $('#problem-homeworks-stats-plot').html(bars);
+            $homework.html(bars);
 
-            $('#problem-homeworks-stats-plot').on('click', function (e) {
+            $homework.on('click', function (e) {
                 $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
                     loadHomeWorkProblems(response.problems[attr.attribute]);
                 }
             });
+            if (small) {
+                $('.plot-bar-vert').on('mouseover', function (e) {
+
+                    let attr = $(this).data('attribute');
+
+                    $('.hw-xaxis').removeClass('hover');
+                    $('.hw-xaxis')[attr].classList.add('hover');
+                });
+                $('.plot-bar-vert').on('mouseleave', function (e) {
+                    $('.hw-xaxis').removeClass('hover');
+                });
+            }
         }
 
         function onError() {
@@ -105,8 +127,8 @@ function ProblemTab(button, content) {
             const incorrect = response.incorrect;
             const absIncorrect = incorrect.map(x => Math.abs(x));
             const yAxis = Array.from(new Array(correct.length), (x, i) => i + 1);
-            const maxCorrect = Math.max(...correct);
-            const maxIncorrect = Math.max(...absIncorrect);
+            const maxCorrect = Math.max(...correct) || 1;
+            const maxIncorrect = Math.max(...absIncorrect) || 1;
             const xAxis = [maxCorrect, maxCorrect / 2, 0, maxIncorrect / 2, maxIncorrect];
 
             let index = 0;
@@ -130,7 +152,7 @@ function ProblemTab(button, content) {
                             <div class="incorrect-bar" style="height:${incorrectBar/2}%">
                                 <span>${Math.abs(incorrect[index])}</span>
                             </div>
-                            <div class="plot-click-me">Click Me</div>
+                            <div class="plot-click-me">${django.gettext('DETAILS')}</div>
                         </li>
                         `
                 index++;
@@ -217,7 +239,7 @@ function ProblemTab(button, content) {
         updateHomeWork()
     };
 
-    problemTab.content.find('.close').click(item => problemTab.content.find('#model_plot').hide());
+    problemTab.content.find('.close').click(item => problemTab.content.find('.modal-for-plot').hide());
 
     return problemTab;
 }
@@ -238,6 +260,12 @@ function bindPlotsPopupForProblem(problem, stringProblemID) {
             var question = avalivleQuestions[i](html, stringProblemID);
             if (question.isCanParse()) {
                 question.applyToCurrentProblem(html);
+                html.append(`
+                <div id="model_plot" class="modal-for-plot">
+                    <div>
+                        <div id="problem-question-plot"></div>
+                    </div>
+                </div>`);
                 isAdded = true;
                 break;
             }
@@ -287,7 +315,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
     * @param data server response. Object with key - name of the position and value - value of the position
     */
     this.displayBar = function (data) {
-        const plot_popup = $('#model_plot');
+        const plot_popup = this.questionHtml.parent().find('.modal-for-plot');
         plot_popup.show();
 
         var x = [];
@@ -313,7 +341,7 @@ function BaseQuestion(questionHtml, stringProblemID) {
               </li>`
         }
         plot = `<ul>${plot}</ul>`;
-        $('#proble-question-plot').html(plot);
+        this.questionHtml.parent().find('#problem-question-plot').html(plot);
     };
 
     /**
@@ -321,9 +349,10 @@ function BaseQuestion(questionHtml, stringProblemID) {
     * @param response
     */
     this.onGettingStat = function (response) {
+        console.log(this.questionHtml);
         switch (response.type) {
             case 'bar':
-                this.displayBar(response.stats)
+                this.displayBar(response.stats);
                 break;
         }
     };
@@ -345,21 +374,20 @@ function BaseQuestion(questionHtml, stringProblemID) {
             $(item.target).toggleClass('active');
             if ($(item.target).hasClass('active')) {
                 $(item.target).html('Hide Plot');
-                $('#model_plot').removeClass('hidden');
+                this.questionHtml.parent().find('.modal-for-plot').removeClass('hidden');
+                $.ajax({
+                    traditional: true,
+                    type: "POST",
+                    url: "api/problem_statics/problem_question_stat/",
+                    data: requestMap,
+                    success: (response) => this.onGettingStat(response),
+                    error: () => this.onGettingStatFail(),
+                    dataType: "json"
+                });
             } else {
                 $(item.target).html('Show Plot');
-                $('#model_plot').addClass('hidden');
+                this.questionHtml.parent().find('.modal-for-plot').addClass('hidden');
             }
-
-            $.ajax({
-                traditional: true,
-                type: "POST",
-                url: "api/problem_statics/problem_question_stat/",
-                data: requestMap,
-                success: (response) => this.onGettingStat(response),
-                error: () => this.onGettingStatFail(),
-                dataType: "json"
-            });
         });
     };
 }
