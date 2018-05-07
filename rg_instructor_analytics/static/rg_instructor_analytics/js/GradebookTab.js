@@ -126,10 +126,15 @@ function GradebookTab(button, content) {
                     return '#c14f84';
                 }
                 return '#568ecc';
-            })
+            });
+
+            let studentsGrades = [];
+            const studentPosition = element.target.dataset['position'];
+            for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++)
+                studentsGrades.push(greadebookTab.studentInfo[studentPosition][greadebookTab.examNames[nameIndex]])
 
             var stat = {
-                y: greadebookTab.studentInfo[element.target.dataset['position']].grades,
+                y: studentsGrades,
                 x: greadebookTab.examNames,
                 type: 'bar',
                 marker:{

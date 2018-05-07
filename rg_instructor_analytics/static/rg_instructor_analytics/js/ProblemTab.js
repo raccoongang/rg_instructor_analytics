@@ -79,6 +79,7 @@ function ProblemTab(button, content) {
 
             $homework.html(bars);
 
+            $homework.off('click');
             $homework.on('click', function (e) {
                 $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
                 if ($(e.target).closest('li').data()) {
@@ -129,14 +130,16 @@ function ProblemTab(button, content) {
             const yAxis = Array.from(new Array(correct.length), (x, i) => i + 1);
             const maxCorrect = Math.max(...correct) || 1;
             const maxIncorrect = Math.max(...absIncorrect) || 1;
-            const xAxis = [maxCorrect, maxCorrect / 2, 0, maxIncorrect / 2, maxIncorrect];
+            let totalMax = 0;
+            maxCorrect>maxIncorrect ? totalMax = maxCorrect : totalMax = maxIncorrect;
+            const xAxis = [totalMax, totalMax / 2, 0, totalMax / 2, totalMax];
 
             let index = 0;
             let bars = '';
 
             for (let item in yAxis) {
-                const correctBar = 100 * correct[index] / maxCorrect;
-                const incorrectBar = Math.abs(100 * incorrect[index] / maxIncorrect);
+                const correctBar = 100 * correct[index] / totalMax;
+                const incorrectBar = Math.abs(100 * incorrect[index] / totalMax);
                 let barHeight = 'auto';
                 if (!correctBar && !incorrectBar) {
                     barHeight = 0;
