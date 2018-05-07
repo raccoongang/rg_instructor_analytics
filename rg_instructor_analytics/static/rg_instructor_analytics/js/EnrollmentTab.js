@@ -79,6 +79,7 @@ function EnrollmentTab(button, content) {
                 result.setMinutes(0);
                 return result;
             }
+
             let totalTrace = {
                 x: response.dates_total.map(dataFixFunction),
                 y: response.counts_total,
@@ -86,13 +87,12 @@ function EnrollmentTab(button, content) {
                 name: django.gettext('Total'),
                 line: {
                     color: '#70A3FF',
-                    width: 2.3,
-                    shape: 'spline',
-                    smoothing: 0.7
+                    width: 4,
+                    shape: 'hv',
                 },
-                hovermode:'closest',
-                hoverdistance:1000,
-                spikedistance:1000,
+                hovermode: 'closest',
+                hoverdistance: 1000,
+                spikedistance: 1000,
                 type: 'scatter'
             };
             let enrollTrace = {
@@ -101,13 +101,13 @@ function EnrollmentTab(button, content) {
                 mode: 'lines',
                 name: django.gettext('Enrollments'),
                 line: {
-                    // shape: 'hv',
                     color: '#8BB22A',
-                    smoothing: 0.25,
-                    shape: 'spline',
                 },
-                yaxis: 'y2', 
-                type: 'scatter'
+                yaxis: 'y2',
+                type: 'bar',
+                marker: {
+                    color: '#8BB22A',
+                },
             };
             let unenrollTrace = {
                 x: response.dates_unenroll.map(dataFixFunction),
@@ -118,13 +118,14 @@ function EnrollmentTab(button, content) {
                 line: {
                     // shape: 'hv',
                     color: '#CC4630',
-                    smoothing: 0.25,
-                    shape: 'spline',
                 },
-                type: 'scatter'
+                type: 'bar',
+                marker: {
+                    color: '#CC4630',
+                },
             };
             let layout = {
-                hovermode:'closest',
+                hovermode: 'closest',
                 xaxis: {
                     type: "date",
                     margin: {t: 10}
