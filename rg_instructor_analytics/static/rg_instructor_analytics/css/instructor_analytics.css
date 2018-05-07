@@ -233,7 +233,7 @@
 .problem p {
     font-size: 13px;
     color: #3f3f3f;
-    margin-bottom: 16px;
+    margin-bottom: 5px;
     display: inline-block;
 }
 .dropdown-content.show {
@@ -487,10 +487,11 @@
     background: #c14f84;
 }
 .plot-name {
-    flex: 0 0 70px;
+    flex: 0 0 140px;
     overflow: hidden;
     padding: 5px;
     text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .plot-value {
     flex: 0 0 50px;
@@ -783,8 +784,8 @@
 
 body .xmodule_display.xmodule_CapaModule div.problem ul {
     margin: 16px 0;
-
-.idash-section.active-section .disc-list {
+}
+body .disc-list {
     list-style: disc;
     padding-left: 40px;
 }
@@ -799,3 +800,7 @@ body .xmodule_display.xmodule_CapaModule div.problem ul {
     transform: translate(-7%, 0);
 
 }
+.problem-action-buttons-wrapper {
+    display: none;
+}
+
