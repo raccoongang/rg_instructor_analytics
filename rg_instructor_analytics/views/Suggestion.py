@@ -51,8 +51,6 @@ class BaseSuggestion(object):
         :param description: description, that shown to a user.
         :param item_id: id of the course item.
         """
-        location = copy.deepcopy(self.suggestion_source)
-
         self.suggestion.append({
             'description': description,
             'location': self.suggestion_source(item_id),
@@ -134,19 +132,11 @@ class ProblemSuggestion(BaseSuggestion):
     Suggestion generator, based on the problem tab.
     """
 
-    suggestion_source = {
-        'value': 'problems',
-
-    }
-
     def suggestion_source(self, item_id):
         return {
             'value': 'problems',
             'child': {
-                'value': 'section',
-                'child': {
-                    'value': item_id
-                }
+                'value': item_id,
             }
 
         }
@@ -157,14 +147,12 @@ class ProblemSuggestion(BaseSuggestion):
         """
         problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(course_key)
         problem_stat['success'] = map(
-            lambda (grade, attempts): attempts and attempts / grade,
+            lambda (grade, attempts): attempts and grade/attempts,
             izip(problem_stat['correct_answer'], problem_stat['attempts'])
         )
 
-        problems = np.array([
-            problem_stat['success'][i] for i in range(len(problem_stat['success']))
-            if problem_stat['success'][i] != 0
-        ])
+        problems = np.array(problem_stat['success'])
+        problems = problems[np.nonzero(problems)]
         threshold = problems.mean() - problems.std()
 
         description = 'Take a look at `{}`: there is to big amount of the attempts and to small value of the mean grade'
