@@ -77,10 +77,10 @@ class EnrollmentStatisticView(AccessMixin, View):
             if count == 0:
                 return
 
-            yestarday = date - timedelta(1)
-            if yestarday >= from_date and not (len(dates_list) > 0 and dates_list[-1] == yestarday):
+            yesterday = date - timedelta(1)
+            if yesterday >= from_date and not (len(dates_list) > 0 and dates_list[-1] == yesterday):
                 counts_list.append(0)
-                dates_list.append(yestarday)
+                dates_list.append(yesterday)
 
             if len(dates_list) > 0 and dates_list[-1] == date:
                 counts_list[-1] = count
