@@ -101,10 +101,13 @@ function EnrollmentTab(button, content) {
                 mode: 'lines',
                 name: django.gettext('Enrollments'),
                 line: {
+                    // shape: 'hv',
                     color: '#8BB22A',
+                    smoothing: 0.25,
+                    shape: 'spline',
                 },
                 yaxis: 'y2', 
-                type: 'bar'
+                type: 'scatter'
             };
             let unenrollTrace = {
                 x: response.dates_unenroll.map(dataFixFunction),
@@ -113,9 +116,12 @@ function EnrollmentTab(button, content) {
                 name: django.gettext('Unenrollments'),
                 yaxis: 'y2',
                 line: {
+                    // shape: 'hv',
                     color: '#CC4630',
+                    smoothing: 0.25,
+                    shape: 'spline',
                 },
-                type: 'bar'
+                type: 'scatter'
             };
             let layout = {
                 hovermode:'closest',
