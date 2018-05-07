@@ -79,6 +79,7 @@ function ProblemTab(button, content) {
 
             $homework.html(bars);
 
+            $homework.unbind( "click" );
             $homework.on('click', function (e) {
                 $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
                 if ($(e.target).closest('li').data()) {
