@@ -116,7 +116,6 @@ function EnrollmentTab(button, content) {
                 name: django.gettext('Unenrollments'),
                 yaxis: 'y2',
                 line: {
-                    // shape: 'hv',
                     color: '#CC4630',
                 },
                 type: 'bar',
