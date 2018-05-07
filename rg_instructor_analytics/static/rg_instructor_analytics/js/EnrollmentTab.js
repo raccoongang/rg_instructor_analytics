@@ -73,53 +73,58 @@ function EnrollmentTab(button, content) {
         };
 
         function onSuccess(response) {
-            var x = response.dates.map(function (x) {
+            function dataFixFunction(x) {
                 var result = new Date(x);
                 result.setHours(0);
                 result.setMinutes(0);
                 return result;
-            });
-            var totalTrace = {
-                x: x,
-                y: response.total,
+            }
+
+            let totalTrace = {
+                x: response.dates_total.map(dataFixFunction),
+                y: response.counts_total,
                 mode: 'lines',
                 name: django.gettext('Total'),
                 line: {
                     color: '#70A3FF',
-                    width: 2.3,
-                    smoothing: 1.25
+                    width: 4,
+                    shape: 'hv',
                 },
-                hovermode:'closest',
-                hoverdistance:1000,
-                spikedistance:1000,
+                hovermode: 'closest',
+                hoverdistance: 1000,
+                spikedistance: 1000,
                 type: 'scatter'
             };
-            var enrollTrace = {
-                x: x,
-                y: response.enroll,
+            let enrollTrace = {
+                x: response.dates_enroll.map(dataFixFunction),
+                y: response.counts_enroll,
                 mode: 'lines',
                 name: django.gettext('Enrollments'),
                 line: {
-                    shape: 'hv',
                     color: '#8BB22A',
                 },
-                yaxis: 'y2', 
-                type: 'scatter'
+                yaxis: 'y2',
+                type: 'bar',
+                marker: {
+                    color: '#8BB22A',
+                },
             };
-            var unenrollTrace = {
-                x: x,
-                y: response.unenroll,
+            let unenrollTrace = {
+                x: response.dates_unenroll.map(dataFixFunction),
+                y: response.counts_unenroll,
                 mode: 'lines',
                 name: django.gettext('Unenrollments'),
                 yaxis: 'y2',
                 line: {
-                    shape: 'hv',
                     color: '#CC4630',
                 },
-                type: 'scatter'
+                type: 'bar',
+                marker: {
+                    color: '#CC4630',
+                },
             };
-            var layout = {
-                hovermode:'closest',
+            let layout = {
+                hovermode: 'closest',
                 xaxis: {
                     type: "date",
                     margin: {t: 10}
@@ -133,7 +138,7 @@ function EnrollmentTab(button, content) {
                 },
                 showlegend: false,
             };
-            var data = [unenrollTrace, enrollTrace, totalTrace];
+            let data = [unenrollTrace, enrollTrace, totalTrace];
             
             Plotly.newPlot('enrollment-stats-plot', data, layout, {
                 displayModeBar: false,

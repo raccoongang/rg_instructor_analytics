@@ -1,7 +1,7 @@
 """
 Module for enrollment subtab.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.http.response import JsonResponse
@@ -9,7 +9,6 @@ from django.views.generic import View
 
 from rg_instructor_analytics.models import EnrollmentTabCache
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
-
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
 CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)
@@ -65,23 +64,51 @@ class EnrollmentStatisticView(AccessMixin, View):
 
         previous_info = EnrollmentStatisticView.get_state_before(course_key, from_date)
 
-        dates = [from_date]
+        dates_total = [from_date]
         counts_total = [previous_info['total']]
-        counts_enroll = [0]
-        counts_unenroll = [0]
+
+        dates_enroll = []
+        counts_enroll = []
+
+        dates_unenroll = []
+        counts_unenroll = []
+
+        def insert_new_stat_item(count, date, counts_list, dates_list):
+            if count == 0:
+                return
+
+            yesterday = date - timedelta(1)
+            if yesterday >= from_date and not (len(dates_list) > 0 and dates_list[-1] == yesterday):
+                counts_list.append(0)
+                dates_list.append(yesterday)
+
+            if len(dates_list) > 0 and dates_list[-1] == date:
+                counts_list[-1] = count
+            else:
+                counts_list.append(count)
+                dates_list.append(date)
+
+            tomorrow = date + timedelta(1)
+            if tomorrow <= to_date:
+                counts_list.append(0)
+                dates_list.append(tomorrow)
 
         for e in EnrollmentStatisticView.get_state_in_period(course_key, from_date, to_date):
-            dates.append(e['created'])
+            dates_total.append(e['created'])
             counts_total.append(e['total'])
-            counts_enroll.append(e['enroll'])
-            counts_unenroll.append(e['unenroll'])
 
-        dates.append(to_date)
+            insert_new_stat_item(e['enroll'], e['created'], counts_enroll, dates_enroll)
+
+            insert_new_stat_item(e['unenroll'], e['created'], counts_unenroll, dates_unenroll)
+
+        dates_total.append(to_date)
         counts_total.append(counts_total[-1])
-        counts_enroll.append(0)
-        counts_unenroll.append(0)
 
-        return {'dates': dates, 'total': counts_total, 'enroll': counts_enroll, 'unenroll': counts_unenroll, }
+        return {
+            'dates_total': dates_total, 'counts_total': counts_total,
+            'dates_enroll': dates_enroll, 'counts_enroll': counts_enroll,
+            'dates_unenroll': dates_unenroll, 'counts_unenroll': counts_unenroll,
+        }
 
     def process(self, request, **kwargs):
         """
