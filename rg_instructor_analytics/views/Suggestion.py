@@ -1,13 +1,14 @@
 """
 Module for the suggestion's tab logic.
 """
-from abc import ABCMeta, abstractmethod
+import copy
 from itertools import izip
 
-from course_modes.models import CourseMode
-from django.views.generic import View
 import numpy as np
+from abc import ABCMeta, abstractmethod
+from django.views.generic import View
 
+from course_modes.models import CourseMode
 from django_comment_client.utils import JsonResponse
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
@@ -28,6 +29,21 @@ class BaseSuggestion(object):
         super(BaseSuggestion, self).__init__()
         self.suggestion = []
 
+    @abstractmethod
+    def suggestion_source(self, item_id):
+        """
+        Return Linked list structure, where head contains tab name and tail point to some position of the tab.
+
+        I.E.:
+            {
+                'value': 'parent',
+                'child': {
+                    'value': child_id
+                }
+            }
+        """
+        pass
+
     def add_suggestion_item(self, description, item_id):
         """
         Add new suggestion item in to suggestion list.
@@ -35,9 +51,11 @@ class BaseSuggestion(object):
         :param description: description, that shown to a user.
         :param item_id: id of the course item.
         """
+        location = copy.deepcopy(self.suggestion_source)
+
         self.suggestion.append({
             'description': description,
-            'item_id': item_id
+            'location': self.suggestion_source(item_id),
         })
 
     def get_suggestion_list(self, course_key):
@@ -66,6 +84,14 @@ class FunnelSuggestion(BaseSuggestion):
     """
     Suggestion generator, based on the funnel tab.
     """
+
+    def suggestion_source(self, item_id):
+        return {
+            'value': 'funnel',
+            'child': {
+                'value': item_id
+            }
+        }
 
     def filter_funnel(self, funnel, conditions):
         """
@@ -107,6 +133,23 @@ class ProblemSuggestion(BaseSuggestion):
     """
     Suggestion generator, based on the problem tab.
     """
+
+    suggestion_source = {
+        'value': 'problems',
+
+    }
+
+    def suggestion_source(self, item_id):
+        return {
+            'value': 'problems',
+            'child': {
+                'value': 'section',
+                'child': {
+                    'value': item_id
+                }
+            }
+
+        }
 
     def generate_suggestion(self, course_key):
         """

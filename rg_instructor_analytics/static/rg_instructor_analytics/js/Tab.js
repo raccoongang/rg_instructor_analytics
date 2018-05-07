@@ -9,6 +9,7 @@ function Tab(button, content) {
     this.button = button;
     this.content = content;
     this.tabHolder = undefined;
+    this.locationToOpen = undefined;
     /**
      * Called for mark this tab active and show content.
      * @param isActive
@@ -32,5 +33,13 @@ function Tab(button, content) {
      */
     this.loadTabData = function () {
         throw new Error("missing implementation")
+    };
+
+
+    /**
+     * Called for navigate to the content inside tab.
+     */
+    this.openLocation = (location) => {
+        this.locationToOpen = location
     }
 }

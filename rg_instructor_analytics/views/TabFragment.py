@@ -45,6 +45,7 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
         fragment = Fragment(html)
         fragment.add_javascript_url(JS_URL + 'Tab.js')
+        fragment.add_javascript_url(JS_URL + 'TabHolder.js')
         fragment.add_javascript_url(JS_URL + 'CohortTab.js')
         fragment.add_javascript_url(JS_URL + 'EnrollmentTab.js')
         fragment.add_javascript_url(JS_URL + 'GradebookTab.js')

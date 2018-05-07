@@ -2,30 +2,31 @@ function SuggestionTab(button, content) {
     'use strict';
     const suggestionTab = new Tab(button, content);
 
-    function updateSuggestion() {
-        function onSuggestionLoad(response) {
+    suggestionTab.loadTabData = () => {
+        let onSuggestionLoad =  (response) => {
             const suggestionContent = suggestionTab.content.find('#suggestion-content');
             suggestionContent[0].innerHTML = response.suggestion.map(renderSuggestion).join('\n');
-            suggestionContent.find('.go-to-item').click((e)=>{
-                const itemID = e.target.dataset.item_id
+            suggestionContent.find('.go-to-item').click((e) => {
+                const location = JSON.parse(e.target.dataset.location);
+                suggestionTab.tabHolder.openLocation(location);
             })
-        }
+        };
 
-        function renderSuggestion(suggestion) {
+        let renderSuggestion = (suggestion) => {
             return (
                 `<div class="suggestion-item" ">
                     <div class="desctiption">
                         ${suggestion.description}
                     </div>
-                    <button class="go-to-item" data-item_id="${suggestion.item_id}">Go to item</button>
+                    <button class="go-to-item" data-location='${JSON.stringify(suggestion.location)}'>Go to item</button>
                 </div>`
             )
-        }
+        };
 
 
-        function onSuggestionLoadError() {
+        let onSuggestionLoadError = () => {
             alert("Can not load statistic for select course");
-        }
+        };
 
         $.ajax({
             traditional: true,
@@ -36,9 +37,7 @@ function SuggestionTab(button, content) {
             data: {intent: 'get_norm_list'},
             dataType: 'json'
         });
-    }
-
-    suggestionTab.loadTabData = updateSuggestion;
+    };
 
     return suggestionTab;
 }
