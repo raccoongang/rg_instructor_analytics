@@ -19,7 +19,7 @@ function CohortTab(button, content) {
         let request = {
             users_ids: ids,
             subject: $('#email-subject').val(),
-            body: $('#email-body').froalaEditor('html.get'),
+            body: $('.richText-editor').html(),
         };
 
         $.ajax({
