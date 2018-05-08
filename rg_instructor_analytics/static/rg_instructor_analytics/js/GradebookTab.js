@@ -140,7 +140,7 @@ function GradebookTab(button, content) {
                 marker:{
                     color: colorArray
                 },
-                width: 0.6
+                width: 0.6,
             };
             var data = [stat];
 
