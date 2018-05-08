@@ -1,14 +1,13 @@
 """
 Module for the suggestion's tab logic.
 """
-import copy
+from abc import ABCMeta, abstractmethod
 from itertools import izip
 
-import numpy as np
-from abc import ABCMeta, abstractmethod
-from django.views.generic import View
-
 from course_modes.models import CourseMode
+from django.views.generic import View
+import numpy as np
+
 from django_comment_client.utils import JsonResponse
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
@@ -84,6 +83,9 @@ class FunnelSuggestion(BaseSuggestion):
     """
 
     def suggestion_source(self, item_id):
+        """
+        Implement parent method.
+        """
         return {
             'value': 'funnel',
             'child': {
@@ -133,6 +135,9 @@ class ProblemSuggestion(BaseSuggestion):
     """
 
     def suggestion_source(self, item_id):
+        """
+        Implement parent method.
+        """
         return {
             'value': 'problems',
             'child': {
@@ -147,7 +152,7 @@ class ProblemSuggestion(BaseSuggestion):
         """
         problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(course_key)
         problem_stat['success'] = map(
-            lambda (grade, attempts): attempts and grade/attempts,
+            lambda (grade, attempts): attempts and grade / attempts,
             izip(problem_stat['correct_answer'], problem_stat['attempts'])
         )
 

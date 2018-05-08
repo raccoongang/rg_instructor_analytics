@@ -10,7 +10,6 @@ from django.views.generic import View
 from rg_instructor_analytics.models import EnrollmentTabCache
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 
-from student.models import CourseEnrollment
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
 CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)
 
