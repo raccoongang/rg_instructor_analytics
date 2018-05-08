@@ -2,16 +2,28 @@ function FunnelTab(button, content) {
     'use strict';
     var funnelTab = new Tab(button, content);
     funnelTab.courseStructureView = content.find('#course-structure');
+    
+    function openLocation() {
+        let items = [funnelTab.viewContent.find(`*[data-edxid="${funnelTab.locationToOpen.value}"]`)];
+        while (!items.slice(-1)[0].hasClass('funnel-item-0')){
+            items.push(items.slice(-1)[0].parent())
+        }
+        items.map(el => el.click());
+        funnelTab.locationToOpen = undefined;
+    }
 
     function updateFunnel() {
         function onSuccess(response) {
             console.log(response);
             funnelTab.courseStructure = response.courses_structure;
 
-            const viewContent = funnelTab.courseStructureView.find('.content');
-            viewContent.empty();
-            viewContent.append(generateFunnel(funnelTab.courseStructure));
+            funnelTab.viewContent = funnelTab.courseStructureView.find('.content');
+            funnelTab.viewContent.empty();
+            funnelTab.viewContent.append(generateFunnel(funnelTab.courseStructure));
             $('.funnel-item-0').on('click',(e)=> $(e.target).closest('.funnel-item').toggleClass('active'));
+
+            if(funnelTab.locationToOpen) openLocation()
+
         }
 
         function generateFunnel(data) {
@@ -24,7 +36,7 @@ function FunnelTab(button, content) {
             const stuck = item.student_count;
             const out = item.student_count_out;
             const className = `funnel-item funnel-item-${item.level}`;
-            return `<div class="${className}">
+            return `<div class="${className}" data-edxid = '${item.id}'>
                         <div class="funnel-item-content">
                             <span class="funnel-item-incoming">${incoming}</span>
                             <span class="funnel-item-outgoing">${out}</span>

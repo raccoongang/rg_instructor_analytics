@@ -68,7 +68,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         """
         academic_performance = self.get_academic_performance(course_key)
         course = get_course_by_id(course_key, depth=4)
-        stat = {'correct_answer': [], 'attempts': [], 'problems': [], 'names': []}
+        stat = {'correct_answer': [], 'attempts': [], 'problems': [], 'names': [], 'subsection_id': []}
         hw_number = 0
 
         for subsection in chain.from_iterable(section.get_children() for section in course.get_children()):
@@ -79,6 +79,8 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
             stat['attempts'].append(0)
             stat['problems'].append([])
             stat['names'].append(subsection.display_name)
+            stat['subsection_id'].append(subsection.location.to_deprecated_string())
+
             problems_in_hw = 0
 
             for child in chain.from_iterable(unit.get_children() for unit in subsection.get_children()):

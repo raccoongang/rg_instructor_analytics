@@ -1,42 +1,31 @@
 $(function() {
     'use strict';
-    var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
+    const CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
 
-    var tabList = [];
-
-    function toggleToTab(tab) {
-        tabList.forEach(function(t) {
-            t.setActive(t === tab);
-        });
-    }
-
-    $(function() {
-        var $content = $('.' + CSS_INSTRUCTOR_CONTENT);
-        tabList = [
-            EnrollmentTab(
-                $content.find('#enrollment-stats-btn'),
-                $content.find('#section-enrollment-stats')),
-            ProblemTab(
-                $content.find('#problems-btn'),
-                $content.find('#section-problem')),
-            GradebookTab(
-                $content.find('#gradebook-btn'),
-                $content.find('#section-gradebook')),
-            CohortTab(
-                $content.find('#cohort-btn'),
-                $content.find('#section-cohort')),
-            FunnelTab(
-                $content.find('#funnel-btn'),
-                $content.find('#section-funnel'))
-        ];
-        tabList.forEach(function (tab) {
-            tab.button.click(function () {
-                toggleToTab(tab);
-            });
-        });
-
-        toggleToTab(tabList[0]);
-    });
+    const $content = $('.' + CSS_INSTRUCTOR_CONTENT);
+    let tabs = {
+        enrollment: EnrollmentTab(
+            $content.find('#enrollment-stats-btn'),
+            $content.find('#section-enrollment-stats')
+        ),
+        problems: ProblemTab(
+            $content.find('#problems-btn'),
+            $content.find('#section-problem')),
+        gradebook: GradebookTab(
+            $content.find('#gradebook-btn'),
+            $content.find('#section-gradebook')),
+        cohort: CohortTab(
+            $content.find('#cohort-btn'),
+            $content.find('#section-cohort')),
+        funnel: FunnelTab(
+            $content.find('#funnel-btn'),
+            $content.find('#section-funnel')),
+        suggestion: SuggestionTab(
+            $content.find('#suggestion-btn'),
+            $content.find('#section-suggestion'))
+    };
+    const tabHolder = new TabHolder(tabs);
+    tabHolder.toggleToTab('enrollment');
 
     window.setup_debug = function (element_id, edit_link, staff_context) {
         // stub function.

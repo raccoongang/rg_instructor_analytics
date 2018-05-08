@@ -7,6 +7,11 @@ function ProblemTab(button, content) {
     var problemTab = new Tab(button, content);
     var problemDetail = problemTab.content.find("#problem-body");
 
+
+    function openLocation(){
+        problemTab.content.find(`*[data-edxid="${problemTab.locationToOpen.value}"]`).click();
+        problemTab.locationToOpen = undefined;
+    }
     /**
     * function for display general plot with homework`s stat
     */
@@ -15,6 +20,7 @@ function ProblemTab(button, content) {
             let maxAttempts = Math.max(...response.attempts);
             let countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
             let correctAnswer = [...response.correct_answer];
+            const subsectionId = response.subsection_id;
             let yAxis = [...response.names];
             let xAxisRight = ['0', '50%', '100%'];
             let $homework = $('#problem-homeworks-stats-plot');
@@ -34,6 +40,7 @@ function ProblemTab(button, content) {
                             class="plot-bar-vert"
                             style="width: ${(100 - yAxis.length) / yAxis.length}%; height: ${barHeight}"
                             data-attribute="${index}"
+                            data-edxid="${subsectionId[index]}"
                         >
                             <div class="plot-bar-attempts" style="height: ${attempts}%">
                                 <span class="plot-bar-value">${response.attempts[index].toFixed(1)}</span>
@@ -99,6 +106,7 @@ function ProblemTab(button, content) {
                     $('.hw-xaxis').removeClass('hover');
                 });
             }
+            if(problemTab.locationToOpen) openLocation()
         }
 
         function onError() {
@@ -165,20 +173,20 @@ function ProblemTab(button, content) {
             let axis = '';
             yAxis.forEach(item=>{
                 axis += `<li style="width: ${(100 - yAxis.length) / yAxis.length}%">${item}</li>`;
-            })
+            });
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
             // build x axis
             axis = '';
             xAxis.forEach(item=>{
                 axis += `<li><div>${item.toFixed(1)}</div></li>`
-            })
+            });
             axis = `<ul class="y-axis-l">${axis}</ul>`
             bars += axis;
             
             $('#problems-stats-plot').html(bars);
 
-
+            $('#problems-stats-plot').off('click');
             $('#problems-stats-plot').on('click', function (e) {
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
