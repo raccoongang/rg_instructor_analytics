@@ -89,7 +89,7 @@ class FunnelSuggestion(BaseSuggestion):
         return {
             'value': 'funnel',
             'child': {
-                'value': item_id
+                'value': item_id,
             }
         }
 

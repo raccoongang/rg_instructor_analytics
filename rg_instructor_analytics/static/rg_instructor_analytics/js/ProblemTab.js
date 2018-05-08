@@ -156,7 +156,6 @@ function ProblemTab(button, content) {
                         <li class="plot-bar-vertical"
                             style="width: ${(100 - yAxis.length) / yAxis.length}%; height: ${barHeight}"
                             data-attribute="${index}"
-                            "
                         >
                             <div class="correct-bar" style="height:${correctBar/2}%">
                                 <span>${correct[index]}</span>

@@ -14,7 +14,7 @@ function SuggestionTab(button, content) {
 
         let renderSuggestion = (suggestion) => {
             return (
-                `<div class="suggestion-item" ">
+                `<div class="suggestion-item">
                     <div class="desctiption">
                         ${suggestion.description}
                     </div>
@@ -31,7 +31,7 @@ function SuggestionTab(button, content) {
         $.ajax({
             traditional: true,
             type: 'POST',
-            url: 'api/suggestion/',
+            url: 'api/suggestion/',  // TODO remove hardcore
             success: onSuggestionLoad,
             error: onSuggestionLoadError,
             data: {intent: 'get_norm_list'},

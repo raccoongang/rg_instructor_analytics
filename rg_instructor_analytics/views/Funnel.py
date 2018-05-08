@@ -47,6 +47,7 @@ class GradeFunnelView(AccessMixin, View):
         """
         Return query set for select given block type for given course.
         """
+        # TODO use preaggregation
         modified_filter = RawSQL(
             "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
