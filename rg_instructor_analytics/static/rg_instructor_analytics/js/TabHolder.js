@@ -5,6 +5,9 @@ function TabHolder(tabs, course) {
     this.original_ajax = $.ajax;
 
     $.ajax = (...args) => {
+        if(args[0].data === undefined){
+            args[0].data = {};
+        }
         args[0].data.course_id = this.course;
         return  this.original_ajax(...args);
     };
