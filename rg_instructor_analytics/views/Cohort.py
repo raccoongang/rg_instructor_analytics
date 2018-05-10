@@ -143,7 +143,7 @@ class CohortSendMessage(AccessMixin, View):
         """
         Process post request.
         """
-        users_ids_list =[int(id) for id in request.POST['users_ids'].split(',') if id != '']
+        users_ids_list = [int(id) for id in request.POST['users_ids'].split(',') if id != '']
         users_emails = [
             str(email) for email in User.objects.filter(id__in=users_ids_list).values_list('email', flat=True)
         ]
