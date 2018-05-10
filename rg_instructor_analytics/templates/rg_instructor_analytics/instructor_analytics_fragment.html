@@ -84,8 +84,12 @@
 
                         <select id="select_course">
 
-                            %for course_string_id in available_courses:
-                                <option value="${course_string_id}">${course_string_id}</option>
+                            %for course_info in available_courses:
+                                <option
+                                        value="${course_info['course_id']}"
+                                        ${(course_info['is_current'] and 'selected' or '')}>
+                                    ${course_info['course_name']}
+                                </option>
                             %endfor
 
                         </select>

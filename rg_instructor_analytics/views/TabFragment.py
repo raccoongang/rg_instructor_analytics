@@ -1,6 +1,7 @@
 """
 Module for tab fragment.
 """
+import json
 from time import mktime
 
 from django.conf import settings
@@ -38,10 +39,15 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
 
     def get_avalibel_courses(self, user):
         avalibel_courses = CourseAccessRole.objects.filter(user=user, role__in=['instructor', 'staff'])
+        exist_courses_id = []
         result = []
         for record in avalibel_courses:
             try:
-                result.append(get_course_by_id(record.course_id, depth=0))
+                course = get_course_by_id(record.course_id, depth=0)
+                course_id = str(course.id)
+                if course_id not in exist_courses_id:
+                    result.append(course)
+                    exist_courses_id.append(course_id)
             except Http404:
                 continue
         return result
@@ -51,14 +57,24 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         Render tab fragment.
         """
         course = kwargs['course']
-        available_courses = self.get_avalibel_courses(request.user)
-        # import ipdb;ipdb.set_trace()
-        print(available_courses)
+        available_courses = [
+            {
+                'course_id': str(c.id),
+                'course_name': str(c.display_name),
+                'is_current': course == c,
+            }
+            for c in self.get_avalibel_courses(request.user)
+        ]
+
+        enroll_info = {
+            str(c.id): self.get_enroll_info(c)
+            for c in self.get_avalibel_courses(request.user)
+        }
 
         context = {
             'course': course,
-            'enroll_info': self.get_enroll_info(course),
-            'available_courses': [str(c.id) for c in available_courses]
+            'enroll_info': json.dumps(enroll_info),
+            'available_courses': available_courses
         }
 
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)

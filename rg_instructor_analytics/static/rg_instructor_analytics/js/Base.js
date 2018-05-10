@@ -3,6 +3,7 @@ $(function() {
     const CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
 
     const $content = $('.' + CSS_INSTRUCTOR_CONTENT);
+    const courseSelect = $content.find('#select_course');
     let tabs = {
         enrollment: EnrollmentTab(
             $content.find('#enrollment-stats-btn'),
@@ -24,8 +25,13 @@ $(function() {
             $content.find('#suggestion-btn'),
             $content.find('#section-suggestion'))
     };
-    const tabHolder = new TabHolder(tabs);
+
+    const tabHolder = new TabHolder(tabs, courseSelect.val());
     tabHolder.toggleToTab('enrollment');
+
+    courseSelect.change(e => {
+        tabHolder.selectCourse(e.target.value)
+    });
 
     window.setup_debug = function (element_id, edit_link, staff_context) {
         // stub function.
