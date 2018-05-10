@@ -24,6 +24,9 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
     """
 
     def get_enroll_info(self, course):
+        """
+        Return enroll_start and enroll_end for given course.
+        """
         enroll_start = course.enrollment_start
         if enroll_start is None:
             enroll_start = course.start
@@ -38,6 +41,9 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         }
 
     def get_avalibel_courses(self, user):
+        """
+        Return courses, available for the given user.
+        """
         avalibel_courses = CourseAccessRole.objects.filter(user=user, role__in=['instructor', 'staff'])
         exist_courses_id = []
         result = []
