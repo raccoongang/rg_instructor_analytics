@@ -79,6 +79,17 @@
                                 data-section="cohort">${_("Suggestion")}
                         </button>
                     </li>
+                    <li>
+
+
+                        <select id="select_course">
+
+                            %for course_string_id in available_courses:
+                                <option value="${course_string_id}">${course_string_id}</option>
+                            %endfor
+
+                        </select>
+                    </li>
                 </ul>
 
                 <section id="section-enrollment-stats" class="idash-section">
