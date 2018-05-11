@@ -118,7 +118,7 @@ class FunnelSuggestion(BaseSuggestion):
         def get_percent(total, put):
             return .0 if not (total and put) else float(put) / float(total)
 
-        subsections_percent = np.array([get_percent(u['student_count'], u['student_count_in']) for u in units])
+        subsections_percent = np.array([get_percent(u['student_count_in'], u['student_count']) for u in units])
 
         threshold = subsections_percent.mean() + subsections_percent.std()
 
