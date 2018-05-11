@@ -266,6 +266,12 @@
 .funnel-item-1.active .funnel-item-2 {
     display: flex;
 }
+.funnel-item-1 > .funnel-item-content > .funnel-item-name {
+    width: 310px;
+}
+.funnel-item-2 > .funnel-item-content > .funnel-item-name {
+    width: 280px;
+}
 .funnel-item-content {
     box-sizing: border-box;
     text-align: center;
@@ -803,4 +809,12 @@ body .disc-list {
 .problem-action-buttons-wrapper {
     display: none;
 }
-
+.instructoe-nav li:last-child {
+    float: right;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+}
+#select_course {
+    width: 200px;
+}
