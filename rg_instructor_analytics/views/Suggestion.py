@@ -4,10 +4,10 @@ Module for the suggestion's tab logic.
 from abc import ABCMeta, abstractmethod
 from itertools import izip
 
-from course_modes.models import CourseMode
 from django.views.generic import View
 import numpy as np
 
+from course_modes.models import CourseMode
 from django_comment_client.utils import JsonResponse
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
