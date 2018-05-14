@@ -117,6 +117,7 @@ class FunnelSuggestion(BaseSuggestion):
             return .0 if not (total and put) else float(put) / float(total)
 
         subsections_percent = np.array([get_percent(unit['student_count_in'], unit['student_count']) for unit in units])
+        # Get an array of elements, that represents a condition that passed to index operator.
         subsections_percent = subsections_percent[subsections_percent < 1.0]
 
         threshold = subsections_percent.mean() + subsections_percent.std()
