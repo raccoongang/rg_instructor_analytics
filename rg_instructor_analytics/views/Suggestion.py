@@ -93,16 +93,16 @@ class FunnelSuggestion(BaseSuggestion):
             }
         }
 
-    def filter_funnel(self, funnel, conditions):
+    def filter_funnel(self, funnel):
         """
-        Filter funnel according to the conditional(ref to some function, that accepts funnel item and return bool).
+        Filter funnel with level equal 2 and with non zero student on the section.
         """
         result = []
-        for i in funnel:
-            if conditions(i):
-                result.append(i)
-            if i.get('children'):
-                result += self.filter_funnel(i['children'], conditions)
+        for item in funnel:
+            if item['level'] == 2 and item['student_count_in'] > 0:
+                result.append(item)
+            if item.get('children'):
+                result += self.filter_funnel(item['children'])
         return result
 
     def generate_suggestion(self, course_key):
@@ -111,14 +111,12 @@ class FunnelSuggestion(BaseSuggestion):
         """
         funnel = GradeFunnelView()
         funnel.user_enrollments_ignored_types = [CourseMode.AUDIT]
-        units = list(self.filter_funnel(
-            funnel.get_funnel_info(course_key),
-            lambda item: item['level'] == 2 and item['student_count_in'] > 0))
+        units = list(self.filter_funnel(funnel.get_funnel_info(course_key)))
 
         def get_percent(total, put):
             return .0 if not (total and put) else float(put) / float(total)
 
-        subsections_percent = np.array([get_percent(u['student_count'], u['student_count_in']) for u in units])
+        subsections_percent = np.array([get_percent(unit['student_count_in'], unit['student_count']) for unit in units])
 
         threshold = subsections_percent.mean() + subsections_percent.std()
 
