@@ -99,7 +99,7 @@ class FunnelSuggestion(BaseSuggestion):
         """
         result = []
         for item in funnel:
-            if item['level'] == 2 and item['student_count_in'] > 0:
+            if item['level'] == 1 and item['student_count_in'] > 0:
                 result.append(item)
             if item.get('children'):
                 result += self.filter_funnel(item['children'])
@@ -117,13 +117,14 @@ class FunnelSuggestion(BaseSuggestion):
             return .0 if not (total and put) else float(put) / float(total)
 
         subsections_percent = np.array([get_percent(unit['student_count_in'], unit['student_count']) for unit in units])
+        subsections_percent = subsections_percent[subsections_percent < 1.0]
 
         threshold = subsections_percent.mean() + subsections_percent.std()
 
         description = 'Take a look at `{}`: the number of students that stuck there is {}% higher than average'
         for unit in units:
             percent = get_percent(unit['student_count_in'], unit['student_count'])
-            if unit['student_count_in'] > 0 and percent >= threshold:
+            if unit['student_count_in'] > 0 and threshold <= percent < 1.0:
                 self.add_suggestion_item(description.format(unit['name'], int(percent * 100.0)), unit['id'])
 
 
