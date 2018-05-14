@@ -15,7 +15,7 @@
 <div class="enroll-buttons-holder">
     <button id="date-btn">${_("Select period")}</button>
     <div id="date_dropdown" class="dropdown-content"
-        data-start=${section_data['enroll_start']} data-end=${section_data['enroll_end']}>
+        data-enroll='${section_data}'>
         <div>
             <label for=${_("from")}>From</label>
             <input type="text" id="from" name="from">

@@ -22,8 +22,8 @@ function EnrollmentTab(button, content) {
             fromDate.datepicker("option", "maxDate", getDate(this));
         });
 
-    var dateStart = periodDiv.attr('data-start');
-    var dateEnd = periodDiv.attr('data-end');
+    var dateStart = 0;
+    var dateEnd = 0;
 
     /**
      * Provide date from given datepicker
@@ -67,6 +67,7 @@ function EnrollmentTab(button, content) {
      * Send ajax to server side according selected date range and redraw plot
      */
     function updateEnrolls() {
+
         var date = {
             from: fromDate.datepicker("getDate").getTime() / 1000,
             to: toDate.datepicker("getDate").getTime() / 1000
@@ -161,24 +162,6 @@ function EnrollmentTab(button, content) {
         });
     }
 
-    var now = new Date();
-    if (dateEnd !== "null" && (dateEnd = new Date(parseFloat(dateEnd) * 1000)) < now) {
-        toDate.datepicker("setDate", dateEnd);
-        toDate.datepicker("option", "maxDate", dateEnd);
-    } else {
-        toDate.datepicker("setDate", now);
-        toDate.datepicker("option", "maxDate", now);
-    }
-
-    if (dateStart !== "null") {
-        dateStart = new Date(parseFloat(dateStart) * 1000);
-        fromDate.datepicker("option", "minDate", dateStart);
-    }
-
-    var defaultStart = new Date();
-    defaultStart.setMonth(defaultStart.getMonth() - 1);
-    fromDate.datepicker("setDate", dateStart && dateStart > defaultStart ? dateStart : defaultStart);
-
     selectDateBtn.click(function () {
         $(this).toggleClass('active');
         periodDiv.toggleClass('show');
@@ -213,10 +196,35 @@ function EnrollmentTab(button, content) {
         updateEnrolls();
     }
 
+    function loadTabData() {
+        let enrollInfo = JSON.parse(periodDiv.attr('data-enroll'))[enrollTab.tabHolder.course];
+        dateStart = enrollInfo.enroll_start;
+        dateEnd = enrollInfo.enroll_end;
 
-    enrollTab.loadTabData = updateEnrolls;
 
-    updateStatPeriod();
-    updateEnrolls();
+        var now = new Date();
+        if (dateEnd !== "null" && (dateEnd = new Date(parseFloat(dateEnd) * 1000)) < now) {
+            toDate.datepicker("setDate", dateEnd);
+            toDate.datepicker("option", "maxDate", dateEnd);
+        } else {
+            toDate.datepicker("setDate", now);
+            toDate.datepicker("option", "maxDate", now);
+        }
+
+        if (dateStart !== "null") {
+            dateStart = new Date(parseFloat(dateStart) * 1000);
+            fromDate.datepicker("option", "minDate", dateStart);
+        }
+
+        var defaultStart = new Date();
+        defaultStart.setMonth(defaultStart.getMonth() - 1);
+        fromDate.datepicker("setDate", dateStart && dateStart > defaultStart ? dateStart : defaultStart);
+        updateStatPeriod();
+        updateEnrolls()
+    }
+
+
+    enrollTab.loadTabData = loadTabData;
+
     return enrollTab;
 };
