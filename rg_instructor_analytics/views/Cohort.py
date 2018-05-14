@@ -143,9 +143,13 @@ class CohortSendMessage(AccessMixin, View):
         """
         Process post request.
         """
-        tasks.send_email_to_cohort(
+        users_ids_list = [int(id) for id in request.POST['users_ids'].split(',') if id != '']
+        users_emails = [
+            str(email) for email in User.objects.filter(id__in=users_ids_list).values_list('email', flat=True)
+        ]
+        tasks.send_email_to_cohort.delay(
             subject=request.POST['subject'],
             message=request.POST['body'],
-            students=User.objects.filter(id__in=request.POST['users_ids'].split(',')).values_list('email', flat=True)
+            students=users_emails
         )
         return JsonResponse({'status': 'ok'})
