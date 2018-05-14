@@ -37,7 +37,7 @@ class AccessMixin(object):
         """
         Preprocess request, check permission and select course.
         """
-        course_id = request.POST.get('course_id') or course_id
+        course_id = request.POST.get('course_id', course_id)
         try:
             course_key = CourseKey.from_string(course_id)
         except InvalidKeyError:
