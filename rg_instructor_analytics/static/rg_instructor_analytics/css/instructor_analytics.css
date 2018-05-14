@@ -809,7 +809,7 @@ body .disc-list {
 .problem-action-buttons-wrapper {
     display: none;
 }
-.instructoe-nav li:last-child {
+.instructor-nav li:last-child {
     float: right;
     height: 40px;
     display: inline-flex;
