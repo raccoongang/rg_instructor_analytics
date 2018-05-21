@@ -424,7 +424,11 @@ function OpetionQuestion(questionHtml, stringProblemID) {
         const selectRoot = this.questionHtml.find('select');
         const optionsItem = selectRoot.find('option');
         const id2ValueMap = {};
-        optionsItem.each(index => id2ValueMap[optionsItem[index].value] = optionsItem[index].text);
+        optionsItem.each(index => {
+            if (!optionsItem[index].value.endsWith('dummy_default')) {
+                id2ValueMap[optionsItem[index].value] = optionsItem[index].text
+            }
+        });
         return {
             type: 'select',
             questionID: selectRoot.attr('name').replace('input_', ''),
