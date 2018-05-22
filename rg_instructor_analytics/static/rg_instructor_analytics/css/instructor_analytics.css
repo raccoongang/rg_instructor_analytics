@@ -836,3 +836,12 @@ body .disc-list {
     margin-bottom: 20px;
     border-bottom: 1px solid #eee;
 }
+
+.suggestion-button {
+    margin: 8px 0px 8px auto;
+    display: block;
+}
+
+.suggestion-message {
+    text-align: justify;
+}
