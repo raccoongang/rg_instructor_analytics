@@ -425,8 +425,9 @@ function OpetionQuestion(questionHtml, stringProblemID) {
         const optionsItem = selectRoot.find('option');
         const id2ValueMap = {};
         optionsItem.each(index => {
-            if (!optionsItem[index].value.endsWith('dummy_default')) {
-                id2ValueMap[optionsItem[index].value] = optionsItem[index].text
+            let itemID = optionsItem[index].value
+            if (!itemID.endsWith('dummy_default')) {
+                id2ValueMap[itemID] = optionsItem[index].text
             }
         });
         return {
