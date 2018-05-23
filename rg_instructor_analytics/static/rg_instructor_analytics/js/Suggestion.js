@@ -5,9 +5,9 @@ function SuggestionTab(button, content) {
     suggestionTab.loadTabData = () => {
         let onSuggestionLoad =  (response) => {
             const suggestionContent = suggestionTab.content.find('#suggestion-content');
-            if(response.suggestion.length > 0) {
+            if (response.suggestion.length > 0) {
                 suggestionContent[0].innerHTML = response.suggestion.map(renderSuggestion).join('\n');
-            }else{
+            } else {
                 suggestionContent[0].innerHTML = '<div>No suggestions so far</div>'
             }
             suggestionContent.find('.go-to-item').click((e) => {
