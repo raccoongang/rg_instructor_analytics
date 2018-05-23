@@ -703,7 +703,7 @@
     align-items: center;
     box-sizing: border-box;
     padding: 0 3px;
-    max-width: 90%;
+    max-width: 50%;
 }
 #problems-stats-plot .plot-bar-vertical {
     cursor: pointer
@@ -739,6 +739,11 @@
 #problems-stats-plot .plot-bar-vertical span {
     display: none;
     color: #fff;
+    text-shadow: 2px 2px #000;
+    position: absolute;
+    top: 92px;
+    left: 50%;
+    transform: translate(-50%,0);
 }
 #problems-stats-plot .plot-bar-vertical:hover span {
     display: block;
