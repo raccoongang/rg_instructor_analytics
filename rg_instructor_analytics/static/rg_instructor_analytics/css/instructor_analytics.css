@@ -746,7 +746,7 @@
     transform: translate(-50%,0);
     z-index: 2;
 }
-#problems-stats-plot .plot-bar-vertical span:last-child {
+#problems-stats-plot .plot-bar-vertical .second-num {
     top: 291px;
 }
 #problems-stats-plot .plot-bar-vertical:hover span {
