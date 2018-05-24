@@ -6,12 +6,12 @@ from time import mktime
 
 from django.conf import settings
 from django.http import Http404
-from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from web_fragments.fragment import Fragment
 from web_fragments.views import FragmentView
 
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseAccessRole
 
