@@ -703,7 +703,7 @@
     align-items: center;
     box-sizing: border-box;
     padding: 0 3px;
-    max-width: 50%;
+    max-width: 40%;
 }
 #problems-stats-plot .plot-bar-vertical {
     cursor: pointer
@@ -744,6 +744,11 @@
     top: 92px;
     left: 50%;
     transform: translate(-50%,0);
+    z-index: 2;
+}
+#problems-stats-plot .plot-bar-vertical span:last-child {
+    top: 291px;
+
 }
 #problems-stats-plot .plot-bar-vertical:hover span {
     display: block;
