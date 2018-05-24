@@ -6,6 +6,7 @@ from time import mktime
 
 from django.conf import settings
 from django.http import Http404
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from web_fragments.fragment import Fragment
 from web_fragments.views import FragmentView
 
@@ -44,18 +45,28 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         """
         Return courses, available for the given user.
         """
-        avalibel_courses = CourseAccessRole.objects.filter(user=user, role__in=['instructor', 'staff'])
-        exist_courses_id = []
         result = []
-        for record in avalibel_courses:
-            try:
-                course = get_course_by_id(record.course_id, depth=0)
-                course_id = str(course.id)
-                if course_id not in exist_courses_id:
-                    result.append(course)
-                    exist_courses_id.append(course_id)
-            except Http404:
-                continue
+        # For staff user we need return all available courses on platform.
+        if user.is_staff:
+            available_courses = CourseOverview.objects.all()
+            for course in available_courses:
+                try:
+                    result.append(get_course_by_id(course.id, depth=0))
+                except Http404:
+                    continue
+        # Return courses, where user has permission as instructor of staff
+        else:
+            available_courses = CourseAccessRole.objects.filter(user=user, role__in=['instructor', 'staff'])
+            exist_courses_id = []
+            for record in available_courses:
+                try:
+                    course = get_course_by_id(record.course_id, depth=0)
+                    course_id = str(course.id)
+                    if course_id not in exist_courses_id:
+                        result.append(course)
+                        exist_courses_id.append(course_id)
+                except Http404:
+                    continue
         return result
 
     def process(self, request, **kwargs):
