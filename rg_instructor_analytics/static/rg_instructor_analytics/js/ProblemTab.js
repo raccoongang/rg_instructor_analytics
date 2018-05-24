@@ -161,7 +161,7 @@ function ProblemTab(button, content) {
                             <div class="correct-bar" style="height:${correctBar/2}%">
                                 
                             </div>
-                            <span>${Math.abs(incorrect[index])}</span>
+                            <span class="second-num">${Math.abs(incorrect[index])}</span>
                             <div class="incorrect-bar" style="height:${incorrectBar/2}%">
                                 
                             </div>
