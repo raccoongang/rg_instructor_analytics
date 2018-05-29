@@ -8,6 +8,8 @@ function CohortTab(button, content) {
     $('#email-body').richText();
 
     content.find('#cohort-send-email-btn').click(function () {
+        // FIXME used for prevent sending email to students, during presentation
+        return;
         let ids = '';
         $("input:checkbox[name=cohort-checkbox]:checked").each(function () {
             if (ids.length > 0) {

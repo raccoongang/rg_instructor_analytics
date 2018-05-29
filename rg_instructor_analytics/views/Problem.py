@@ -121,20 +121,20 @@ class ProblemsStatisticView(AccessMixin, View):
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in problems_ids]
         stats = (
             StudentModule.objects
-            .filter(module_state_key__in=problems)
+            .filter(module_state_key__in=problems, grade__isnull=False)
             .values('module_state_key')
             .annotate(grades=Sum('grade'))
             .annotate(max_grades=Sum('max_grade'))
-            .annotate(attempts=Sum(ProblemHomeWorkStatisticView.ATTEMPTS_REQUEST))
+            .annotate(attempts=Avg(ProblemHomeWorkStatisticView.ATTEMPTS_REQUEST))
             .values('module_state_key', 'grades', 'max_grades', 'attempts')
         )
 
-        problems_stat = [None] * len(stats)
+        problems_stat = [None] * len(problems_ids)
         for s in stats:
             problems_stat[problems_ids.index(s['module_state_key'])] = s
 
         def record(stat_item):
-            if not stat_item['attempts']:
+            if not stat_item or not stat_item['attempts']:
                 return 0, 0
             correct = int((float(stat_item['grades']) / float(stat_item['max_grades'] * stat_item['attempts'])) * 100)
             incorrect = 100 - correct
