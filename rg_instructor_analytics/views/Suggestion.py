@@ -160,7 +160,9 @@ class ProblemSuggestion(BaseSuggestion):
         problems = problems[np.nonzero(problems)]
         threshold = problems.mean() - problems.std()
 
-        description = 'Take a look at `{}`: there is to big amount of the attempts and to small value of the mean grade'
+        description = (
+            'Take a look at `{}`: there is too high avg attempts number and too low value of the mean success rate'
+        )
         for i in range(len(problem_stat['success'])):
             if problem_stat['success'][i] and problem_stat['success'][i] < threshold:
                 self.add_suggestion_item(
