@@ -16,6 +16,8 @@ url(
 ```python
 FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 
+FEATURES['ENABLE_RG_INSTRUCTOR_ANALYTICS'] = True
+
 INSTALLED_APPS += ('rg_instructor_analytics',)
 ```
 * Apply migration
