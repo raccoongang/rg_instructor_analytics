@@ -66,5 +66,3 @@ All tests could be run only in local.
 * Ensure that the source placed in one of the edx-platform subdirectory.
 * cd rg_instructor_analytics
 * sh ./test_tool/run_test.sh
-
-aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj aksdk asjdk asdjas dkjasdkj 
