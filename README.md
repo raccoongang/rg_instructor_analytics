@@ -58,7 +58,7 @@ sudo /edx/bin/supervisorctl restart edxapp:lms
 
 ## Microsites 
 
-for microsite configurations use this flag for enable tab: `ENABLE_RG_INSTRUCTOR_ANALYTICS`
+for microsite configurations use this flag for enable/disable tab: `ENABLE_RG_INSTRUCTOR_ANALYTICS`
 
 ## Unit tests
 All tests could be run only in local. 
