@@ -1,6 +1,7 @@
 """
 Module for tabs description.
 """
+from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.utils.translation import ugettext_noop
 
@@ -26,7 +27,10 @@ class InstructorAnalyticsDashboardTab(CourseTab):
         """
         Return true if the specified user has staff access.
         """
-        return bool(user and has_access(user, 'staff', course, course.id))
+        return bool(
+            user and has_access(user, 'staff', course, course.id) and 
+            settings.FEATURES.get('ENABLE_RG_INSTRUCTOR_ANALYTICS', False)
+        )
 
     def __init__(self, tab_dict):
         """
