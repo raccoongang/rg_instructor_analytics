@@ -1,11 +1,13 @@
 """
 Module for tabs description.
 """
+from django.conf import settings
 from django.core.files.storage import get_storage_class
 from django.utils.translation import ugettext_noop
 
 from courseware.access import has_access
 from courseware.tabs import CourseTab
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 
 class InstructorAnalyticsDashboardTab(CourseTab):
@@ -26,7 +28,14 @@ class InstructorAnalyticsDashboardTab(CourseTab):
         """
         Return true if the specified user has staff access.
         """
-        return bool(user and has_access(user, 'staff', course, course.id))
+        return bool(
+            user and
+            has_access(user, 'staff', course, course.id) and
+            configuration_helpers.get_value(
+                'ENABLE_RG_INSTRUCTOR_ANALYTICS',
+                settings.FEATURES.get('ENABLE_RG_INSTRUCTOR_ANALYTICS', False)
+            )
+        )
 
     def __init__(self, tab_dict):
         """
