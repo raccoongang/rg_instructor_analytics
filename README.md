@@ -18,7 +18,7 @@ FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 
 FEATURES['ENABLE_RG_INSTRUCTOR_ANALYTICS'] = True
 
-INSTALLED_APPS += ('rg_instructor_analytics',)
+INSTALLED_APPS += ('rg_instructor_analytics', 'web_fragments',)
 ```
 * Apply migration
 * Ensure that celerybeat is running
