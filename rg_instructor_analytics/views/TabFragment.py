@@ -2,6 +2,7 @@
 Module for tab fragment.
 """
 import json
+import sys
 from time import mktime
 
 from django.conf import settings
@@ -14,6 +15,9 @@ from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseAccessRole
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
 CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)
