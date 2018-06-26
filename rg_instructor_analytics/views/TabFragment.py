@@ -16,6 +16,7 @@ from openedx.core.djangoapps.content.course_overviews.models import CourseOvervi
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseAccessRole
 
+# Used for restore method `setdefaultencoding`. It unsafe, but we need it.
 reload(sys)
 sys.setdefaultencoding('utf8')
 
