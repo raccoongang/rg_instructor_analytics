@@ -18,7 +18,7 @@ FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 
 FEATURES['ENABLE_RG_INSTRUCTOR_ANALYTICS'] = True
 
-INSTALLED_APPS += ('rg_instructor_analytics',)
+INSTALLED_APPS += ('rg_instructor_analytics', 'web_fragments',)
 ```
 * Apply migration
 * Ensure that celerybeat is running
@@ -36,7 +36,29 @@ INSTALLED_APPS += ('rg_instructor_analytics',)
     * for json config:
 
     ```json
-    "RG_ANALYTICS_ENROLLMENT_STAT_UPDATE":{
+    "RG_ANALYTICS_ENROLLMENT_STAT_UPDATE": {
+        "minute": "*",
+        "hour": "*/6",
+        "day_of_week": "*",
+        "day_of_month": "*",
+        "month_of_year": "*"
+    }
+    ```
+* Set setting for grade cache update, for example:
+    * for common.py
+    ```python
+    RG_ANALYTICS_GRADE_STAT_UPDATE = {
+        'minute': '*',
+        'hour': '*/6',
+        'day_of_week': '*',
+        'day_of_month': '*',
+        'month_of_year': '*',
+    }
+    ```
+    * for json config:
+
+    ```json
+    "RG_ANALYTICS_GRADE_STAT_UPDATE": {
         "minute": "*",
         "hour": "*/6",
         "day_of_week": "*",
@@ -54,6 +76,13 @@ cd edx-platform
 python ./manage.py lms collectstatic --settings=$EDX_PLATFORM_SETTINGS --noinput
 exit
 sudo /edx/bin/supervisorctl restart edxapp:lms
+```
+
+##### After installation run next code in Django shell (warning this tasks can take time) 
+```python
+from rg_instructor_analytics.tasks import grade_collector_stat
+grade_collector_stat()
+enrollment_collector_date()
 ```
 
 ## Microsites 
