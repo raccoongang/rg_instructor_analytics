@@ -36,7 +36,7 @@ INSTALLED_APPS += ('rg_instructor_analytics', 'web_fragments',)
     * for json config:
 
     ```json
-    "RG_ANALYTICS_ENROLLMENT_STAT_UPDATE":{
+    "RG_ANALYTICS_ENROLLMENT_STAT_UPDATE": {
         "minute": "*",
         "hour": "*/6",
         "day_of_week": "*",
@@ -58,7 +58,7 @@ INSTALLED_APPS += ('rg_instructor_analytics', 'web_fragments',)
     * for json config:
 
     ```json
-    "RG_ANALYTICS_GRADE_STAT_UPDATE":{
+    "RG_ANALYTICS_GRADE_STAT_UPDATE": {
         "minute": "*",
         "hour": "*/6",
         "day_of_week": "*",
