@@ -16,8 +16,8 @@ from openedx.core.djangoapps.content.course_overviews.models import CourseOvervi
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseAccessRole
 
-# NOTE(flying-pi) Used for restore method `setdefaultencoding`. 
-# This method used to set flag PYTHONIOENCODING to utf8.
+# NOTE(flying-pi) reload(sys) us used for restore method `setdefaultencoding`,
+# which set flag PYTHONIOENCODING to utf8.
 reload(sys)
 sys.setdefaultencoding('utf8')
 
