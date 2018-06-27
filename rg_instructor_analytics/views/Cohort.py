@@ -111,6 +111,9 @@ class CohortView(AccessMixin, View):
             .filter(course_id=kwargs['course_key'])
             .values('student_id', 'student__username', 'total')
         )
+        # Return empty lost of the cohorts, when precollect statistic is empty.
+        if len(grade_stat) == 0:
+            return JsonResponse(data={'labels': [], 'values': [], 'cohorts': []})
         cohorts = self.generate_cohort_by_mean_and_dispersion(
             [
                 {
