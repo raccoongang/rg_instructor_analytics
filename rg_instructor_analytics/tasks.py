@@ -10,6 +10,7 @@ from celery.schedules import crontab
 from celery.task import periodic_task
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.db.models import F
@@ -183,7 +184,10 @@ def get_grade_summary(user_id, course):
     """
     Return the grade for the given student in the addressed course.
     """
-    return CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
+    try:
+        return CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
+    except PermissionDenied:
+        return None
 
 
 cron_grade_settings = getattr(
@@ -213,6 +217,8 @@ def grade_collector_stat():
         with modulestore().bulk_operations(course_key):
             for user in users:
                 grades = get_grade_summary(user, course)
+                if not grades:
+                    continue
                 exam_info = OrderedDict()
                 for grade in grades['section_breakdown']:
                     exam_info[grade['label']] = int(grade['percent'] * 100.0)
