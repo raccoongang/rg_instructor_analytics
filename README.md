@@ -81,6 +81,8 @@ sudo /edx/bin/supervisorctl restart edxapp:lms
 ##### After installation run next code in Django shell (warning this tasks can take time) 
 ```python
 from rg_instructor_analytics.tasks import grade_collector_stat
+from rg_instructor_analytics.tasks import enrollment_collector_date
+
 grade_collector_stat()
 enrollment_collector_date()
 ```
