@@ -7,7 +7,7 @@ import json
 import logging
 
 from celery.schedules import crontab
-from celery.task import periodic_task
+from celery.task import periodic_task, task
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
@@ -237,3 +237,12 @@ def grade_collector_stat():
             GradeStatistic.objects.update_or_create(**key_values)
 
         LastGradeStatUpdate(last_update=this_update_date).save()
+
+
+@task
+def run_common_static_collection():
+    """
+    Task for updating analytics data.
+    """
+    grade_collector_stat()
+    enrollment_collector_date()
