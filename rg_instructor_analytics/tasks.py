@@ -242,7 +242,7 @@ def grade_collector_stat():
 @task
 def run_common_static_collection():
     """
-    Task for the initial data collection.
+    Task for updating analytics data.
     """
     grade_collector_stat()
     enrollment_collector_date()
