@@ -35,8 +35,8 @@ class EnrollmentByStudent(Model):
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    student = IntegerField()
-    last_update = DateTimeField(db_index=True)
+    student = IntegerField(db_index=True)
+    last_update = DateTimeField(db_index=True, blank=True, null=True)
     state = BooleanField()
 
     class Meta:

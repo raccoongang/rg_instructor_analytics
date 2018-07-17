@@ -55,15 +55,6 @@ def send_email_to_cohort(subject, message, students):
     msg.send(fail_silently=False)
 
 
-cron_enroll_settings = getattr(
-    settings, 'RG_ANALYTICS_ENROLLMENT_STAT_UPDATE',
-    {
-        'hour': '*/6',
-    }
-)
-
-
-@periodic_task(run_every=crontab(**cron_enroll_settings))
 def enrollment_collector_date():
     """
     Task for update enrollment statistic.
