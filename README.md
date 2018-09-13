@@ -12,6 +12,7 @@ url(
         name='instructor_analytics_endpoint',
     ),
 ```
+> Note: url definition must be set *before* url with the name `course_tab_view`
 * Add in to the settings file (i.e. in `edx-platform/lms/envs/common.py`): 
 ```python
 FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
