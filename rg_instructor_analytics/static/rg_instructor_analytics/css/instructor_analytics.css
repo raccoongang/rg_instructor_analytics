@@ -851,6 +851,7 @@ body .disc-list {
 }
 .suggestion-item {
     margin-bottom: 40px;
+}
 
 .suggestion-button {
     margin: 8px 0px 8px auto;
@@ -859,4 +860,15 @@ body .disc-list {
 
 .suggestion-message {
     text-align: justify;
+}
+
+.send-email-message {
+    padding: 10px 0;
+    color: #3c3c3c;
+}
+.error-message, .validation-error-message {
+    color: red;
+}
+.success-message {
+    color: green;
 }
