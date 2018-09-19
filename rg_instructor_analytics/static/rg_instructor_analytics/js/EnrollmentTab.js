@@ -148,7 +148,7 @@ function EnrollmentTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select period");
+            alert("Can't load data for selected period!");
         }
 
         $.ajax({
