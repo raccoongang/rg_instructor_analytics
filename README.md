@@ -1,6 +1,28 @@
-# rg_instructor_analytics
+# RaccoonGang Instructor Analytics
+
+## Description
+
+This django application extends OpenEdx LMS staff functionality.
+It adds extra navigation `Instructor analytics` tab for instructors (next to `Instructor`).
+`Instructor analytics` tab includes following sections (sub-tabs):
+
+- Enrollment stats:
+
+> `enrollments`/`unenrollments` count given separately for each Course time-sliced by:
+> - arbitrary period;
+> - last week;
+> - last two weeks;
+> - last month;
+> - since course start;
+
+- Problems
+- Gradebook
+- Clusters
+- Progress Funnel
+- Suggestions
 
 ## Installation
+
 * Add `rg_instructor_analytics` and `web_fragments` to the INSTALLED_APPS (i.e. in `edx-platform/lms/envs/common.py`)
 * Add to lms url (i.e. in `edx-platform/lms/urls.py`): 
 ```python
@@ -92,7 +114,8 @@ enrollment_collector_date()
 for microsite configurations use this flag for enable/disable tab: `ENABLE_RG_INSTRUCTOR_ANALYTICS`
 
 ## Unit tests
-All tests could be run only in local. 
+All tests could be run only in local.
+
 ##### For run unit test follow the next steps:
 * Ensure that the source placed in one of the edx-platform subdirectory.
 * cd rg_instructor_analytics
