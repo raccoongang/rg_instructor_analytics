@@ -55,7 +55,7 @@ class TestEnrollmentStatisticView(TestCase):
     @patch('rg_instructor_analytics.views.has_access')
     @patch('rg_instructor_analytics.views.get_course_by_id')
     @patch('rg_instructor_analytics.views.CourseKey.from_string')
-    @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_statistic_per_day')
+    @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_daily_stats_for_course')
     def test_enroll_statistic_post_call(
         self,
         moc_get_statistic_per_day,
@@ -125,15 +125,15 @@ class TestEnrollmentStatisticView(TestCase):
         )
         self.assertEqual(response.status_code, 403)
 
-    @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_state_before')
-    @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_state_in_period')
+    @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_last_state')
+    @patch('rg_instructor_analytics.views.EnrollmentStatisticView.get_state_for_period')
     def test_get_statistic_per_day(self, mock_get_state_in_period, moc_get_state_before):
         """
         Verify collection of statistic per day.
         """
         moc_get_state_before.return_value = self.MOCK_PREVIOUS_ENROLL_STATE
         mock_get_state_in_period.return_value = self.MOCK_CURRENT_ENROLL_STATE
-        stats = EnrollmentStatisticView.get_statistic_per_day(self.MOCK_FROM_DATE, self.MOCK_TO_DATE, 'key')
+        stats = EnrollmentStatisticView.get_daily_stats_for_course(self.MOCK_FROM_DATE, self.MOCK_TO_DATE, 'key')
 
         self.assertEqual(stats, self.EXPECTED_ENROLL_STATISTIC)
 
@@ -147,19 +147,19 @@ class TestEnrollmentStatisticView(TestCase):
             {'is_active': False, 'count': 2},
         ]
         expect = (10, -2)
-        stats = EnrollmentStatisticView.get_state_before('key', '12345')
+        stats = EnrollmentStatisticView.get_last_state('key', '12345')
         self.assertEqual(stats, expect)
 
         mock_request_to_db_for_stats_before.return_value = [
             {'is_active': False, 'count': 2},
         ]
         expect = (0, -2)
-        stats = EnrollmentStatisticView.get_state_before('key', '12345')
+        stats = EnrollmentStatisticView.get_last_state('key', '12345')
         self.assertEqual(stats, expect)
 
         mock_request_to_db_for_stats_before.return_value = [
             {'is_active': True, 'count': 10},
         ]
         expect = (10, 0)
-        stats = EnrollmentStatisticView.get_state_before('key', '12345')
+        stats = EnrollmentStatisticView.get_last_state('key', '12345')
         self.assertEqual(stats, expect)
