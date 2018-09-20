@@ -8,10 +8,18 @@ function CohortTab(button, content) {
     $('#email-body').richText();
 
     content.find('#cohort-send-email-btn').click(function () {
-        // FIXME used for prevent sending email to students, during presentation
-        return;
-        let ids = '';
-        $("input:checkbox[name=cohort-checkbox]:checked").each(function () {
+
+        function isValid(data) {
+            return !!data.users_ids && !!data.subject && !!data.body
+        }
+
+        content.find('.send-email-message').addClass('hidden');
+        let $subject = content.find('#email-subject'),
+            $richTextEditor = content.find('.richText-editor'),
+            $cohortCheckbox = content.find("input:checkbox[name=cohort-checkbox]:checked"),
+            ids = '';
+
+        $cohortCheckbox.each(function () {
             if (ids.length > 0) {
                 ids += ',';
             }
@@ -20,16 +28,29 @@ function CohortTab(button, content) {
 
         let request = {
             users_ids: ids,
-            subject: $('#email-subject').val(),
-            body: $('.richText-editor').html(),
+            subject: $subject.val(),
+            body: $richTextEditor.html(),
         };
+
+        if (!isValid(request)) {
+            content.find('.send-email-message.validation-error-message').removeClass('hidden');
+            return;
+        }
 
         $.ajax({
             type: "POST",
             url: "api/cohort/send_email/",
             data: request,
-            success: () => console.log('Emails are sended'),
-            error: () => console.log('Email sending failed'),
+            success: () => {
+                content.find('.send-email-message.success-message').removeClass('hidden');
+                // clear fields
+                $subject.val('');
+                $richTextEditor.html('');
+                $cohortCheckbox.prop('checked', false)
+            },
+            error: () => {
+                content.find('.send-email-message.error-message').removeClass('hidden');
+            },
             dataType: "json"
         });
     });

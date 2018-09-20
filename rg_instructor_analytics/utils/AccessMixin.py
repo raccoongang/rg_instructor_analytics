@@ -54,12 +54,12 @@ class AccessMixin(object):
 
     def post(self, request, course_id):
         """
-        Overwrite base method for process post request.
+        Override base method for process post request.
         """
         return self.base_process(request, course_id)
 
     def render_to_fragment(self, request, course_id):
         """
-        Overwrite base method for process render to fragment.
+        Override base method for process render to fragment.
         """
         return self.base_process(request, course_id)

@@ -3,23 +3,21 @@ Models of the rg analytics.
 """
 
 from django.contrib.auth.models import User
-from django.db.models import (
-    BooleanField, DateField, DateTimeField, FloatField, ForeignKey, IntegerField, Model, TextField
-)
+from django.db import models
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
 
 
-class EnrollmentTabCache(Model):
+class EnrollmentTabCache(models.Model):
     """
     Cache for the Enrollment tab.
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    created = DateField(db_index=True)
-    unenroll = IntegerField(default=0)
-    enroll = IntegerField(default=0)
-    total = IntegerField(default=0)
+    created = models.DateField(db_index=True)
+    unenroll = models.IntegerField(default=0, blank=True)
+    enroll = models.IntegerField(default=0, blank=True)
+    total = models.IntegerField(default=0, blank=True)
 
     class Meta:
         """
@@ -29,15 +27,15 @@ class EnrollmentTabCache(Model):
         unique_together = ('course_id', 'created',)
 
 
-class EnrollmentByStudent(Model):
+class EnrollmentByStudent(models.Model):
     """
     Model for store last enrollment state of a user.
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    student = IntegerField()
-    last_update = DateTimeField(db_index=True)
-    state = BooleanField()
+    student = models.IntegerField()
+    last_update = models.DateTimeField(db_index=True)
+    state = models.BooleanField()
 
     class Meta:
         """
@@ -47,16 +45,16 @@ class EnrollmentByStudent(Model):
         unique_together = ('course_id', 'student',)
 
 
-class GradeStatistic(Model):
+class GradeStatistic(models.Model):
     """
     Model for store grades of the student for each course.
     """
 
     course_id = CourseKeyField(max_length=255, db_index=True)
-    student = ForeignKey(User)
-    exam_info = TextField()
+    student = models.ForeignKey(User)
+    exam_info = models.TextField()
     # Represent total grade in range from 0 to 1; [0; 1]
-    total = FloatField()
+    total = models.FloatField()
 
     class Meta:
         """
@@ -67,9 +65,9 @@ class GradeStatistic(Model):
 
 
 # TODO replace this table with the Redis.
-class LastGradeStatUpdate(Model):
+class LastGradeStatUpdate(models.Model):
     """
     For the calculation diffs for the update.
     """
 
-    last_update = DateTimeField(db_index=True)
+    last_update = models.DateTimeField(db_index=True)

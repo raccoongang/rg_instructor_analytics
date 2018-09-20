@@ -148,7 +148,7 @@ function EnrollmentTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select period");
+            alert("Can't load data for selected period!");
         }
 
         $.ajax({
@@ -185,44 +185,48 @@ function EnrollmentTab(button, content) {
         setPeriod(30)
     });
 
-    function setPeriod(days) {
+    enrollTab.content.find("#select-all-week").click(function () {
+        setPeriod('all')
+    });
 
-        let newFrom = new Date(toDate.datepicker('getDate') - 1000 * 60 * 60 * 24 * days);
-        if (dateStart !== "null" && newFrom < dateStart) {
-            newFrom = dateStart
+    function setPeriod(days) {
+        let newFrom;
+        if (days === 'all') {
+            newFrom = dateStart;
+        } else {
+            newFrom = new Date(dateEnd - 1000 * 60 * 60 * 24 * days);
+            if (newFrom < dateStart) {
+                newFrom = dateStart;
+            }
         }
+
         fromDate.datepicker("setDate", newFrom);
+        toDate.datepicker("setDate", dateEnd);
         updateStatPeriod();
         updateEnrolls();
     }
 
     function loadTabData() {
-        let enrollInfo = JSON.parse(periodDiv.attr('data-enroll'))[enrollTab.tabHolder.course];
-        dateStart = enrollInfo.enroll_start;
-        dateEnd = enrollInfo.enroll_end;
-
-
-        var now = new Date();
-        if (dateEnd !== "null" && (dateEnd = new Date(parseFloat(dateEnd) * 1000)) < now) {
-            toDate.datepicker("setDate", dateEnd);
-            toDate.datepicker("option", "maxDate", dateEnd);
-        } else {
-            toDate.datepicker("setDate", now);
-            toDate.datepicker("option", "maxDate", now);
-        }
-
-        if (dateStart !== "null") {
-            dateStart = new Date(parseFloat(dateStart) * 1000);
-            fromDate.datepicker("option", "minDate", dateStart);
-        }
-
-        var defaultStart = new Date();
+        let now = new Date();
+        let defaultStart = new Date();
         defaultStart.setMonth(defaultStart.getMonth() - 1);
-        fromDate.datepicker("setDate", dateStart && dateStart > defaultStart ? dateStart : defaultStart);
+
+        let enrollInfo = JSON.parse(periodDiv.attr('data-enroll'))[enrollTab.tabHolder.course];
+        dateStart = enrollInfo.enroll_start === "null" ? defaultStart : new Date(parseFloat(enrollInfo.enroll_start) * 1000);
+        dateEnd = enrollInfo.enroll_end === "null" ? now : new Date(parseFloat(enrollInfo.enroll_end) * 1000);
+
+        if (dateEnd > now) {
+            dateEnd = now;
+        }
+
+        fromDate.datepicker("option", "minDate", dateStart);
+        fromDate.datepicker("setDate", dateStart);
+        toDate.datepicker("setDate", dateEnd);
+        toDate.datepicker("option", "maxDate", dateEnd);
+
         updateStatPeriod();
         updateEnrolls()
     }
-
 
     enrollTab.loadTabData = loadTabData;
 

@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.http.response import JsonResponse
 from django.views.generic import View
+from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 
-from rg_instructor_analytics.models import EnrollmentTabCache
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
@@ -23,35 +23,42 @@ class EnrollmentStatisticView(AccessMixin, View):
     """
 
     @staticmethod
-    def get_state_before(course_key, date):
+    def get_last_state(course_key, date):
         """
-        Provide dict with count of  unenroll, enroll and total users.
+        Get the last available Enrollments statistics before the date.
 
-        For example `{'unenroll': 1, 'enroll': 2, 'total': 3}`
+        :param course_key: (str) Edx course id
+        :param date: (DateTime) base date
+        :return: (dict) with count of `unenrolled`, `enrolled` and total users.
+        For example: `{'unenrolled': 1, 'enrolled': 2, 'total': 3}`
         """
-        previous_stat = (
-            EnrollmentTabCache.objects
-            .filter(course_id=course_key, created__lt=date)
-            .values('unenroll', 'enroll', 'total')
-            .order_by('-created')
+        last_state = (
+            EnrollmentByDay.objects
+            .filter(course=course_key, day__lt=date)
+            .values('unenrolled', 'enrolled', 'total')
+            .first()
         )
-        return previous_stat.first() if previous_stat.exists() else {'unenroll': 0, 'enroll': 0, 'total': 0}
+        return last_state or {'unenrolled': 0, 'enrolled': 0, 'total': 0}
 
     @staticmethod
-    def get_state_in_period(course_key, from_date, to_date):
+    def get_state_for_period(course_key, from_date, to_date):
         """
-        Provide list of dict with count of  unenroll, enroll, total and change date.
+        Get Enrollments stats for the date range.
+
+        :param course_key: (str) Edx course id
+        :param from_date: (DateTime) start range date
+        :param to_date: (DateTime) end range date
+        :return: list of dicts || empty list
         """
-        enrollment_stat = (
-            EnrollmentTabCache.objects
-            .filter(course_id=course_key, created__range=(from_date, to_date))
-            .values('unenroll', 'enroll', 'total', 'created')
-            .order_by('created')
+        return (
+            EnrollmentByDay.objects
+            .filter(course=course_key, day__range=(from_date, to_date))
+            .values('unenrolled', 'enrolled', 'total', 'day')
+            .order_by('day')
         )
-        return enrollment_stat
 
     @staticmethod
-    def get_statistic_per_day(from_timestamp, to_timestamp, course_key):
+    def get_daily_stats_for_course(from_timestamp, to_timestamp, course_key):  # get_day_course_stats
         """
         Provide statistic, which contains: dates in unix-time, count of enrolled users, unenrolled and total.
 
@@ -62,7 +69,7 @@ class EnrollmentStatisticView(AccessMixin, View):
         from_date = datetime.fromtimestamp(from_timestamp).date()
         to_date = datetime.fromtimestamp(to_timestamp).date()
 
-        previous_info = EnrollmentStatisticView.get_state_before(course_key, from_date)
+        previous_info = EnrollmentStatisticView.get_last_state(course_key, from_date)
 
         dates_total = [from_date]
         counts_total = [previous_info['total']]
@@ -93,13 +100,13 @@ class EnrollmentStatisticView(AccessMixin, View):
                 counts_list.append(0)
                 dates_list.append(tomorrow)
 
-        for e in EnrollmentStatisticView.get_state_in_period(course_key, from_date, to_date):
-            dates_total.append(e['created'])
-            counts_total.append(e['total'])
+        for data in EnrollmentStatisticView.get_state_for_period(course_key, from_date, to_date):
+            dates_total.append(data['day'])
+            counts_total.append(data['total'])
 
-            insert_new_stat_item(e['enroll'], e['created'], counts_enroll, dates_enroll)
+            insert_new_stat_item(data['enrolled'], data['day'], counts_enroll, dates_enroll)
 
-            insert_new_stat_item(e['unenroll'], e['created'], counts_unenroll, dates_unenroll)
+            insert_new_stat_item(data['unenrolled'], data['day'], counts_unenroll, dates_unenroll)
 
         dates_total.append(to_date)
         counts_total.append(counts_total[-1])
@@ -114,7 +121,11 @@ class EnrollmentStatisticView(AccessMixin, View):
         """
         Process post request for this view.
         """
+        # NOTE: needs simplifying - switch to post implementation.
+
         from_timestamp = int(request.POST['from'])
         to_timestamp = int(request.POST['to'])
 
-        return JsonResponse(data=self.get_statistic_per_day(from_timestamp, to_timestamp, kwargs['course_key']))
+        return JsonResponse(
+            data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, kwargs['course_key'])
+        )
