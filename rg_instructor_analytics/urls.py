@@ -4,7 +4,7 @@ Url config file.
 from django.conf.urls import url
 
 from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
-from rg_instructor_analytics.views.Enrollment import EnrollmentStatisticView
+from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
 from rg_instructor_analytics.views.Gradebook import GradebookView
 from rg_instructor_analytics.views.Problem import (
