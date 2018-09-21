@@ -1,22 +1,27 @@
-import logging
+"""
+Util decorators.
+"""
 from functools import wraps
+import logging
 
-from courseware.access import has_access
-from courseware.courses import get_course
 from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.utils.decorators import available_attrs
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+
+from courseware.access import has_access
+from courseware.courses import get_course
 
 log = logging.getLogger(__name__)
 
 
 def instructor_access_required(view_func):
     """
-    Decorator for views that checks that the user is logged in and has instructor access
+    Instructor access check decorator.
+
+    Decorator for views that checks the user is logged in and has instructor access
     to the course with given course_id.
     """
-
     role = 'instructor'
 
     @wraps(view_func, assigned=available_attrs(view_func))

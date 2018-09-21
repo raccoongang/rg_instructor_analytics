@@ -5,34 +5,48 @@ from abc import ABCMeta, abstractmethod
 from itertools import chain
 import json
 
-from django.db.models import Avg, Sum
-from django.db.models import IntegerField
+from django.db.models import Avg, IntegerField, Sum
 from django.db.models.expressions import RawSQL
 from django.http.response import JsonResponse
+from django.utils.decorators import method_decorator
 from django.views.generic import View
+from opaque_keys.edx.keys import CourseKey
 
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
 from courseware.module_render import xblock_view
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
-
+from rg_instructor_analytics.utils.decorators import instructor_access_required
 
 QUESTUIN_SELECT_TYPE = 'select'
 QUESTUIN_MULTI_SELECT_TYPE = 'multySelect'
 
 
-class ProblemHomeWorkStatisticView(AccessMixin, View):
+class ProblemHomeWorkStatisticView(View):
     """
-    Api for get homework`s statistic for given course.
+    Homework problem stats API view for given course.
     """
-
-    _PARSABLE_PROBLEMS = frozenset(['multiplechoiceresponse', 'choiceresponse', 'stringresponse', 'optionresponse'])
-    _LABEL = 'label'
-    _DESCRIPTION = 'label'
 
     ATTEMPTS_REQUEST = RawSQL(
-        "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)", (), output_field=IntegerField()
+        "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)",
+        (),
+        output_field=IntegerField()
     )
+
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(ProblemHomeWorkStatisticView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        :param course_id: (str) context course ID (from urlconf).
+        """
+        stats_course_id = request.POST.get('course_id')
+        course_key = CourseKey.from_string(stats_course_id)
+        return JsonResponse(data=self.get_homework_stat(course_key))
 
     def academic_performance_request(self, course_key):
         """
@@ -99,12 +113,6 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
                 stat['attempts'][-1] /= problems_in_hw
 
         return stat
-
-    def process(self, request, **kwargs):
-        """
-        Process post request.
-        """
-        return JsonResponse(data=self.get_homework_stat(kwargs['course_key']))
 
 
 class ProblemsStatisticView(AccessMixin, View):

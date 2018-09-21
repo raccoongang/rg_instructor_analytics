@@ -8,11 +8,9 @@ from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import View
 from opaque_keys.edx.keys import CourseKey
+from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 
 from rg_instructor_analytics.utils.decorators import instructor_access_required
-from rg_instructor_analytics.views.Problem import ProblemHomeWorkStatisticView
-
-from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
 CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)
@@ -28,6 +26,9 @@ class EnrollmentStatisticView(View):
 
     @method_decorator(instructor_access_required)
     def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
         return super(EnrollmentStatisticView, self).dispatch(*args, **kwargs)
 
     @staticmethod
