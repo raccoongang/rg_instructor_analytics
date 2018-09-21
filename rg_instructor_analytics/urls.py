@@ -7,7 +7,7 @@ from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
 from rg_instructor_analytics.views.Gradebook import GradebookView
-from rg_instructor_analytics.views.Problem import (
+from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
 from rg_instructor_analytics.views.Suggestion import SuggestionView
