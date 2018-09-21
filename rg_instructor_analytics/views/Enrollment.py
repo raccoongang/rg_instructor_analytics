@@ -1,14 +1,18 @@
 """
-Module for enrollment subtab.
+Enrollment stats sub-tab module.
 """
 from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.http.response import JsonResponse
+from django.utils.decorators import method_decorator
 from django.views.generic import View
-from rg_instructor_analytics_log_collector.models import EnrollmentByDay
+from opaque_keys.edx.keys import CourseKey
 
-from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from rg_instructor_analytics.utils.decorators import instructor_access_required
+from rg_instructor_analytics.views.Problem import ProblemHomeWorkStatisticView
+
+from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
 CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)
@@ -17,10 +21,14 @@ QUESTUIN_SELECT_TYPE = 'select'
 QUESTUIN_MULTI_SELECT_TYPE = 'multySelect'
 
 
-class EnrollmentStatisticView(AccessMixin, View):
+class EnrollmentStatisticView(View):
     """
-    Api for getting enrollment statistic.
+    Enrollment stats API view.
     """
+
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        return super(EnrollmentStatisticView, self).dispatch(*args, **kwargs)
 
     @staticmethod
     def get_last_state(course_key, date):
@@ -117,15 +125,18 @@ class EnrollmentStatisticView(AccessMixin, View):
             'dates_unenroll': dates_unenroll, 'counts_unenroll': counts_unenroll,
         }
 
-    def process(self, request, **kwargs):
+    def post(self, request, course_id):
         """
-        Process post request for this view.
+        POST request handler.
         """
         # NOTE: needs simplifying - switch to post implementation.
 
+        stats_course_id = request.POST.get('course_id')
         from_timestamp = int(request.POST['from'])
         to_timestamp = int(request.POST['to'])
 
+        course_key = CourseKey.from_string(stats_course_id)
+
         return JsonResponse(
-            data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, kwargs['course_key'])
+            data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, course_key)
         )
