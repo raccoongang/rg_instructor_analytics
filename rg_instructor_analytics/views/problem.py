@@ -42,11 +42,12 @@ class ProblemHomeWorkStatisticView(View):
 
     def post(self, request, course_id):
         """
-        :param course_id: (str) context course ID (from urlconf).
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
         """
         stats_course_id = request.POST.get('course_id')
-        course_key = CourseKey.from_string(stats_course_id)
-        return JsonResponse(data=self.get_homework_stat(course_key))
+        return JsonResponse(data=self.get_homework_stat(stats_course_id))
 
     def academic_performance_request(self, course_key):
         """
@@ -72,7 +73,7 @@ class ProblemHomeWorkStatisticView(View):
             for i in self.academic_performance_request(course_key)
         }
 
-    def get_homework_stat(self, course_key):
+    def get_homework_stat(self, course_id):
         """
         Provide statistic for given course.
 
@@ -80,39 +81,52 @@ class ProblemHomeWorkStatisticView(View):
         :return: map with list of correct answers, attempts, list of the problems for unit and names.
         Each item of given list represent one unit.
         """
-        academic_performance = self.get_academic_performance(course_key)
+        course_key = CourseKey.from_string(course_id)
         course = get_course_by_id(course_key, depth=4)
-        stat = {'correct_answer': [], 'attempts': [], 'problems': [], 'names': [], 'subsection_id': []}
-        hw_number = 0
 
-        for subsection in chain.from_iterable(section.get_children() for section in course.get_children()):
-            if not subsection.graded:
-                continue
-            hw_number += 1
-            stat['correct_answer'].append(0)
-            stat['attempts'].append(0)
-            stat['problems'].append([])
-            stat['names'].append(subsection.display_name)
-            stat['subsection_id'].append(subsection.location.to_deprecated_string())
+        academic_performance = self.get_academic_performance(course_key)
 
-            problems_in_hw = 0
+        def process_stats():
+            """
+            Process students module data.
 
-            for child in chain.from_iterable(unit.get_children() for unit in subsection.get_children()):
-                if child.location.category == 'problem':
-                    problem_id = child.location.to_deprecated_string()
-                    if problem_id in academic_performance:
-                        current_performance = academic_performance[problem_id]
-                        stat['correct_answer'][-1] += current_performance['grade_avg']
-                        stat['attempts'][-1] += current_performance['attempts_avg']
-                        problems_in_hw += 1
+            NOTE(wowkalucky): optimize - currently 'process_stats' takes about 11033.25 ms
+            """
+            stats = {
+                'correct_answer': [], 'attempts': [], 'problems': [], 'names': [], 'subsection_id': []
+            }
+            hw_number = 0
 
-                    stat['problems'][-1].append(problem_id)
+            course_children = course.get_children()
+            for subsection in chain.from_iterable(section.get_children() for section in course_children):
+                if not subsection.graded:
+                    continue
+                hw_number += 1
+                stats['correct_answer'].append(0)
+                stats['attempts'].append(0)
+                stats['problems'].append([])
+                stats['names'].append(subsection.display_name)
+                stats['subsection_id'].append(subsection.location.to_deprecated_string())
 
-            if problems_in_hw > 0:
-                stat['correct_answer'][-1] /= problems_in_hw
-                stat['attempts'][-1] /= problems_in_hw
+                problems_in_hw = 0
 
-        return stat
+                for child in chain.from_iterable(unit.get_children() for unit in subsection.get_children()):
+                    if child.location.category == 'problem':
+                        problem_id = child.location.to_deprecated_string()
+                        if problem_id in academic_performance:
+                            current_performance = academic_performance[problem_id]
+                            stats['correct_answer'][-1] += current_performance['grade_avg']
+                            stats['attempts'][-1] += current_performance['attempts_avg']
+                            problems_in_hw += 1
+
+                        stats['problems'][-1].append(problem_id)
+
+                if problems_in_hw > 0:
+                    stats['correct_answer'][-1] /= problems_in_hw
+                    stats['attempts'][-1] /= problems_in_hw
+            return stats
+
+        return process_stats()
 
 
 class ProblemsStatisticView(AccessMixin, View):
