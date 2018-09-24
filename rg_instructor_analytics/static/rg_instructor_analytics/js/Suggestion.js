@@ -33,7 +33,7 @@ function SuggestionTab(button, content) {
 
 
         let onSuggestionLoadError = () => {
-            alert("Can not load statistic for select course");
+            alert("Can't load data for selected course!");
         };
 
         $.ajax({

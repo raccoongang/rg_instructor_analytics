@@ -24,7 +24,7 @@ function GradebookTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic for select course");
+            alert("Can't load data for selected course!");
         }
 
         $.ajax({
