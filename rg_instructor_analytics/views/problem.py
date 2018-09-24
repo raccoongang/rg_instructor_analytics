@@ -2,14 +2,17 @@
 Module for problem subtab.
 """
 from abc import ABCMeta, abstractmethod
+from datetime import date
 from itertools import chain
 import json
 
-from django.db.models import Avg, IntegerField, Sum
+from django.db.models import Avg, IntegerField, Sum, Q
 from django.db.models.expressions import RawSQL
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponseBadRequest
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import View
+from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 
 from courseware.courses import get_course_by_id
@@ -46,57 +49,50 @@ class ProblemHomeWorkStatisticView(View):
 
         :param course_id: (str) context course ID (from urlconf)
         """
-        stats_course_id = request.POST.get('course_id')
-        return JsonResponse(data=self.get_homework_stat(stats_course_id))
+        post_data = request.POST
+        stats_course_id = post_data.get('course_id')
 
-    def academic_performance_request(self, course_key):
-        """
-        Make request to db for academic performance.
+        try:
+            from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
+            to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
 
-        Return list, where each item contain id of the problem, average count of attempts and percent of correct answer.
-        """
-        return (
-            StudentModule.objects
-            .filter(course_id__exact=course_key, grade__isnull=False, module_type__exact="problem")
-            .values('module_state_key')
-            .annotate(attempts_avg=Avg(self.ATTEMPTS_REQUEST))
-            .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
-            .values('module_state_key', 'attempts_avg', 'grade_avg')
+            course_key = CourseKey.from_string(stats_course_id)
+        except ValueError:
+            return HttpResponseBadRequest(_("Invalid date range."))
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        return JsonResponse(
+            data=self.get_homework_stat(course_key, from_date, to_date)
         )
 
-    def get_academic_performance(self, course_key):
+    def get_homework_stat(self, course_key, from_date, to_date):
         """
-        Provide map, where key - course and value - map with average grade and attempt.
-        """
-        return {
-            i['module_state_key']: {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
-            for i in self.academic_performance_request(course_key)
-        }
+        Aggregate students' attemps/grade info for given course.
 
-    def get_homework_stat(self, course_id):
-        """
-        Provide statistic for given course.
-
-        :param course_key:  object, that represent course.
+        :param course_key:  Edx CourseKey object.
+        :param from_date:  (Date) stats period start.
+        :param to_date:  (Date) stats period end.
         :return: map with list of correct answers, attempts, list of the problems for unit and names.
         Each item of given list represent one unit.
         """
-        course_key = CourseKey.from_string(course_id)
-        course = get_course_by_id(course_key, depth=4)
-
-        academic_performance = self.get_academic_performance(course_key)
+        academic_performance = {
+            i['module_state_key']: {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
+            for i in self.academic_performance_request(course_key, from_date, to_date)
+        }
 
         def process_stats():
             """
             Process students module data.
 
-            NOTE(wowkalucky): optimize - currently 'process_stats' takes about 11033.25 ms
+            NOTE(wowkalucky): optimize - currently 'process_stats' takes about 11 sec!
             """
             stats = {
                 'correct_answer': [], 'attempts': [], 'problems': [], 'names': [], 'subsection_id': []
             }
             hw_number = 0
 
+            course = get_course_by_id(course_key, depth=4)
             course_children = course.get_children()
             for subsection in chain.from_iterable(section.get_children() for section in course_children):
                 if not subsection.graded:
@@ -127,6 +123,31 @@ class ProblemHomeWorkStatisticView(View):
             return stats
 
         return process_stats()
+
+    def academic_performance_request(self, course_key, from_date, to_date):
+        """
+        Academic performance DB request.
+
+        Forms list, where each item contains:
+        - problem id,
+        - average count of attempts,
+        - correct answers percent (only last grades are taken into account...)
+        """
+        date_range_filter = Q(modified__range=(from_date, to_date)) if from_date and to_date else Q()
+
+        return (
+            StudentModule.objects
+            .filter(
+                date_range_filter,
+                course_id__exact=course_key,
+                grade__isnull=False,
+                module_type__exact="problem",
+            )
+            .values('module_state_key')
+            .annotate(attempts_avg=Avg(self.ATTEMPTS_REQUEST))
+            .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
+            .values('module_state_key', 'attempts_avg', 'grade_avg')
+        )
 
 
 class ProblemsStatisticView(AccessMixin, View):
