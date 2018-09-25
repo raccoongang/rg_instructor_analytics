@@ -161,6 +161,13 @@
     transform: translate(-7%, 0);
     width: 900px;
 }
+.filter-btn.active, .filter-btn.active:hover, .filter-btn.active:focus,
+.filter-btn.active:before {
+    color: #fff !important;
+    background: #0075b4 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
 #date-btn {
     padding-right: 20px;
     position: relative;
@@ -174,10 +181,10 @@
     transform: translate(0,-50%);
     transition: 0.3s;
 }
-#date-btn.active:before {
-    transform: translate(0,-50%) rotate(180deg);
-    transition: 0.3s;
-}
+/*#date-btn.active:before {*/
+    /*transform: translate(0,-50%) rotate(180deg);*/
+    /*transition: 0.3s;*/
+/*}*/
 
 .instructor-dashboard-wrapper-2 .idash-section button {
     font-size: 14px;

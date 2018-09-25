@@ -13,6 +13,7 @@ from web_fragments.views import FragmentView
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from rg_instructor_analytics.utils import resource_string
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseAccessRole
 
@@ -102,6 +103,7 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
 
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
         fragment = Fragment(html)
+        fragment.add_javascript(resource_string("js/utils.js"))
         fragment.add_javascript_url(JS_URL + 'Tab.js')
         fragment.add_javascript_url(JS_URL + 'TabHolder.js')
         fragment.add_javascript_url(JS_URL + 'CohortTab.js')
