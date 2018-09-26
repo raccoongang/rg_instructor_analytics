@@ -1,3 +1,6 @@
+.spacing {
+    margin-bottom: 16px;
+}
 .dropdown-content {
     padding: 24px;
     margin: 40px 12px 12px 0;
@@ -179,13 +182,7 @@
     right: 6px;
     top: 50%;
     transform: translate(0,-50%);
-    transition: 0.3s;
 }
-/*#date-btn.active:before {*/
-    /*transform: translate(0,-50%) rotate(180deg);*/
-    /*transition: 0.3s;*/
-/*}*/
-
 .instructor-dashboard-wrapper-2 .idash-section button {
     font-size: 14px;
     text-transform: uppercase;

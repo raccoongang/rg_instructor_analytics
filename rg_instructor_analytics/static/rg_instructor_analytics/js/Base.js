@@ -29,8 +29,8 @@ $(function() {
     const tabHolder = new TabHolder(tabs, courseSelect.val());
     tabHolder.toggleToTab('enrollment');
 
-    courseSelect.change(e => {
-        tabHolder.selectCourse(e.target.value)
+    courseSelect.change(function(item) {
+        tabHolder.selectCourse(item.target.value);
     });
 
     window.setup_debug = function (element_id, edit_link, staff_context) {

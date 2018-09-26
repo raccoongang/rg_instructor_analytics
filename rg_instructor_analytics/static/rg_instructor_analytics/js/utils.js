@@ -42,7 +42,7 @@ function TimeFilter(content, action) {
         return this._startDate;
       },
       set: function(val) {
-        if (moment.isMoment(val)) {
+        if (moment.isMoment(val) && val <= moment()) {  // do not set if Course starts in the Future
           this._startDate = val;
           this.$fromDatePicker.datepicker("setDate", val.format(momentDateFormat));
           if (this.endDate) {
@@ -127,6 +127,4 @@ function TimeFilter(content, action) {
     $('.filter-btn').removeClass('active');
     $(target).addClass('active');
   }
-
-  makeActive($selectPeriodBtn);
 }

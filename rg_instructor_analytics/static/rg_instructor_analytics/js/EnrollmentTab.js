@@ -5,7 +5,7 @@
  */
 function EnrollmentTab(button, content) {
   var enrollTab = new Tab(button, content);
-  var periodDiv = enrollTab.content.find("#date_dropdown");
+  var timeFilter = new TimeFilter(content, updateEnrolls);
 
   /**
    * Send ajax to server side according selected date range and redraw plot
@@ -112,10 +112,8 @@ function EnrollmentTab(button, content) {
   }
 
   function loadTabData() {
-    var timeFilter = new TimeFilter(content, updateEnrolls);
-
     try {
-      var enrollInfo = JSON.parse(periodDiv.attr('data-enroll'))[enrollTab.tabHolder.course];
+      var enrollInfo = $('#enrollment-data').data('enroll')[enrollTab.tabHolder.course];
 
       if (enrollInfo.enroll_start !== "null") {
         timeFilter.startDate = moment(enrollInfo.enroll_start * 1000);
