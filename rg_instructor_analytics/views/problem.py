@@ -1,14 +1,14 @@
 """
-Module for problem subtab.
+Problems sub-tab module.
 """
 from abc import ABCMeta, abstractmethod
 from datetime import date
 from itertools import chain
 import json
 
-from django.db.models import Avg, IntegerField, Sum, Q
+from django.db.models import Avg, IntegerField, Q, Sum
 from django.db.models.expressions import RawSQL
-from django.http.response import JsonResponse, HttpResponseBadRequest
+from django.http.response import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
@@ -18,11 +18,10 @@ from opaque_keys.edx.keys import CourseKey
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
 from courseware.module_render import xblock_view
-from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 
-QUESTUIN_SELECT_TYPE = 'select'
-QUESTUIN_MULTI_SELECT_TYPE = 'multySelect'
+QUESTION_SELECT_TYPE = 'select'
+QUESTION_MULTI_SELECT_TYPE = 'multySelect'
 
 
 class ProblemHomeWorkStatisticView(View):
@@ -150,21 +149,49 @@ class ProblemHomeWorkStatisticView(View):
         )
 
 
-class ProblemsStatisticView(AccessMixin, View):
+class ProblemsStatisticView(View):
     """
-    Api for getting statistic for each problem in unit.
+    Certain problem's stats in Unit.
     """
 
-    def process(self, request, **kwargs):
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
         """
-        Process post request.
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
-        course_key = kwargs['course_key']
-        problems_ids = request.POST.getlist('problems')
+        return super(ProblemsStatisticView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        post_data = request.POST
+        stats_course_id = post_data.get('course_id')
+
+        try:
+            from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
+            to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
+
+            course_key = CourseKey.from_string(stats_course_id)
+        except ValueError:
+            return HttpResponseBadRequest(_("Invalid date range."))
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        problems_ids = post_data.getlist('problems')
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in problems_ids]
+
+        date_range_filter = Q(modified__range=(from_date, to_date)) if from_date and to_date else Q()
+
         stats = (
             StudentModule.objects
-            .filter(module_state_key__in=problems, grade__isnull=False)
+            .filter(
+                date_range_filter,
+                module_state_key__in=problems,
+                grade__isnull=False
+            )
             .values('module_state_key')
             .annotate(grades=Sum('grade'))
             .annotate(max_grades=Sum('max_grade'))
@@ -179,7 +206,9 @@ class ProblemsStatisticView(AccessMixin, View):
         def record(stat_item):
             if not stat_item or not stat_item['attempts']:
                 return 0, 0
-            correct = int((float(stat_item['grades']) / float(stat_item['max_grades'] * stat_item['attempts'])) * 100)
+            correct = int(
+                (float(stat_item['grades']) / float(stat_item['max_grades'] * stat_item['attempts'])) * 100
+            )
             incorrect = 100 - correct
             return incorrect, correct
 
@@ -188,16 +217,25 @@ class ProblemsStatisticView(AccessMixin, View):
         return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
 
 
-class ProblemDetailView(AccessMixin, View):
+class ProblemDetailView(View):
     """
-    Api for getting problem detail.
+    Problem detail API view.
     """
 
-    def process(self, request, **kwargs):
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
         """
-        Process post request.
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
-        return xblock_view(request, kwargs['course_id'], request.POST['problem'], 'student_view')
+        return super(ProblemDetailView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        return xblock_view(request, request.POST.get('course_id'), request.POST['problem'], 'student_view')
 
 
 class ProblemQuestionParser():
@@ -287,24 +325,45 @@ class ProblemMultiSelectQuestion(ProblemSelectQuestion):
             state['stats'][self.answer_map[answer]] += 1
 
 
-class ProblemQuestionView(AccessMixin, View):
+class ProblemQuestionView(View):
     """
     Api for question statistic.
     """
 
-    def process(self, request, **kwargs):
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
         """
-        Process post request.
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
-        type = request.POST['type']
-        questionID = request.POST['questionID']
-        answer_map = json.loads(request.POST['answerMap'])
-        problemID = kwargs['course_key'].make_usage_key_from_deprecated_string(request.POST['problemID'])
+        return super(ProblemQuestionView, self).dispatch(*args, **kwargs)
 
-        if type == QUESTUIN_SELECT_TYPE:
-            result = ProblemSelectQuestion(problemID, questionID, answer_map).get_statistic()
-        elif type == QUESTUIN_MULTI_SELECT_TYPE:
-            result = ProblemMultiSelectQuestion(problemID, questionID, answer_map).get_statistic()
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        post_data = request.POST
+        stats_course_id = post_data.get('course_id')
+
+        try:
+            q_type = post_data.get('type')
+            question_id = post_data.get('questionID')
+            problem_id = post_data.get('problemID')
+
+            answer_map = json.loads(post_data.get('answerMap'))
+
+            course_key = CourseKey.from_string(stats_course_id)
+            problem_usage_key = course_key.make_usage_key_from_deprecated_string(problem_id)
+        except ValueError:
+            return HttpResponseBadRequest(_("Invalid `answerMap` (JSON parsing error)."))
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        if q_type == QUESTION_SELECT_TYPE:
+            result = ProblemSelectQuestion(problem_usage_key, question_id, answer_map).get_statistic()
+        elif q_type == QUESTION_MULTI_SELECT_TYPE:
+            result = ProblemMultiSelectQuestion(problem_usage_key, question_id, answer_map).get_statistic()
         else:
             result = {}
 

@@ -1,10 +1,10 @@
 $(function() {
     'use strict';
-    const CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
+    var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
+    var $content = $('.' + CSS_INSTRUCTOR_CONTENT);
+    var courseSelect = $content.find('#select_course');
 
-    const $content = $('.' + CSS_INSTRUCTOR_CONTENT);
-    const courseSelect = $content.find('#select_course');
-    let tabs = {
+    var tabs = {
         enrollment: EnrollmentTab(
             $content.find('#enrollment-stats-btn'),
             $content.find('#section-enrollment-stats')
