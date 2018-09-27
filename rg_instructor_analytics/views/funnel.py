@@ -1,12 +1,12 @@
 """
-Module for funnel subtab.
+Progress Funnel sub-tab module.
 """
-import json
 from datetime import date
+import json
 
 from django.db.models import Count, Q
 from django.db.models.expressions import RawSQL
-from django.http.response import JsonResponse, HttpResponseBadRequest
+from django.http.response import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
@@ -100,7 +100,7 @@ class GradeFunnelView(View):
             module_type=block_type,
             modified__exact=modified_filter
         )
-        
+
         if IGNORED_ENROLLMENT_MODES:
             users = (
                 CourseEnrollment.objects
