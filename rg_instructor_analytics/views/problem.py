@@ -27,6 +27,8 @@ QUESTION_MULTI_SELECT_TYPE = 'multySelect'
 class ProblemHomeWorkStatisticView(View):
     """
     Homework problem stats API view for given course.
+
+    Data source: StudentModule DB model + Course structure.
     """
 
     ATTEMPTS_REQUEST = RawSQL(
@@ -152,6 +154,8 @@ class ProblemHomeWorkStatisticView(View):
 class ProblemsStatisticView(View):
     """
     Certain problem's stats in Unit.
+
+    Data source: StudentModule DB model.
     """
 
     @method_decorator(instructor_access_required)

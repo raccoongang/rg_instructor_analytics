@@ -48,7 +48,7 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
             'enroll_end': mktime(enroll_end.timetuple()) if enroll_end else 'null',
         }
 
-    def get_avalibel_courses(self, user):
+    def get_available_courses(self, user):
         """
         Return courses, available for the given user.
         """
@@ -87,12 +87,12 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
                 'course_name': str(c.display_name),
                 'is_current': course == c,
             }
-            for c in self.get_avalibel_courses(request.user)
+            for c in self.get_available_courses(request.user)
         ]
 
         enroll_info = {
             str(c.id): self.get_enroll_info(c)
-            for c in self.get_avalibel_courses(request.user)
+            for c in self.get_available_courses(request.user)
         }
 
         context = {
@@ -103,17 +103,17 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
 
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
         fragment = Fragment(html)
-        fragment.add_css_url(CSS_URL + 'instructor_analytics.css')
+        fragment.add_css(resource_string("css/instructor_analytics.css"))
 
         fragment.add_javascript(resource_string("js/utils.js"))
         fragment.add_javascript(resource_string("js/tab.js"))
         fragment.add_javascript(resource_string("js/tab-holder.js"))
         fragment.add_javascript(resource_string("js/enrollment-tab.js"))
         fragment.add_javascript(resource_string("js/problem-tab.js"))
+        fragment.add_javascript(resource_string("js/funnel-tab.js"))
 
-        fragment.add_javascript_url(JS_URL + 'CohortTab.js')
         fragment.add_javascript_url(JS_URL + 'GradebookTab.js')
-        fragment.add_javascript_url(JS_URL + 'FunnelTab.js')
+        fragment.add_javascript_url(JS_URL + 'CohortTab.js')
         fragment.add_javascript_url(JS_URL + 'Suggestion.js')
 
         fragment.add_javascript(resource_string("js/base.js"))

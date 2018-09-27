@@ -5,13 +5,13 @@ from django.conf.urls import url
 
 from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
-from rg_instructor_analytics.views.Funnel import GradeFunnelView
+from rg_instructor_analytics.views.funnel import GradeFunnelView
 from rg_instructor_analytics.views.Gradebook import GradebookView
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
 from rg_instructor_analytics.views.Suggestion import SuggestionView
-from rg_instructor_analytics.views.TabFragment import InstructorAnalyticsFragmentView
+from rg_instructor_analytics.views.tab_fragment import InstructorAnalyticsFragmentView
 
 urlpatterns = [
     # Enrollment stats tab:
@@ -39,14 +39,17 @@ urlpatterns = [
         name='problem_question_view'
     ),
 
+    # Gradebook tab:
     url(r'^api/gradebook/$', GradebookView.as_view(), name='gradebook_view'),
 
+    # Clusters tab:
     url(r'^api/cohort/$', CohortView.as_view(), name='cohort_view'),
-
     url(r'^api/cohort/send_email/$', CohortSendMessage.as_view(), name='send_email_to_cohort'),
 
+    # Progress Funnel tab:
     url(r'^api/funnel/$', GradeFunnelView.as_view(), name='funnel'),
 
+    # Suggestions tab:
     url(r'^api/suggestion/$', SuggestionView.as_view(), name='suggestion'),
 
     url(r'^', InstructorAnalyticsFragmentView.as_view(), name='instructor_analytics_dashboard'),

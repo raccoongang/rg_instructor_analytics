@@ -14,7 +14,7 @@ from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseEnrollment
 
 
-def info_for_course_element(element, level):
+def course_element_info(element, level):
     """
     Return new element of the course item.
     """
@@ -38,25 +38,31 @@ def add_as_child(element, child):
 
 class GradeFunnelView(AccessMixin, View):
     """
-    Api for get funnel for given course.
+    Progress Funnel API view.
+
+    Data source: StudentModule DB model.
     """
+
+    # NOTE(wowkalucky): needs optimization - request takes above 30 sec!
 
     user_enrollments_ignored_types = []
 
     def get_query_for_course_item_stat(self, course_key, block_type):
         """
-        Return query set for select given block type for given course.
+        Build DB queryset for course block type and given course.
         """
         # TODO use preaggregation
         modified_filter = RawSQL(
             "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
             "AND t2.module_type = %s)", (course_key, block_type))
+
         result = StudentModule.objects.filter(
             course_id=course_key,
             module_type=block_type,
             modified__exact=modified_filter
         )
+        
         if len(self.user_enrollments_ignored_types):
             users = (
                 CourseEnrollment.objects.all()
@@ -95,14 +101,14 @@ class GradeFunnelView(AccessMixin, View):
         course_info = []
         course = get_course_by_id(course_key, depth=4)
         for section in course.get_children():
-            section_info = info_for_course_element(section, level=0)
+            section_info = course_element_info(section, level=0)
             for subsection in section.get_children():
-                subsection_info = info_for_course_element(subsection, level=1)
+                subsection_info = course_element_info(subsection, level=1)
                 for unit in subsection.get_children():
-                    unit_info = info_for_course_element(unit, level=2)
+                    unit_info = course_element_info(unit, level=2)
                     for child in unit.get_children():
                         if child.location.category == 'problem':
-                            add_as_child(unit_info, info_for_course_element(child, level=3))
+                            add_as_child(unit_info, course_element_info(child, level=3))
                     add_as_child(subsection_info, unit_info)
                 add_as_child(section_info, subsection_info)
                 if subsection_info['id'] in subsection_activity:
@@ -128,7 +134,7 @@ class GradeFunnelView(AccessMixin, View):
         """
         Return course info in the tree-like structure.
 
-        Structure of the node described inside function info_for_course_element.
+        Structure of the node described inside function course_element_info.
         """
         subsection_activity = self.get_progress_info_for_subsection(course_key)
         courses_structure = self.get_course_info(course_key, subsection_activity)

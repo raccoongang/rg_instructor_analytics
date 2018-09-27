@@ -10,7 +10,7 @@ import numpy as np
 from course_modes.models import CourseMode
 from django_comment_client.utils import JsonResponse
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
-from rg_instructor_analytics.views.Funnel import GradeFunnelView
+from rg_instructor_analytics.views.funnel import GradeFunnelView
 from rg_instructor_analytics.views.problem import ProblemHomeWorkStatisticView
 
 
