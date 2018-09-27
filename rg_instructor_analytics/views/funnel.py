@@ -5,13 +5,19 @@ import json
 
 from django.db.models import Count
 from django.db.models.expressions import RawSQL
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, HttpResponseBadRequest
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import View
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
-from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseEnrollment
+
+IGNORED_ENROLLMENT_MODES = []
 
 
 def course_element_info(element, level):
@@ -36,7 +42,7 @@ def add_as_child(element, child):
     element['children'].append(child)
 
 
-class GradeFunnelView(AccessMixin, View):
+class GradeFunnelView(View):
     """
     Progress Funnel API view.
 
@@ -45,9 +51,30 @@ class GradeFunnelView(AccessMixin, View):
 
     # NOTE(wowkalucky): needs optimization - request takes above 30 sec!
 
-    user_enrollments_ignored_types = []
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(GradeFunnelView, self).dispatch(*args, **kwargs)
 
-    def get_query_for_course_item_stat(self, course_key, block_type):
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        try:
+            stats_course_id = request.POST.get('course_id')
+            course_key = CourseKey.from_string(stats_course_id)
+
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        return JsonResponse(data={'courses_structure': self.get_funnel_info(course_key)})
+
+    @staticmethod
+    def get_query_for_course_item_stat(course_key, block_type):
         """
         Build DB queryset for course block type and given course.
         """
@@ -57,20 +84,24 @@ class GradeFunnelView(AccessMixin, View):
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
             "AND t2.module_type = %s)", (course_key, block_type))
 
-        result = StudentModule.objects.filter(
+        students_course_state_qs = StudentModule.objects.filter(
             course_id=course_key,
             module_type=block_type,
             modified__exact=modified_filter
         )
         
-        if len(self.user_enrollments_ignored_types):
+        if IGNORED_ENROLLMENT_MODES:
             users = (
-                CourseEnrollment.objects.all()
-                                .filter(course_id=course_key, mode__in=self.user_enrollments_ignored_types)
-                                .values_list('user', flat=True)
+                CourseEnrollment.objects
+                .filter(
+                    course_id=course_key,
+                    mode__in=IGNORED_ENROLLMENT_MODES
+                )
+                .values_list('user', flat=True)
             )
-            result = result.exclude(student__in=users)
-        return result
+            students_course_state_qs = students_course_state_qs.exclude(student__in=users)
+
+        return students_course_state_qs
 
     def get_progress_info_for_subsection(self, course_key):
         """
@@ -94,7 +125,8 @@ class GradeFunnelView(AccessMixin, View):
 
         return result
 
-    def get_course_info(self, course_key, subsection_activity):
+    @staticmethod
+    def get_course_info(course_key, subsection_activity):
         """
         Return information about the course in tree view.
         """
@@ -121,7 +153,7 @@ class GradeFunnelView(AccessMixin, View):
 
     def append_inout_info(self, statistic, accomulate=0):
         """
-        Append information about how many student in course.
+        Append information about how many students in course.
         """
         for i in reversed(statistic):
             i['student_count_out'] = accomulate
@@ -140,9 +172,3 @@ class GradeFunnelView(AccessMixin, View):
         courses_structure = self.get_course_info(course_key, subsection_activity)
         self.append_inout_info(courses_structure)
         return courses_structure
-
-    def process(self, request, **kwargs):
-        """
-        Process post request.
-        """
-        return JsonResponse(data={'courses_structure': self.get_funnel_info(kwargs['course_key'])})
