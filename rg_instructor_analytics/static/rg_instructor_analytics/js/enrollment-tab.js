@@ -10,7 +10,7 @@ function EnrollmentTab(button, content) {
   /**
    * Send ajax to server side according selected date range and redraw plot
    */
-  function updateEnrolls(dateRange) {
+  function updateEnrolls(timeFilter) {
 
     function onSuccess(response) {
       var totalTrace;
@@ -101,13 +101,15 @@ function EnrollmentTab(button, content) {
     }
 
     $.ajax({
-      traditional: true,
       type: "POST",
       url: "api/enroll_statics/",
-      data: dateRange,
+      data: timeFilter.timestampRange,
+      dataType: "json",
+      traditional: true,
       success: onSuccess,
       error: onError,
-      dataType: "json"
+      beforeSend: timeFilter.toggleLoader,
+      complete: timeFilter.toggleLoader,
     });
   }
 
@@ -126,7 +128,7 @@ function EnrollmentTab(button, content) {
       console.error(error);
     }
 
-    updateEnrolls(timeFilter.timestampRange);
+    updateEnrolls(timeFilter);
   }
 
   enrollTab.loadTabData = loadTabData;

@@ -106,14 +106,16 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         fragment.add_css_url(CSS_URL + 'instructor_analytics.css')
 
         fragment.add_javascript(resource_string("js/utils.js"))
-        fragment.add_javascript_url(JS_URL + 'Tab.js')
-        fragment.add_javascript_url(JS_URL + 'TabHolder.js')
+        fragment.add_javascript(resource_string("js/tab.js"))
+        fragment.add_javascript(resource_string("js/tab-holder.js"))
+        fragment.add_javascript(resource_string("js/enrollment-tab.js"))
+        fragment.add_javascript(resource_string("js/problem-tab.js"))
+
         fragment.add_javascript_url(JS_URL + 'CohortTab.js')
-        fragment.add_javascript_url(JS_URL + 'EnrollmentTab.js')
         fragment.add_javascript_url(JS_URL + 'GradebookTab.js')
-        fragment.add_javascript_url(JS_URL + 'ProblemTab.js')
         fragment.add_javascript_url(JS_URL + 'FunnelTab.js')
         fragment.add_javascript_url(JS_URL + 'Suggestion.js')
-        fragment.add_javascript_url(JS_URL + 'base.js')
+
+        fragment.add_javascript(resource_string("js/base.js"))
 
         return fragment

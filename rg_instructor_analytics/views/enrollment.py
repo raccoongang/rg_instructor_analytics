@@ -4,9 +4,12 @@ Enrollment stats sub-tab module.
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.http.response import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
+from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import View
+from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 
@@ -129,14 +132,22 @@ class EnrollmentStatisticView(View):
     def post(self, request, course_id):
         """
         POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
         """
-        # NOTE: needs simplifying - switch to post implementation.
+        try:
+            from_timestamp = int(request.POST['from'])
+            to_timestamp = int(request.POST['to'])
 
-        stats_course_id = request.POST.get('course_id')
-        from_timestamp = int(request.POST['from'])
-        to_timestamp = int(request.POST['to'])
+            stats_course_id = request.POST['course_id']
+            course_key = CourseKey.from_string(stats_course_id)
 
-        course_key = CourseKey.from_string(stats_course_id)
+        except MultiValueDictKeyError:
+            return HttpResponseBadRequest(_("`from`, `to`, `course_id` are the must."))
+        except TypeError:
+            return HttpResponseBadRequest(_("Invalid date range."))
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
 
         return JsonResponse(
             data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, course_key)

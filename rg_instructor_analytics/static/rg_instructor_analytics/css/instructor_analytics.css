@@ -1,3 +1,10 @@
+.loader {
+    font-size: large;
+    text-align: center;
+    font-weight: 600;
+    margin: 35px auto;
+    width: 200px;
+}
 .spacing {
     margin-bottom: 16px;
 }
@@ -242,7 +249,7 @@
     display: inline-block;
 }
 .dropdown-content.show {
-    z-index: 2;
+    z-index: 5;
 }
 
 .hidden {

@@ -9,6 +9,7 @@ function TimeFilter(content, action) {
   var momentDateFormat = 'YYYY-MM-DD';           // 2018-02-02
   var $selectPeriodBtn = content.find("#date-btn");
   var periodDiv = content.find("#date_dropdown");
+  var $loader = content.find("#loader");
 
   this.$fromDatePicker = content.find("#from")
     .datepicker({
@@ -91,35 +92,35 @@ function TimeFilter(content, action) {
 
   content.find("#date-apply-btn").click(function() {
     periodDiv.removeClass('show');
-    action(filter.timestampRange);
+    action(filter);
   });
 
   content.find("#select-1-week").click(function() {
     makeActive(this);
     filter.endDate = moment().subtract(1, 'weeks').endOf('isoWeek');
     filter.startDate = moment().subtract(1, 'weeks').startOf('isoWeek');
-    action(filter.timestampRange);
+    action(filter);
   });
 
   content.find("#select-2-week").click(function() {
     makeActive(this);
     filter.endDate = moment().subtract(1, 'weeks').endOf('isoWeek');
     filter.startDate = moment().subtract(2, 'weeks').startOf('isoWeek');
-    action(filter.timestampRange);
+    action(filter);
   });
 
   content.find("#select-4-week").click(function() {
     makeActive(this);
     filter.endDate = moment().subtract(1, 'months').endOf('month');
     filter.startDate = moment().subtract(1, 'months').startOf('month');
-    action(filter.timestampRange);
+    action(filter);
   });
 
   content.find("#select-all-week").click(function() {
     makeActive(this);
     filter.endDate = moment();
     filter.startDate = filter.minDate;
-    action(filter.timestampRange);
+    action(filter);
   });
 
   function makeActive(target) {
@@ -127,4 +128,9 @@ function TimeFilter(content, action) {
     $('.filter-btn').removeClass('active');
     $(target).addClass('active');
   }
+
+  this.toggleLoader = function () {
+    $loader.toggleClass('hidden');
+  };
+
 }

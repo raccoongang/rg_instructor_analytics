@@ -16,17 +16,18 @@ function ProblemTab(button, content) {
     /**
     * Homework`s stats drawer
     */
-    function updateHomeWork(dateRange) {
+    function updateHomeWork(timeFilter) {
         function onSuccess(response) {
-            let maxAttempts = Math.max(...response.attempts);
-            let countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
-            let correctAnswer = [...response.correct_answer];
-            const subsectionId = response.subsection_id;
-            let yAxis = [...response.names];
-            let xAxisRight = ['0', '50%', '100%'];
-            let $homework = $('#problem-homeworks-stats-plot');
+            var $homework = $('#problem-homeworks-stats-plot');
+            var maxAttempts = Math.max(...response.attempts);
+            var countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
+            var correctAnswer = [...response.correct_answer];
+            var subsectionId = response.subsection_id;
+            var yAxis = [...response.names];
+            var xAxisRight = ['0', '50%', '100%'];
 
-            let bars = '', index = 0;
+            var bars = '',
+                index = 0;
             for (let item in yAxis) {
                 let attempts = (100 * response.attempts[index]) / maxAttempts;
                 let percent = correctAnswer[index] * 100;
@@ -56,7 +57,7 @@ function ProblemTab(button, content) {
             }
             bars = `<ul class="plot-body">${bars}</ul>`;
 
-            //build x axis
+            // build 'X' axis
             let axis = ``;
             let small;
             if (yAxis.length > 10) {small = 'small'}
@@ -72,7 +73,7 @@ function ProblemTab(button, content) {
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
 
-            // build left y axis
+            // build left 'Y' axis
             axis = '';
             countAttempts.forEach((item) => {
                 axis += `<li>${item.toFixed(1)}</li>`
@@ -80,7 +81,7 @@ function ProblemTab(button, content) {
             axis = `<ul class="y-axis-l">${axis}</ul>`;
             bars += axis;
 
-            //build right y axis
+            // build right 'Y' axis
             axis = '';
             xAxisRight.forEach((item) => {
                 axis += `<li>${item}</li>`
@@ -120,13 +121,15 @@ function ProblemTab(button, content) {
         }
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/problem_statics/homework/",
-            data: dateRange,
+            data: timeFilter.timestampRange,
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: timeFilter.toggleLoader,
+            complete: timeFilter.toggleLoader,
         });
     }
 
@@ -206,7 +209,6 @@ function ProblemTab(button, content) {
         }
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/problem_statics/homeworksproblems/",
             data: {
@@ -214,9 +216,12 @@ function ProblemTab(button, content) {
                 from: timeFilter.timestampRange.from,
                 to: timeFilter.timestampRange.to,
             },
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: timeFilter.toggleLoader,
+            complete: timeFilter.toggleLoader,
         });
 
     }
@@ -246,20 +251,22 @@ function ProblemTab(button, content) {
         }
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/problem_statics/problem_detail/",
             data: { problem: stringProblemID },
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: timeFilter.toggleLoader,
+            complete: timeFilter.toggleLoader,
         });
     }
 
     problemTab.loadTabData = loadTabData;
 
     function loadTabData() {
-        updateHomeWork(timeFilter.timestampRange);
+        updateHomeWork(timeFilter);
     }
 
     problemTab.content
