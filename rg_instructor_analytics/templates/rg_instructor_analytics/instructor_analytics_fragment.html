@@ -25,9 +25,9 @@
 
 <div class="container">
     <div class="instructor-dashboard-wrapper-2">
-
         <main id="main" aria-label="Content" tabindex="-1">
             <section class="instructor-dashboard-content-2" id="instructor-analytics-dashboard-content">
+            % if available_cohorts or user.is_superuser:
                 <ul class="instructor-nav">
                     <li class="nav-item">
                         <button type="button"
@@ -79,7 +79,21 @@
                                 data-section="cohort">${_("Suggestions")}
                         </button>
                     </li>
-                    <li>
+                </ul>
+                <ul class="instructor-course-data-filter" ${ 'style="display:none;"' if not user.is_superuser else '' }>
+                    <li class="nav-item">
+                        <select id="select_cohort">
+                                ${ '<option value=""> --- </option>' if available_cohorts and len(available_cohorts) > 1 else ''}
+                            %for cohort in available_cohorts:
+                                <option
+                                        value="${cohort}">
+                                    ${cohort}
+                                </option>
+                            %endfor
+
+                        </select>
+                    </li>
+                    <li class="nav-item">
 
 
                         <select id="select_course">
@@ -119,6 +133,9 @@
                 <section id="section-suggestion" class="idash-section">
                     <%include file="suggestion.html" args="section_data={'course':course}" />
                 </section>
+            % else:
+            <h3>You don't have any course cohorts yet</h3>
+            % endif
             </section>
         </main>
     </div>

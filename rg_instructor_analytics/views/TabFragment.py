@@ -2,6 +2,7 @@
 Module for tab fragment.
 """
 import json
+import re
 import sys
 from time import mktime
 
@@ -15,6 +16,8 @@ from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseAccessRole
+
+from openedx.core.djangoapps.course_groups import cohorts
 
 # NOTE(flying-pi) reload(sys) is used for restore method `setdefaultencoding`,
 # which set flag PYTHONIOENCODING to utf8.
@@ -53,7 +56,7 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         """
         result = []
         # For staff user we need return all available courses on platform.
-        if user.is_staff:
+        if user.is_superuser:
             available_courses = CourseOverview.objects.all()
             for course in available_courses:
                 try:
@@ -80,28 +83,30 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
         Render tab fragment.
         """
         course = kwargs['course']
+        courses = self.get_avalibel_courses(request.user)
         available_courses = [
             {
                 'course_id': str(c.id),
                 'course_name': str(c.display_name),
                 'is_current': course == c,
             }
-            for c in self.get_avalibel_courses(request.user)
+            for c in courses
         ]
 
         enroll_info = {
             str(c.id): self.get_enroll_info(c)
-            for c in self.get_avalibel_courses(request.user)
+            for c in courses
         }
-
         context = {
             'course': course,
             'enroll_info': json.dumps(enroll_info),
-            'available_courses': available_courses
+            'available_courses': available_courses,
+            'available_cohorts': self.course_cohorts or []
         }
 
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
         fragment = Fragment(html)
+        # if self.course_cohorts:
         fragment.add_javascript_url(JS_URL + 'Tab.js')
         fragment.add_javascript_url(JS_URL + 'TabHolder.js')
         fragment.add_javascript_url(JS_URL + 'CohortTab.js')

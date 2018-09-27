@@ -151,6 +151,7 @@
 }
 .idash-section {
     max-width: 768px;
+    min-width: 700px;
     margin: 0 auto;
     width: 100%;
 }
@@ -820,12 +821,12 @@ body .disc-list {
 .problem-action-buttons-wrapper {
     display: none;
 }
-.instructor-nav li:last-child {
-    float: right;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-}
+/*.instructor-nav li:last-child {*/
+    /*float: right;*/
+    /*height: 40px;*/
+    /*display: inline-flex;*/
+    /*align-items: center;*/
+/*}*/
 #select_course {
     width: 200px;
 }
@@ -871,4 +872,26 @@ body .disc-list {
 }
 .success-message {
     color: green;
+}
+
+.instructor-course-data-filter {
+    display: flex;
+    width: 100%;
+    padding: 0;
+    justify-content: flex-end;
+}
+
+.instructor-course-data-filter li {
+    list-style: none;
+    margin: 0 10px;
+}
+
+.spinner-size {
+    font-size: 1em;
+    text-align: center;
+    margin: 20px;
+}
+
+.select-disabled {
+    background-color: rgb(206, 206, 206)
 }

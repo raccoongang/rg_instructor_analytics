@@ -34,31 +34,38 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         "SELECT SUBSTRING_INDEX(SUBSTRING_INDEX(state,'attempts\": ',-1),',',1)", (), output_field=IntegerField()
     )
 
-    def academic_performance_request(self, course_key):
+    def academic_performance_request(self, course_key, cohort):
         """
         Make request to db for academic performance.
 
         Return list, where each item contain id of the problem, average count of attempts and percent of correct answer.
         """
+        filter_args = dict(
+            course_id__exact=course_key, grade__isnull=False, module_type__exact="problem"
+        )
+        if cohort:
+            filter_args.update(dict(
+                student__in=cohort.users.all().values_list('id', flat=True)
+            ))
         return (
             StudentModule.objects
-            .filter(course_id__exact=course_key, grade__isnull=False, module_type__exact="problem")
+            .filter(**filter_args)
             .values('module_state_key')
             .annotate(attempts_avg=Avg(self.ATTEMPTS_REQUEST))
             .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
             .values('module_state_key', 'attempts_avg', 'grade_avg')
         )
 
-    def get_academic_performance(self, course_key):
+    def get_academic_performance(self, course_key, cohort):
         """
         Provide map, where key - course and value - map with average grade and attempt.
         """
         return {
             i['module_state_key']: {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
-            for i in self.academic_performance_request(course_key)
+            for i in self.academic_performance_request(course_key, cohort)
         }
 
-    def get_homework_stat(self, course_key):
+    def get_homework_stat(self, course_key, cohort):
         """
         Provide statistic for given course.
 
@@ -66,7 +73,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         :return: map with list of correct answers, attempts, list of the problems for unit and names.
         Each item of given list represent one unit.
         """
-        academic_performance = self.get_academic_performance(course_key)
+        academic_performance = self.get_academic_performance(course_key, cohort)
         course = get_course_by_id(course_key, depth=4)
         stat = {'correct_answer': [], 'attempts': [], 'problems': [], 'names': [], 'subsection_id': []}
         hw_number = 0
@@ -104,7 +111,7 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
         """
         Process post request.
         """
-        return JsonResponse(data=self.get_homework_stat(kwargs['course_key']))
+        return JsonResponse(data=self.get_homework_stat(kwargs['course_key'], kwargs['cohort']))
 
 
 class ProblemsStatisticView(AccessMixin, View):
@@ -119,9 +126,16 @@ class ProblemsStatisticView(AccessMixin, View):
         course_key = kwargs['course_key']
         problems_ids = request.POST.getlist('problems')
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in problems_ids]
+        filter_args = dict(
+            module_state_key__in=problems, grade__isnull=False
+        )
+        if kwargs['cohort']:
+            filter_args.update(dict(
+                student__in=kwargs['cohort'].users.all().values_list('id', flat=True)
+            ))
         stats = (
             StudentModule.objects
-            .filter(module_state_key__in=problems, grade__isnull=False)
+            .filter(**filter_args)
             .values('module_state_key')
             .annotate(grades=Sum('grade'))
             .annotate(max_grades=Sum('max_grade'))

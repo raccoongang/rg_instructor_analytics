@@ -24,7 +24,7 @@ function EnrollmentTab(button, content) {
 
     var dateStart = 0;
     var dateEnd = 0;
-
+    $("#get-report").on('click', loadTabData);
     /**
      * Provide date from given datepicker
      * @param element - datepicker
@@ -72,6 +72,16 @@ function EnrollmentTab(button, content) {
             from: fromDate.datepicker("getDate").getTime() / 1000,
             to: toDate.datepicker("getDate").getTime() / 1000
         };
+        
+        $("#enrollment-stats-plot").html(`
+            <div class="spinner-size">
+                Loading, please wait a while
+                <img src="/static/rg_instructor_analytics/images/ajax-loader.gif" alt="loader">
+            </div>
+        `);
+        
+        $("#select_cohort").addClass('select-disabled').get(0).disabled = true;
+        $("#select_course").addClass('select-disabled').get(0).disabled = true;
 
         function onSuccess(response) {
             function dataFixFunction(x) {
@@ -140,7 +150,9 @@ function EnrollmentTab(button, content) {
                 showlegend: false,
             };
             let data = [unenrollTrace, enrollTrace, totalTrace];
-            
+            $("#enrollment-stats-plot").html('');
+            $("#select_cohort").removeClass('select-disabled').removeAttr('disabled');
+            $("#select_course").removeClass('select-disabled').removeAttr('disabled');
             Plotly.newPlot('enrollment-stats-plot', data, layout, {
                 displayModeBar: false,
                 scrollZoom: false,
@@ -148,18 +160,35 @@ function EnrollmentTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic fo select period");
+            alert("Can not load statistic fo selected period");
         }
-
+        
         $.ajax({
-            traditional: true,
-            type: "POST",
             url: "api/enroll_statics/",
+            method: "POST",
             data: date,
-            success: onSuccess,
-            error: onError,
-            dataType: "json"
-        });
+            success: function (data){
+                var checkStatus = function () {
+                    $.ajax({
+                        url: "api/enroll_statics/",
+                        method: "POST",
+                        data: {task_id: data.task_id, ...date},
+                        success: function (response) {
+                            if(response.state == "SUCCESS"){
+                                onSuccess(response.data)
+                            } else if (["FAILURE", "REVOKED", "REJECTED"].indexOf(response.state) === -1) {
+                                setTimeout(checkStatus, 2000);
+                            } else {
+                                onError()
+                            }
+                        },
+                        error: onError,
+                    })
+                };
+                checkStatus();
+    
+            }
+        })
     }
 
     selectDateBtn.click(function () {

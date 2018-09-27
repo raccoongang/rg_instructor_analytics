@@ -55,7 +55,7 @@ class BaseSuggestion(object):
             'location': self.suggestion_source(item_id),
         })
 
-    def get_suggestion_list(self, course_key):
+    def get_suggestion_list(self, course_key, cohort):
         """
         Return suggestion list.
 
@@ -63,11 +63,11 @@ class BaseSuggestion(object):
         Also, new list will stored inside suggestion field of the current instance.
         """
         self.suggestion = []
-        self.generate_suggestion(course_key)
+        self.generate_suggestion(course_key, cohort)
         return self.suggestion
 
     @abstractmethod
-    def generate_suggestion(self, course_key):
+    def generate_suggestion(self, course_key, cohort):
         """
         Use for generate suggestion for the course.
 
@@ -105,13 +105,13 @@ class FunnelSuggestion(BaseSuggestion):
                 result += self.filter_funnel(item['children'])
         return result
 
-    def generate_suggestion(self, course_key):
+    def generate_suggestion(self, course_key, cohort):
         """
         Generate suggestion, based on the funnels tab information.
         """
         funnel = GradeFunnelView()
         funnel.user_enrollments_ignored_types = [CourseMode.AUDIT]
-        units = list(self.filter_funnel(funnel.get_funnel_info(course_key)))
+        units = list(self.filter_funnel(funnel.get_funnel_info(course_key, cohort)))
 
         def get_percent(total, put):
             return .0 if not (total and put) else float(put) / float(total)
@@ -146,11 +146,11 @@ class ProblemSuggestion(BaseSuggestion):
 
         }
 
-    def generate_suggestion(self, course_key):
+    def generate_suggestion(self, course_key, cohort):
         """
         Generate suggestion, based on the funnels tab information.
         """
-        problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(course_key)
+        problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(course_key, cohort)
         problem_stat['success'] = map(
             lambda (grade, attempts): attempts and grade / attempts,
             izip(problem_stat['correct_answer'], problem_stat['attempts'])
@@ -185,5 +185,5 @@ class SuggestionView(AccessMixin, View):
         """
         Process post request.
         """
-        result = sum([s.get_suggestion_list(kwargs['course_key']) for s in self.suggestion_providers], [])
+        result = sum([s.get_suggestion_list(kwargs['course_key'], kwargs['cohort']) for s in self.suggestion_providers], [])
         return JsonResponse(data={'suggestion': result})

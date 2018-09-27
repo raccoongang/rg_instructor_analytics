@@ -18,7 +18,7 @@ function Tab(button, content) {
         if (isActive) {
             content.addClass('active-section');
             button.addClass('active-section');
-            this.loadTabData();
+            // this.loadTabData();
         } else {
             content.removeClass('active-section');
             button.removeClass('active-section');
@@ -41,5 +41,20 @@ function Tab(button, content) {
      */
     this.openLocation = (location) => {
         this.locationToOpen = location
+    };
+    
+    this.populateCohortSelect = function (response, resetCohort) {
+      if (resetCohort) {
+          if (response.available_cohorts.length > 1) {
+            $('#select_cohort').html('<option value=""> --- </option>');
+          } else {
+              $('#select_cohort').html('');
+          }
+          response.available_cohorts.forEach((cohort) => {
+              $('#select_cohort').append(
+                  '<option value="' + cohort + '">' + cohort + '</option>'
+              );
+          })
+      }
     }
 }

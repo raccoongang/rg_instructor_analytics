@@ -14,7 +14,6 @@ function FunnelTab(button, content) {
 
     function updateFunnel() {
         function onSuccess(response) {
-            console.log(response);
             funnelTab.courseStructure = response.courses_structure;
 
             funnelTab.viewContent = funnelTab.courseStructureView.find('.content');

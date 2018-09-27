@@ -1,6 +1,7 @@
-function TabHolder(tabs, course) {
+function TabHolder(tabs, course, course_cohort) {
     this.tabs = tabs;
     this.course = course;
+    this.courseCohort = course_cohort;
 
     this.original_ajax = $.ajax;
 
@@ -9,6 +10,7 @@ function TabHolder(tabs, course) {
             args[0].data = {};
         }
         args[0].data.course_id = this.course;
+        args[0].data.cohort = this.courseCohort;
         return  this.original_ajax(...args);
     };
 
@@ -34,7 +36,16 @@ function TabHolder(tabs, course) {
     };
 
     this.selectCourse = (course) => {
+        let resetCohort = this.course !== course;
         this.course = course;
+        this.courseCohort = null;
+        for (let tabName in this.tabs) {
+            this.tabs[tabName].loadTabData(resetCohort)
+        }
+    };
+    
+    this.selectCourseCohort = (cohort) => {
+        this.courseCohort = cohort;
         for (let tabName in this.tabs) {
             this.tabs[tabName].loadTabData()
         }

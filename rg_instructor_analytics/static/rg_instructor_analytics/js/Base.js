@@ -4,6 +4,7 @@ $(function() {
 
     const $content = $('.' + CSS_INSTRUCTOR_CONTENT);
     const courseSelect = $content.find('#select_course');
+    const courseCohortSelect = $content.find('#select_cohort');
     let tabs = {
         enrollment: EnrollmentTab(
             $content.find('#enrollment-stats-btn'),
@@ -25,12 +26,19 @@ $(function() {
             $content.find('#suggestion-btn'),
             $content.find('#section-suggestion'))
     };
-
-    const tabHolder = new TabHolder(tabs, courseSelect.val());
+    const tabHolder = new TabHolder(tabs, courseSelect.val(), courseCohortSelect.val());
+    
+    for (let tabName in tabHolder.tabs) {
+        tabHolder.tabs[tabName].loadTabData();
+    }
     tabHolder.toggleToTab('enrollment');
 
     courseSelect.change(e => {
         tabHolder.selectCourse(e.target.value)
+    });
+    
+    courseCohortSelect.change(e => {
+        tabHolder.selectCourseCohort(e.target.value)
     });
 
     window.setup_debug = function (element_id, edit_link, staff_context) {

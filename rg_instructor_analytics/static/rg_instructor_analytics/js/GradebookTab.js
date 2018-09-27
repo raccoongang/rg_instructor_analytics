@@ -11,27 +11,29 @@ function GradebookTab(button, content) {
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
 
     greadebookTab.filterString = '';
-    greadebookTab.loadTabData = function () {
-        updateData()
+    greadebookTab.loadTabData = function (resetCohort) {
+        updateData('', resetCohort)
     };
 
-    function updateData(filterString = '') {
+    function updateData(filterString = '', resetCohort) {
+        
         function onSuccess(response) {
             greadebookTab.studentInfo = response.student_info;
             greadebookTab.examNames = response.exam_names;
             greadebookTab.studentsNames = response.students_names;
-            updateTables()
+            updateTables();
+            greadebookTab.populateCohortSelect(response, resetCohort);
         }
 
         function onError() {
             alert("Can not load statistic for select course");
         }
-
+        
         $.ajax({
             traditional: true,
             type: "POST",
             url: "api/gradebook/",
-            data: {filter: filterString},
+            data: { filter: filterString, reset_cohort: resetCohort },
             success: onSuccess,
             error: onError,
             dataType: "json"
@@ -106,19 +108,19 @@ function GradebookTab(button, content) {
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
 
         //Make cells width equal to biggest cell
-        let maxLength = 0;
-        let $tableCells = $('.gradebook-table-cell:not(:first-child)');
-
-        $tableCells.each((item) => {
-            let width = $tableCells[item].clientWidth;
-            if (maxLength < width) {
-                maxLength = width;
-            }
-        });
-
-        $tableCells.each((item) => {
-            $tableCells[item].style.flex = `0 0 ${maxLength}px`;
-        });
+        // let maxLength = 0;
+        // let $tableCells = $('.gradebook-table-cell:not(:first-child)');
+        //
+        // $tableCells.each((item) => {
+        //     let width = $tableCells[item].clientWidth;
+        //     if (maxLength < width) {
+        //         maxLength = width;
+        //     }
+        // });
+        //
+        // $tableCells.each((item) => {
+        //     $tableCells[item].style.flex = `auto`;
+        // });
 
         $(greadebookTab.gradebookTableBody).click(function (element) {
             let colorArray = greadebookTab.examNames.map((item, idx, arr) => {

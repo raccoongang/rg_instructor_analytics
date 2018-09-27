@@ -106,9 +106,14 @@ class CohortView(AccessMixin, View):
         """
         Process post request.
         """
+        filter_args = dict(
+            course_id=kwargs['course_key']
+        )
+        if kwargs['cohort']:
+            filter_args.update(dict(student__in=kwargs['cohort'].users.all().values_list('id', flat=True)))
         grade_stat = (
             GradeStatistic.objects
-            .filter(course_id=kwargs['course_key'])
+            .filter(**filter_args)
             .values('student_id', 'student__username', 'total')
         )
         # Return empty lost of the cohorts, when precollect statistic is empty.

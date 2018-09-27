@@ -43,7 +43,7 @@ class GradeFunnelView(AccessMixin, View):
 
     user_enrollments_ignored_types = []
 
-    def get_query_for_course_item_stat(self, course_key, block_type):
+    def get_query_for_course_item_stat(self, course_key, block_type, cohort):
         """
         Return query set for select given block type for given course.
         """
@@ -52,11 +52,16 @@ class GradeFunnelView(AccessMixin, View):
             "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
             "AND t2.module_type = %s)", (course_key, block_type))
-        result = StudentModule.objects.filter(
+        filter_args = dict(
             course_id=course_key,
             module_type=block_type,
             modified__exact=modified_filter
         )
+        if cohort:
+            filter_args.update({
+                'student__in': cohort.users.all().values_list('id', flat=True)
+            })
+        result = StudentModule.objects.filter(**filter_args)
         if len(self.user_enrollments_ignored_types):
             users = (
                 CourseEnrollment.objects.all()
@@ -66,11 +71,11 @@ class GradeFunnelView(AccessMixin, View):
             result = result.exclude(student__in=users)
         return result
 
-    def get_progress_info_for_subsection(self, course_key):
+    def get_progress_info_for_subsection(self, course_key, cohort):
         """
         Return activity for each of the section.
         """
-        info = self.get_query_for_course_item_stat(course_key, 'sequential')
+        info = self.get_query_for_course_item_stat(course_key, 'sequential', cohort)
         info = (
             info.values('module_state_key', 'state')
                 .order_by('module_state_key', 'state')
@@ -124,13 +129,13 @@ class GradeFunnelView(AccessMixin, View):
             accomulate += i['student_count']
             i['student_count_in'] = accomulate
 
-    def get_funnel_info(self, course_key):
+    def get_funnel_info(self, course_key, cohort):
         """
         Return course info in the tree-like structure.
 
         Structure of the node described inside function info_for_course_element.
         """
-        subsection_activity = self.get_progress_info_for_subsection(course_key)
+        subsection_activity = self.get_progress_info_for_subsection(course_key, cohort)
         courses_structure = self.get_course_info(course_key, subsection_activity)
         self.append_inout_info(courses_structure)
         return courses_structure
@@ -139,4 +144,4 @@ class GradeFunnelView(AccessMixin, View):
         """
         Process post request.
         """
-        return JsonResponse(data={'courses_structure': self.get_funnel_info(kwargs['course_key'])})
+        return JsonResponse(data={'courses_structure': self.get_funnel_info(kwargs['course_key'], kwargs['cohort'])})
