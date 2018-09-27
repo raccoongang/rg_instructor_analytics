@@ -1,6 +1,8 @@
 function FunnelTab(button, content) {
     'use strict';
     var funnelTab = new Tab(button, content);
+    var timeFilter = new TimeFilter(content, updateFunnel);
+
     funnelTab.courseStructureView = content.find('#course-structure');
     
     function openLocation() {
@@ -12,9 +14,8 @@ function FunnelTab(button, content) {
         funnelTab.locationToOpen = undefined;
     }
 
-    function updateFunnel() {
+    function updateFunnel(timeFilter) {
         function onSuccess(response) {
-            console.log(response);
             funnelTab.courseStructure = response.courses_structure;
 
             funnelTab.viewContent = funnelTab.courseStructureView.find('.content');
@@ -51,16 +52,21 @@ function FunnelTab(button, content) {
         }
 
         $.ajax({
-            traditional: true,
             type: 'POST',
             url: 'api/funnel/',
+            data: timeFilter.timestampRange,
+            dataType: 'json',
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: 'json'
+            beforeSend: timeFilter.toggleLoader,
+            complete: timeFilter.toggleLoader,
         });
     }
 
-    funnelTab.loadTabData = updateFunnel;
+    funnelTab.loadTabData = function () {
+        updateFunnel(timeFilter);
+    };
 
     return funnelTab;
 }

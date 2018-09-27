@@ -67,7 +67,7 @@ class ProblemHomeWorkStatisticView(View):
             data=self.get_homework_stat(course_key, from_date, to_date)
         )
 
-    def get_homework_stat(self, course_key, from_date, to_date):
+    def get_homework_stat(self, course_key, from_date=None, to_date=None):
         """
         Aggregate students' attemps/grade info for given course.
 
@@ -261,6 +261,7 @@ class ProblemQuestionParser():
         self.problemID = problemID
         self.questionID = questionID
 
+    @staticmethod
     def init_statistic_object():
         """
         Provide init state for statistic.
