@@ -1,54 +1,64 @@
 <%page args="section_data" expression_filter="h"/>
 
 <%
-    from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _
 %>
 
 <h1>${_("Problems")}</h1>
 
-<h2 class="enrollment-title">${_("This report helps detect assessments that are most problematic for students.")}
+## MAIN section ##
+<h2 class="enrollment-title">
+  ${_("This report helps detect assessments that are most problematic for students.")}
 </h2>
 <ul class="disc-list">
-    <li class="enrollment-title-text">${_("Blue columns represent average count of attempts for all assessments in a su"
-        "bsection.")}</li>
-    <li class="enrollment-title-text">${_("Red columns represent average level of student’s success in a subsection (in"
-        "%)")}</li>
+  <li class="enrollment-title-text">
+    ${_("Blue columns represent average count of attempts for all assessments in a subsection.")}
+  </li>
+  <li class="enrollment-title-text">
+    ${_("Red columns represent average level of student’s success in a subsection (%)")}
+  </li>
 </ul>
 
-<span class="enrollment-title-text">${_("Click on the area that represents a subsection (only subsections that contain "
-    "graded assessments are displayed) to get more detailed information.")}</span>
+<span class="enrollment-title-text">
+    ${_("Click on the area that represents a subsection (only subsections that contain "
+    "graded assessments are displayed) to get more detailed information.")}
+</span>
+
+<%include file="time-filter.html" />
+
 <div class="enrollment-legend-holder enrollment-legend-holder__square">
-    <div class="enrollment-legend-item">Average attempts count</div>
-    <div class="enrollment-legend-item">Average success level, %</div>
-</div>
-<div id="problem-homeworks-stats-plot">
-    Loading
-    <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
+  <div class="enrollment-legend-item">Average attempts count</div>
+  <div class="enrollment-legend-item">Average success level, %</div>
 </div>
 
+<div id="problem-homeworks-stats-plot"></div>
+
+## DETAILS section ##
 <h2 class="enrollment-title enrollment-title-1 hidden">${_("Details")}</h2>
-<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("This level of the report indexes units from ass"
-    "essments success perspective")}</span>
-    <ul class="disc-list">
-        <li class="enrollment-title-text">${_("Blue column = 100% if students gave correct ans"
-            "wers with 1st attempt")}</li>
-        <li class="enrollment-title-text">${_("Red column = 100% if students gave incorrect an"
-            "swers and used all the attempts")}</li>
-    </ul>
+<span class="enrollment-title-text enrollment-title-text-1 hidden">
+    ${_("This level of the report indexes units from assessments success perspective")}
+</span>
+<ul class="disc-list">
+  <li class="enrollment-title-text">
+    ${_("Blue column = 100% if students gave correct answers with 1st attempt")}
+  </li>
+  <li class="enrollment-title-text">
+    ${_("Red column = 100% if students gave incorrect answers and used all the attempts")}
+  </li>
+</ul>
 
-<span class="enrollment-title-text enrollment-title-text-1 hidden">${_("Click on the area that represents a unit to get"
-    " detailed information.")}</span>
+<span class="enrollment-title-text enrollment-title-text-1 hidden">
+  ${_("Click on the area that represents a unit to get detailed information.")}
+</span>
 <div class="enrollment-legend-holder enrollment-legend-holder__square enrollment-legend-holder__square-1 hidden">
-    <div class="enrollment-legend-item">${_("Correct Answers, %")}</div>
-    <div class="enrollment-legend-item">${_("Incorrect Answers, %")}</div>
+  <div class="enrollment-legend-item">${_("Correct Answers, %")}</div>
+  <div class="enrollment-legend-item">${_("Incorrect Answers, %")}</div>
 </div>
-<div id="problems-stats-plot">
-    
-</div>
+<div id="problems-stats-plot"></div>
 
-<h2 class="enrollment-title enrollment-title-2 hidden">${_("Details")}</h2>
-<span class="enrollment-title-text enrollment-title-text-2 hidden">${_("This level of the report indexes units from ass"
-    "essments success perspective")}</span>
-<div id="problem-body">
-
-</div>
+## PROBLEM section ##
+<h2 class="enrollment-title enrollment-title-2 hidden">${_("Problem")}</h2>
+<span class="enrollment-title-text enrollment-title-text-2 hidden">
+  ${_("This level of the report indexes units from assessments success perspective")}
+</span>
+<div id="problem-body"></div>

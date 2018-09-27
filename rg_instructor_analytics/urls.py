@@ -4,29 +4,40 @@ Url config file.
 from django.conf.urls import url
 
 from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
-from rg_instructor_analytics.views.Enrollment import EnrollmentStatisticView
+from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.Funnel import GradeFunnelView
 from rg_instructor_analytics.views.Gradebook import GradebookView
-from rg_instructor_analytics.views.Problem import (
+from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
 from rg_instructor_analytics.views.Suggestion import SuggestionView
 from rg_instructor_analytics.views.TabFragment import InstructorAnalyticsFragmentView
 
 urlpatterns = [
+    # Enrollment stats tab:
     url(r'^api/enroll_statics/$', EnrollmentStatisticView.as_view(), name='enrollment_statistic_view'),
 
+    # Problems tab:
     url(
         r'^api/problem_statics/homework/$',
         ProblemHomeWorkStatisticView.as_view(),
         name='problem_homework_statistic_view'
     ),
-
-    url(r'^api/problem_statics/homeworksproblems/$', ProblemsStatisticView.as_view(), name='problems_statistic_view'),
-
-    url(r'^api/problem_statics/problem_detail/$', ProblemDetailView.as_view(), name='problem_detail_view'),
-
-    url(r'^api/problem_statics/problem_question_stat/$', ProblemQuestionView.as_view(), name='problem_question_view'),
+    url(
+        r'^api/problem_statics/homeworksproblems/$',
+        ProblemsStatisticView.as_view(),
+        name='problems_statistic_view'
+    ),
+    url(
+        r'^api/problem_statics/problem_detail/$',
+        ProblemDetailView.as_view(),
+        name='problem_detail_view'
+    ),
+    url(
+        r'^api/problem_statics/problem_question_stat/$',
+        ProblemQuestionView.as_view(),
+        name='problem_question_view'
+    ),
 
     url(r'^api/gradebook/$', GradebookView.as_view(), name='gradebook_view'),
 

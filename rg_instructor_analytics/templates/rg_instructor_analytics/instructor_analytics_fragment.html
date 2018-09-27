@@ -7,6 +7,7 @@
 <%block name="headextra">
     <%static:css group='style-course'/>
     <!-- Plotly.js -->
+    ## TODO: pin vendor libs!
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -17,10 +18,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.3/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />
 </%block>
+
 <%include file="/courseware/course_navigation.html" args="active_page='instructor_analytics'" />
-<%
-    from django.utils.translation import ugettext as _
-%>
 
 
 <div class="container">

@@ -12,27 +12,9 @@
 <span class="enrollment-title-text">${_("You can choose the predefined periods of time to see the dynamics (Last Week, "
     "Last 2 Weeks, Last Month) or you can choose custom time period.")}</span>
 
-<div class="enroll-buttons-holder">
-    <button id="date-btn">${_("Select period")}</button>
-    <div id="date_dropdown" class="dropdown-content"
-        data-enroll='${section_data}'>
-        <div>
-            <label for=${_("from")}>From</label>
-            <input type="text" id="from" name="from">
-            <label for=${_("to")}>to</label>
-            <input type="text" id="to" name="to">
-        </div>
-        <p>&nbsp;</p>
-        <div>
-            <button id="date-apply-btn">${_("Apply")}</button>
-        </div>
-    </div>
+<div id="enrollment-data" data-enroll='${section_data}'></div>
 
-    <button id="select-1-week">${_("Last Week")}</button>
-    <button id="select-2-week">${_("Last 2 Weeks")}</button>
-    <button id="select-4-week">${_("Last Month")}</button>
-    <button id="select-all-week">${_("Since Course Start")}</button>
-</div>
+<%include file="time-filter.html" />
 
 <div class="enrollment-legend-holder">
     <div class="enrollment-legend-item">${_("Enrollments")}</div>

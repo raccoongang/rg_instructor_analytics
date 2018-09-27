@@ -6,10 +6,13 @@
  * @abstract
  */
 function Tab(button, content) {
+    var tab = this;
+
     this.button = button;
     this.content = content;
     this.tabHolder = undefined;
     this.locationToOpen = undefined;
+
     /**
      * Called for mark this tab active and show content.
      * @param isActive
@@ -25,8 +28,6 @@ function Tab(button, content) {
         }
     };
 
-
-
     /**
      * Called for loading date for some tab implementation.
      * @abstract
@@ -35,11 +36,10 @@ function Tab(button, content) {
         throw new Error("missing implementation")
     };
 
-
     /**
-     * Called for navigate to the content inside tab.
+     * Navigate to tab's content.
      */
-    this.openLocation = (location) => {
-        this.locationToOpen = location
+    this.openLocation = function (location) {
+        tab.locationToOpen = location;
     }
 }

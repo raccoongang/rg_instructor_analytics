@@ -1,14 +1,19 @@
 """
-Module for enrollment subtab.
+Enrollment stats sub-tab module.
 """
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.http.response import JsonResponse
+from django.http import HttpResponseBadRequest, JsonResponse
+from django.utils.datastructures import MultiValueDictKeyError
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import View
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 
-from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from rg_instructor_analytics.utils.decorators import instructor_access_required
 
 JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
 CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)
@@ -17,10 +22,17 @@ QUESTUIN_SELECT_TYPE = 'select'
 QUESTUIN_MULTI_SELECT_TYPE = 'multySelect'
 
 
-class EnrollmentStatisticView(AccessMixin, View):
+class EnrollmentStatisticView(View):
     """
-    Api for getting enrollment statistic.
+    Enrollment stats API view.
     """
+
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(EnrollmentStatisticView, self).dispatch(*args, **kwargs)
 
     @staticmethod
     def get_last_state(course_key, date):
@@ -117,15 +129,26 @@ class EnrollmentStatisticView(AccessMixin, View):
             'dates_unenroll': dates_unenroll, 'counts_unenroll': counts_unenroll,
         }
 
-    def process(self, request, **kwargs):
+    def post(self, request, course_id):
         """
-        Process post request for this view.
-        """
-        # NOTE: needs simplifying - switch to post implementation.
+        POST request handler.
 
-        from_timestamp = int(request.POST['from'])
-        to_timestamp = int(request.POST['to'])
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        try:
+            from_timestamp = int(request.POST['from'])
+            to_timestamp = int(request.POST['to'])
+
+            stats_course_id = request.POST['course_id']
+            course_key = CourseKey.from_string(stats_course_id)
+
+        except MultiValueDictKeyError:
+            return HttpResponseBadRequest(_("`from`, `to`, `course_id` are the must."))
+        except TypeError:
+            return HttpResponseBadRequest(_("Invalid date range."))
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
 
         return JsonResponse(
-            data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, kwargs['course_key'])
+            data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, course_key)
         )

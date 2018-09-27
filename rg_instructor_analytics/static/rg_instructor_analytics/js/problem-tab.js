@@ -6,26 +6,28 @@
 function ProblemTab(button, content) {
     var problemTab = new Tab(button, content);
     var problemDetail = problemTab.content.find("#problem-body");
-
+    var timeFilter = new TimeFilter(content, updateHomeWork);
 
     function openLocation(){
         problemTab.content.find(`*[data-edxid="${problemTab.locationToOpen.value}"]`).click();
         problemTab.locationToOpen = undefined;
     }
-    /**
-    * function for display general plot with homework`s stat
-    */
-    function updateHomeWork() {
-        function onSuccess(response) {
-            let maxAttempts = Math.max(...response.attempts);
-            let countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
-            let correctAnswer = [...response.correct_answer];
-            const subsectionId = response.subsection_id;
-            let yAxis = [...response.names];
-            let xAxisRight = ['0', '50%', '100%'];
-            let $homework = $('#problem-homeworks-stats-plot');
 
-            let bars = '', index = 0;
+    /**
+    * Homework`s stats drawer
+    */
+    function updateHomeWork(timeFilter) {
+        function onSuccess(response) {
+            var $homework = $('#problem-homeworks-stats-plot');
+            var maxAttempts = Math.max(...response.attempts);
+            var countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
+            var correctAnswer = [...response.correct_answer];
+            var subsectionId = response.subsection_id;
+            var yAxis = [...response.names];
+            var xAxisRight = ['0', '50%', '100%'];
+
+            var bars = '',
+                index = 0;
             for (let item in yAxis) {
                 let attempts = (100 * response.attempts[index]) / maxAttempts;
                 let percent = correctAnswer[index] * 100;
@@ -54,7 +56,8 @@ function ProblemTab(button, content) {
                 index++;
             }
             bars = `<ul class="plot-body">${bars}</ul>`;
-            //build x axis
+
+            // build 'X' axis
             let axis = ``;
             let small;
             if (yAxis.length > 10) {small = 'small'}
@@ -69,14 +72,16 @@ function ProblemTab(button, content) {
             });
             axis = `<ul class="x-axis">${axis}</ul>`;
             bars += axis;
-            // build left y axis
+
+            // build left 'Y' axis
             axis = '';
             countAttempts.forEach((item) => {
                 axis += `<li>${item.toFixed(1)}</li>`
             });
             axis = `<ul class="y-axis-l">${axis}</ul>`;
             bars += axis;
-            //build right y axis
+
+            // build right 'Y' axis
             axis = '';
             xAxisRight.forEach((item) => {
                 axis += `<li>${item}</li>`
@@ -106,32 +111,34 @@ function ProblemTab(button, content) {
                     $('.hw-xaxis').removeClass('hover');
                 });
             }
-            if(problemTab.locationToOpen) openLocation()
+            if (problemTab.locationToOpen) {
+                openLocation();
+            }
         }
 
         function onError() {
-            alert("Can not load statistic for select course");
+            alert("Can't load data for selected course!");
         }
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/problem_statics/homework/",
-            data: {},
+            data: timeFilter.timestampRange,
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: timeFilter.toggleLoader,
+            complete: timeFilter.toggleLoader,
         });
     }
 
     /**
-    * function for display plot with homework problem statistics
-    * @param homeworsProblem string id of the problem
+    * `Homework` problem statistics
+    * @param hwProblem string id of the problem
     */
-    function loadHomeWorkProblems(homeworsProblem) {
+    function loadHomeWorkProblems(hwProblem) {
         function onSuccess(response) {
-
-
             const correct = response.correct;
             const incorrect = response.incorrect;
             const absIncorrect = incorrect.map(x => Math.abs(x));
@@ -192,23 +199,29 @@ function ProblemTab(button, content) {
             $('#problems-stats-plot').on('click', function (e) {
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
-                    displayProblemView(homeworsProblem[attr.attribute]);
+                    displayProblemView(hwProblem[attr.attribute]);
                 }
             });
         }
 
         function onError() {
-            alert("Can not load statistic for select course");
+            alert("Can't load data for selected course!");
         }
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/problem_statics/homeworksproblems/",
-            data: { problems: homeworsProblem },
+            data: {
+                problems: hwProblem,
+                from: timeFilter.timestampRange.from,
+                to: timeFilter.timestampRange.to,
+            },
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: timeFilter.toggleLoader,
+            complete: timeFilter.toggleLoader,
         });
 
     }
@@ -234,25 +247,33 @@ function ProblemTab(button, content) {
         }
 
         function onError() {
-            alert("Can not load statistic for select course");
+            alert("Can't load data for selected course!");
         }
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/problem_statics/problem_detail/",
             data: { problem: stringProblemID },
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: timeFilter.toggleLoader,
+            complete: timeFilter.toggleLoader,
         });
     }
 
-    problemTab.loadTabData = function () {
-        updateHomeWork()
-    };
+    problemTab.loadTabData = loadTabData;
 
-    problemTab.content.find('.close').click(item => problemTab.content.find('.modal-for-plot').hide());
+    function loadTabData() {
+        updateHomeWork(timeFilter);
+    }
+
+    problemTab.content
+      .find('.close')
+      .click(function (item) {
+        problemTab.content.find('.modal-for-plot').hide()
+    });
 
     return problemTab;
 }
@@ -263,12 +284,14 @@ function ProblemTab(button, content) {
 * @param stringProblemID string problem id
 */
 function bindPlotsPopupForProblem(problem, stringProblemID) {
-    var avalivleQuestions = [OpetionQuestion, RadioOpetionQuestion, MultyChoseQuestion];
+    var avalivleQuestions = [OpetionQuestion, RadioOptionQuestion, MultyChoseQuestion];
     var questionsDivs = problem.find(".wrapper-problem-response");
     var isAdded;
+
     questionsDivs.each(function (index) {
-        isAdded = false;
         var html = $(questionsDivs[index]);
+        isAdded = false;
+
         for (var i = 0; i < avalivleQuestions.length; i++) {
             var question = avalivleQuestions[i](html, stringProblemID);
             if (question.isCanParse()) {
@@ -362,7 +385,6 @@ function BaseQuestion(questionHtml, stringProblemID) {
     * @param response
     */
     this.onGettingStat = function (response) {
-        console.log(this.questionHtml);
         switch (response.type) {
             case 'bar':
                 this.displayBar(response.stats);
@@ -447,18 +469,20 @@ function OpetionQuestion(questionHtml, stringProblemID) {
 * Implementation for the single choice question
 * @param questionHtml
 * @param stringProblemID
-* @return {RadioOpetionQuestion}
+* @return {RadioOptionQuestion}
 * @class old realisation
 * @extends BaseQuestion
 */
-function RadioOpetionQuestion(questionHtml, stringProblemID) {
+function RadioOptionQuestion(questionHtml, stringProblemID) {
     const optionQuestion = new BaseQuestion(questionHtml, stringProblemID);
     const question = optionQuestion.questionHtml.find('.choicegroup');
     optionQuestion.questionHtml = question.length === 1 ? $(question[0]) : null;
-    optionQuestion.options = optionQuestion.questionHtml.find('input[type="radio"]');
+    if (optionQuestion.questionHtml) {
+        optionQuestion.options = optionQuestion.questionHtml.find('input[type="radio"]');
+    }
 
     optionQuestion.isCanParse = function () {
-        return optionQuestion.options.length > 0
+        return optionQuestion.options && optionQuestion.options.length > 0;
     };
 
     optionQuestion.getRequestMap = function () {
@@ -470,7 +494,6 @@ function RadioOpetionQuestion(questionHtml, stringProblemID) {
             questionID: this.questionHtml.attr('id').replace('inputtype_', ''),
             answerMap: JSON.stringify(id2ValueMap)
         }
-
     };
 
     return optionQuestion;
@@ -483,15 +506,17 @@ function RadioOpetionQuestion(questionHtml, stringProblemID) {
 * @param stringProblemID
 * @return {MultyChoseQuestion}
 * @class old realisation
-* @extends RadioOpetionQuestion
+* @extends RadioOptionQuestion
 */
 function MultyChoseQuestion(questionHtml, stringProblemID) {
-    const multyChooseQuestion = new RadioOpetionQuestion(questionHtml, stringProblemID);
-    multyChooseQuestion.options = multyChooseQuestion.questionHtml.find('input[type="checkbox"]');
+    const multyChooseQuestion = new RadioOptionQuestion(questionHtml, stringProblemID);
+    if (multyChooseQuestion.questionHtml) {
+      multyChooseQuestion.options = multyChooseQuestion.questionHtml.find('input[type="checkbox"]');
+    }
 
     var baseRequestMapFunction = multyChooseQuestion.getRequestMap;
     multyChooseQuestion.getRequestMap = function () {
-        var result = baseRequestMapFunction.call(this)
+        var result = baseRequestMapFunction.call(this);
         result.type = 'multySelect';
         return result;
     };
