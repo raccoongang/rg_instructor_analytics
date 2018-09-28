@@ -25,6 +25,8 @@ QUESTUIN_MULTI_SELECT_TYPE = 'multySelect'
 class EnrollmentStatisticView(View):
     """
     Enrollment stats API view.
+
+    Data source: EnrollmentByDay DB model (rg_analytics_collector).
     """
 
     @method_decorator(instructor_access_required)

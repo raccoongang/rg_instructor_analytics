@@ -27,6 +27,8 @@ QUESTION_MULTI_SELECT_TYPE = 'multySelect'
 class ProblemHomeWorkStatisticView(View):
     """
     Homework problem stats API view for given course.
+
+    Data source: StudentModule DB model + Course structure.
     """
 
     ATTEMPTS_REQUEST = RawSQL(
@@ -65,7 +67,7 @@ class ProblemHomeWorkStatisticView(View):
             data=self.get_homework_stat(course_key, from_date, to_date)
         )
 
-    def get_homework_stat(self, course_key, from_date, to_date):
+    def get_homework_stat(self, course_key, from_date=None, to_date=None):
         """
         Aggregate students' attemps/grade info for given course.
 
@@ -152,6 +154,8 @@ class ProblemHomeWorkStatisticView(View):
 class ProblemsStatisticView(View):
     """
     Certain problem's stats in Unit.
+
+    Data source: StudentModule DB model.
     """
 
     @method_decorator(instructor_access_required)
@@ -257,6 +261,7 @@ class ProblemQuestionParser():
         self.problemID = problemID
         self.questionID = questionID
 
+    @staticmethod
     def init_statistic_object():
         """
         Provide init state for statistic.

@@ -125,7 +125,7 @@ function TimeFilter(content, action) {
 
   function makeActive(target) {
     periodDiv.removeClass('show');
-    $('.filter-btn').removeClass('active');
+    content.find('.filter-btn').removeClass('active');
     $(target).addClass('active');
   }
 
