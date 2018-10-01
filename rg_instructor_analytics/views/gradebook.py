@@ -5,7 +5,7 @@ from collections import OrderedDict
 import json
 
 from django.db.models import Q
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
