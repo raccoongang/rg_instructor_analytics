@@ -5,139 +5,162 @@
  */
 function GradebookTab(button, content) {
     var greadebookTab = new Tab(button, content);
+    var $tbody = $('#gradebook_table_body');
     var $loader = $('#gb-loader');
     
     greadebookTab.studentsTable = content.find('#student_table_body');
     greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
-
+    
     greadebookTab.filterString = '';
-    greadebookTab.loadTabData = function () {
-        updateData()
+    greadebookTab.loadTabData = function() {
+        updateData();
     };
     
     function toggleLoader() {
         $loader.toggleClass('hidden');
     }
     
+    function updateData(filter) {
+        var filterString = filter || '';
+        
         function onSuccess(response) {
             greadebookTab.studentInfo = response.student_info;
             greadebookTab.examNames = response.exam_names;
             greadebookTab.studentsNames = response.students_names;
-            updateTables()
+            updateTables(filterString);
         }
-
+        
         function onError() {
             alert("Can't load data for selected course!");
         }
-
+        
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/gradebook/",
             data: {filter: filterString},
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: toggleLoader,
+            complete: toggleLoader,
         });
     }
-    let inputValue = '';
-
-    function updateTables() {
+    
+    function updateTables(filterString) {
         var htmlStringStudents = '';
-        var htmlStringResults = '';
-
-        var htmlTemp = `<div class="gradebook-table-cell"><form class="student-search">
-            <input 
-                value="${django.gettext(inputValue)}" 
-                type="search" 
-                class="student-search-field" 
-                placeholder="Search students"
-            />
-            </form></div>`;
-
+        var value = filterString;
+        var $searchInput;
+        var htmlTemp;
+        
+        var htmlTemplate = (
+            '<div class="gradebook-table-cell">' +
+            '<form class="student-search">' +
+            '<input ' +
+            'value="<%= value %>" ' +
+            'type="search" ' +
+            'class="student-search-field" ' +
+            'placeholder="<%= placeholder %>" ' +
+            '/>' +
+            '</form>' +
+            '</div>'
+        );
+        
         greadebookTab.gradebookTableHeader.empty();
         greadebookTab.gradebookTableBody.empty();
-
+        
         for (var i = 0; i < greadebookTab.examNames.length; i++) {
-            htmlTemp += `
-                <div class="gradebook-table-cell">
-                    <div class="assignment-label">${greadebookTab.examNames[i]}</div>
-                </div>
-            `;
+            htmlTemplate += (
+                '<div class="gradebook-table-cell">' +
+                '<div class="assignment-label">' +
+                greadebookTab.examNames[i] +
+                '</div>' +
+                '</div>'
+            );
         }
+        
+        htmlTemp = _.template(htmlTemplate)({
+            value: value,
+            placeholder: django.gettext("Search students"),
+        });
+        
         greadebookTab.gradebookTableHeader.append(htmlTemp);
-
-        let $input = $('.student-search-field');
-        $input[0].addEventListener('keyup', function(e){
+        
+        $searchInput = $('.student-search-field');
+        $searchInput[0].addEventListener('keyup', function(e) {
             if (e.keyCode == 13) {
                 e.preventDefault();
                 this.blur();
             }
         });
-
+        
         $(".student-search").submit(function(e) {
             e.preventDefault();
         });
-
-        $input.on('change', (e) => {
-            inputValue = e.target.value;
-            updateData(inputValue);
-            e.target.value = inputValue;
+        
+        $searchInput.on('change', function(evt) {
+            var filterValue = evt.target.value;
+            updateData(filterValue);
         });
-
         greadebookTab.studentsTable.empty();
-
-        for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
+        
+        for (var j = 0; j < greadebookTab.studentInfo.length; j++) {
             var htmlStringResults = '';
+            
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
-                htmlStringResults += `
-                    <div class="gradebook-table-cell">
-                        ${greadebookTab.studentInfo[i][greadebookTab.examNames[nameIndex]]}
-                    </div>
-                `
+                var exName = greadebookTab.studentInfo[j][greadebookTab.examNames[nameIndex]];
+                htmlStringResults += '<div class="gradebook-table-cell">' + exName + '</div>';
             }
-
-            htmlStringStudents +=
-                `<div class="gradebook-table-row">
-                    <div class="gradebook-table-cell">
-                        <a data-position="${i}">${greadebookTab.studentsNames[i]}</a>
-                    </div>
-                    ${htmlStringResults}
-                </div>`;
+            
+            htmlStringStudents += _.template(
+                '<div class="gradebook-table-row">' +
+                    '<div class="gradebook-table-cell">' +
+                        '<a data-position="<%= dataPosition %>"><%= studentName %></a>' +
+                    '</div>' +
+                    htmlStringResults +
+                '</div>'
+            )({
+                studentName: greadebookTab.studentsNames[j],
+                dataPosition: j,
+            });
         }
-
+        
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
-
+        
         //Make cells width equal to biggest cell
-        let maxLength = 0;
-        let $tableCells = $('.gradebook-table-cell:not(:first-child)');
-
-        $tableCells.each((item) => {
-            let width = $tableCells[item].clientWidth;
+        var maxLength = 0;
+        var $tableCells = $('.gradebook-table-cell:not(:first-child)');
+        $tableCells.each(function (item) {
+            var width = $tableCells[item].clientWidth;
             if (maxLength < width) {
                 maxLength = width;
             }
         });
-
-        $tableCells.each((item) => {
-            $tableCells[item].style.flex = `0 0 ${maxLength}px`;
+        
+        $tableCells.each(function (item) {
+            $tableCells[item].style.flex = '0 0 ' + maxLength + 'px';
         });
 
-        $(greadebookTab.gradebookTableBody).click(function (element) {
-            let colorArray = greadebookTab.examNames.map((item, idx, arr) => {
+        $(greadebookTab.gradebookTableBody).click(function (evt) {
+            var colorArray = greadebookTab.examNames.map(function (item, idx, arr) {
                 if (idx === arr.length - 1) {
                     return '#c14f84';
                 }
                 return '#568ecc';
             });
 
-            let studentsGrades = [];
-            const studentPosition = element.target.dataset['position'];
-            for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++)
-                studentsGrades.push(greadebookTab.studentInfo[studentPosition][greadebookTab.examNames[nameIndex]])
+            var studentsGrades = [];
+            var studentPosition = evt.target.dataset['position'];
+            var stat;
 
-            var stat = {
+            for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
+                studentsGrades.push(
+                  greadebookTab.studentInfo[studentPosition][greadebookTab.examNames[nameIndex]]
+                );
+            }
+
+            stat = {
                 y: studentsGrades,
                 x: greadebookTab.examNames,
                 type: 'bar',
@@ -149,24 +172,26 @@ function GradebookTab(button, content) {
             var data = [stat];
 
             var layout = {
-                title: greadebookTab.studentInfo[element.target.dataset['position']].username,
+                title: greadebookTab.studentInfo[evt.target.dataset['position']].username,
                 showlegend: false,
                 xaxis: {domain: [0, 0.97]},
             };
+
             $('.gradebook-table-row').removeClass('active');
-            $(element.target).closest('.gradebook-table-row').toggleClass('active');
+            $(evt.target).closest('.gradebook-table-row').toggleClass('active');
             $('.enrollment-title-1.hidden').removeClass('hidden');
             $('.enrollment-title-text-1.hidden').removeClass('hidden');
+
             Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});
         })
     }
-    let $tbody = $('#gradebook_table_body');
-    $tbody.on('scroll',() => {
 
-        let scrollLeft = $tbody.scrollLeft();
-    
+    $tbody.on('scroll', function() {
+        var scrollLeft = $tbody.scrollLeft();
+        
         $('#gradebook_table_header').css("left", -scrollLeft);
         $('.gradebook-table-cell:first-child').css("left", scrollLeft)
     });
+
     return greadebookTab;
 }
