@@ -20,7 +20,12 @@ from django.utils.translation import ugettext as _
 <div class="grades grade-table-wrapper" >
     <div class="grade-table">
         <div class="gradebook-table-row" id="gradebook_table_header"></div>
-        <div id="gradebook_table_body" class="loader">Loading ...</div>
+        <div id="gb-loader" class="loader hidden">
+            ${_("Loading")}
+            <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
+        </div>
+        <div id="gradebook_table_body">
+        </div>
     </div>
 </div>
 

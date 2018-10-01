@@ -5,7 +5,8 @@
  */
 function GradebookTab(button, content) {
     var greadebookTab = new Tab(button, content);
-
+    var $loader = $('#gb-loader');
+    
     greadebookTab.studentsTable = content.find('#student_table_body');
     greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
@@ -14,8 +15,11 @@ function GradebookTab(button, content) {
     greadebookTab.loadTabData = function () {
         updateData()
     };
-
-    function updateData(filterString = '') {
+    
+    function toggleLoader() {
+        $loader.toggleClass('hidden');
+    }
+    
         function onSuccess(response) {
             greadebookTab.studentInfo = response.student_info;
             greadebookTab.examNames = response.exam_names;
