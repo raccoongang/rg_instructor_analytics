@@ -76,8 +76,8 @@ function FunnelTab(button, content) {
             traditional: true,
             success: onSuccess,
             error: onError,
-            beforeSend: timeFilter.toggleLoader,
-            complete: timeFilter.toggleLoader,
+            beforeSend: timeFilter.setLoader,
+            complete: timeFilter.removeLoader,
         });
     }
 
