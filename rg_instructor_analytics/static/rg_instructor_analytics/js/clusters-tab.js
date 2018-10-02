@@ -1,5 +1,5 @@
 function CohortTab(button, content) {
-    let cohortTab = new Tab(button, content);
+    var cohortTab = new Tab(button, content);
     var $loader = $('#cl-loader');
 
     cohortTab.cohortList = content.find('#cohort-check-list');
@@ -9,16 +9,17 @@ function CohortTab(button, content) {
     $('#email-body').richText();
 
     content.find('#cohort-send-email-btn').click(function () {
+        var $subject = content.find('#email-subject');
+        var $richTextEditor = content.find('.richText-editor');
+        var $cohortCheckbox = content.find("input:checkbox[name=cohort-checkbox]:checked");
+        var ids = '';
+        var request;
 
         function isValid(data) {
             return !!data.users_ids && !!data.subject && !!data.body
         }
 
         content.find('.send-email-message').addClass('hidden');
-        let $subject = content.find('#email-subject'),
-            $richTextEditor = content.find('.richText-editor'),
-            $cohortCheckbox = content.find("input:checkbox[name=cohort-checkbox]:checked"),
-            ids = '';
 
         $cohortCheckbox.each(function () {
             if (ids.length > 0) {
@@ -27,7 +28,7 @@ function CohortTab(button, content) {
             ids += $(this).val();
         });
 
-        let request = {
+        request = {
             users_ids: ids,
             subject: $subject.val(),
             body: $richTextEditor.html(),
@@ -42,17 +43,17 @@ function CohortTab(button, content) {
             type: "POST",
             url: "api/cohort/send_email/",
             data: request,
-            success: () => {
+            dataType: "json",
+            success: function () {
                 content.find('.send-email-message.success-message').removeClass('hidden');
                 // clear fields
                 $subject.val('');
                 $richTextEditor.html('');
                 $cohortCheckbox.prop('checked', false)
             },
-            error: () => {
+            error: function () {
                 content.find('.send-email-message.error-message').removeClass('hidden');
             },
-            dataType: "json"
         });
     });
     
@@ -62,29 +63,40 @@ function CohortTab(button, content) {
 
     function updateCohort() {
         function onSuccess(response) {
-            let plot = {
+            var plot = {
                 y: response.values,
                 x: response.labels,
                 type: 'bar',
             };
-            let data = [plot];
+            var data = [plot];
             Plotly.newPlot('cohort-plot', data, {}, {displayModeBar: false});
 
             cohortTab.cohortList.empty();
-            for (let i = 0; i < response.cohorts.length; i++) {
-                let item = 'cohort-checkbox' + i;
+            for (var i = 0; i < response.cohorts.length; i++) {
+                var item = 'cohort-checkbox' + i;
+                var studentsId = response.cohorts[i].students_id;
+                var label  = response.labels[i];
+                
                 cohortTab.cohortList.append(
-                    `<li>
-                        <div>
-                            <input 
-                                id="${item}" 
-                                name="cohort-checkbox" 
-                                type="checkbox" 
-                                value="${response.cohorts[i].students_id}"
-                            >
-                            <label for="${item}" style="display: inline-block;">${response.labels[i]}</label>
-                        </div>
-                    </li>`
+                    _.template(
+                        '<li>' +
+                            '<div>' +
+                                '<input ' +
+                                    'id="<%= item %>" ' +
+                                    'name="cohort-checkbox" ' +
+                                    'type="checkbox" ' +
+                                    'value="<%= studentsId %>" ' +
+                                '>' +
+                                '<label for="<%= item %>" class="emails-label">' +
+                                    '<%= label %>' +
+                                '</label>' +
+                            '</div>' +
+                        '</li>'
+                    )({
+                        item: item,
+                        studentsId: studentsId,
+                        label: label,
+                    })
                 )
             }
         }
