@@ -6,7 +6,7 @@ from django.conf.urls import url
 from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.funnel import GradeFunnelView
-from rg_instructor_analytics.views.Gradebook import GradebookView
+from rg_instructor_analytics.views.gradebook import GradebookView
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
