@@ -35,7 +35,7 @@ class CohortView(View):
         :param course_id: (str) context course ID (from urlconf)
         """
         stats_course_id = request.POST.get('course_id')
-        
+
         try:
             course_key = CourseKey.from_string(stats_course_id)
         except InvalidKeyError:
