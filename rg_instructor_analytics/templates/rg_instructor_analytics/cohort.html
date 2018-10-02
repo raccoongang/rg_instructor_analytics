@@ -16,9 +16,13 @@
 <span class="enrollment-title-text">${_("This report constantly divides your students’ progress in clusters: from low-"
     "performing to high-performing groups. You can take action right away - send appropriate email to clusters in coup"
     "le of clicks.")}</span>
-<div id="cohort-plot">
-
+<div id="cl-loader" class="loader hidden">
+    ${_("Loading")}
+    <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
 </div>
+<div id="cohort-plot"></div>
+
+
 <h2 class="enrollment-title">${_("Send Email")}</h2>
 <span class="enrollment-title-text">${_("Choose clusters you want to send emails to, create email and send. Exactly tha"
     "t simple.")}</span>

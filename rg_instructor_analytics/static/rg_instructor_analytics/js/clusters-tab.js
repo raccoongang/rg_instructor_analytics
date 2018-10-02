@@ -1,5 +1,6 @@
 function CohortTab(button, content) {
     let cohortTab = new Tab(button, content);
+    var $loader = $('#cl-loader');
 
     cohortTab.cohortList = content.find('#cohort-check-list');
     cohortTab.emailBody = cohortTab.content.find('#email-body');
@@ -54,6 +55,10 @@ function CohortTab(button, content) {
             dataType: "json"
         });
     });
+    
+    function toggleLoader() {
+        $loader.toggleClass('hidden');
+    }
 
     function updateCohort() {
         function onSuccess(response) {
@@ -89,12 +94,14 @@ function CohortTab(button, content) {
         }
 
         $.ajax({
-            traditional: true,
             type: "POST",
             url: "api/cohort/",
+            dataType: "json",
+            traditional: true,
             success: onSuccess,
             error: onError,
-            dataType: "json"
+            beforeSend: toggleLoader,
+            complete: toggleLoader,
         });
 
     }
