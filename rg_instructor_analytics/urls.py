@@ -10,7 +10,7 @@ from rg_instructor_analytics.views.gradebook import GradebookView
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
-from rg_instructor_analytics.views.Suggestion import SuggestionView
+from rg_instructor_analytics.views.suggestion import SuggestionView
 from rg_instructor_analytics.views.tab_fragment import InstructorAnalyticsFragmentView
 
 urlpatterns = [
