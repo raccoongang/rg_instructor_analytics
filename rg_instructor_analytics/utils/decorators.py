@@ -34,10 +34,10 @@ def instructor_access_required(view_func):
                 return HttpResponseForbidden(reason='Instructors only!')
             return view_func(request, *args, **kwargs)
 
-        except (ValueError, InvalidKeyError):
+        except (ValueError, InvalidKeyError) as exc:
             log.error(
                 "Unable to find course with course key %s while loading the Instructor Analytics dashboard.",
                 course_id
             )
-            return HttpResponseBadRequest(reason='Bad course ID')
+            return HttpResponseBadRequest(reason=exc.message)
     return _wrapped_view

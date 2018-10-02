@@ -1,22 +1,75 @@
 """
-Module for cohort subtab.
+Clusters sub-tab module.
 """
 import math
 
 from django.contrib.auth.models import User
-from django.http.response import JsonResponse
+from django.http.response import HttpResponseBadRequest, JsonResponse
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 
 from rg_instructor_analytics import tasks
 from rg_instructor_analytics.models import GradeStatistic
-from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from rg_instructor_analytics.utils.decorators import instructor_access_required
 
 
-class CohortView(AccessMixin, View):
+class CohortView(View):
     """
-    Api for cohort statistic.
+    Cohorts statistics API view.
     """
+
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(CohortView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        stats_course_id = request.POST.get('course_id')
+        
+        try:
+            course_key = CourseKey.from_string(stats_course_id)
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        grade_stats = (
+            GradeStatistic.objects
+            .filter(course_id=course_key)
+            .values('student_id', 'student__username', 'total')
+        )
+
+        if not grade_stats:
+            return JsonResponse(data={'labels': [], 'values': [], 'cohorts': []})
+
+        cohorts = self.generate_cohort_by_mean_and_dispersion([
+            {
+                'id': grade['student_id'],
+                'username': grade['student__username'],
+                'grade': grade['total']
+            } for grade in grade_stats
+        ])
+
+        labels = []
+        for i, cohort in enumerate(cohorts):
+            prev_cohort = cohorts[i - 1]
+            if cohort['max_progress'] == 0:
+                labels.append(_('zero progress'))
+            else:
+                labels.append(
+                    _('from {} % to {} %').format(prev_cohort['max_progress'], cohort['max_progress'])
+                )
+        values = [info['percent'] for info in cohorts]
+
+        return JsonResponse(data={'labels': labels, 'values': values, 'cohorts': cohorts})
 
     @staticmethod
     def generate_cohort_by_mean_and_dispersion(student_info):
@@ -66,6 +119,7 @@ class CohortView(AccessMixin, View):
         add_thresholds(mean + 0.5 * s)
         add_thresholds(mean + 3 * s)
         add_thresholds(1.0)
+
         return CohortView.split_students(student_info, thresholds)
 
     @staticmethod
@@ -102,57 +156,44 @@ class CohortView(AccessMixin, View):
             } for t in thresholds
         ]
 
-    def process(self, request, **kwargs):
-        """
-        Process post request.
-        """
-        grade_stat = (
-            GradeStatistic.objects
-            .filter(course_id=kwargs['course_key'])
-            .values('student_id', 'student__username', 'total')
-        )
-        # Return empty lost of the cohorts, when precollect statistic is empty.
-        if len(grade_stat) == 0:
-            return JsonResponse(data={'labels': [], 'values': [], 'cohorts': []})
-        cohorts = self.generate_cohort_by_mean_and_dispersion(
-            [
-                {
-                    'id': grade['student_id'],
-                    'username': grade['student__username'],
-                    'grade': grade['total']}
-                for grade in grade_stat
-            ]
-        )
 
-        labels = []
-        for i in range(len(cohorts)):
-            if cohorts[i]['max_progress'] == 0:
-                labels.append(_('zero progress'))
-            else:
-                labels.append(
-                    _('from ') + str(cohorts[i - 1]['max_progress']) + ' %' +
-                    _(' to ') + str(cohorts[i]['max_progress']) + ' %'
-                )
-        values = [i['percent'] for i in cohorts]
-        return JsonResponse(data={'labels': labels, 'values': values, 'cohorts': cohorts})
-
-
-class CohortSendMessage(AccessMixin, View):
+class CohortSendMessage(View):
     """
     Endpoint for sending email message.
     """
 
-    def process(self, request, **kwargs):
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
         """
-        Process post request.
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
-        users_ids_list = [int(id) for id in request.POST['users_ids'].split(',') if id != '']
+        return super(CohortSendMessage, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        users_ids = request.POST.get('users_ids')
+        email_subject = request.POST.get('subject')
+        email_body = request.POST.get('body')
+
+        try:
+            if users_ids is None:
+                raise ValueError
+        except ValueError:
+            return HttpResponseBadRequest(_("No users provided."))
+
+        users_ids_list = [int(id) for id in users_ids.split(',') if id != '']
+
         users_emails = [
             str(email) for email in User.objects.filter(id__in=users_ids_list).values_list('email', flat=True)
         ]
+
         tasks.send_email_to_cohort.delay(
-            subject=request.POST['subject'],
-            message=request.POST['body'],
+            subject=email_subject,
+            message=email_body,
             students=users_emails
         )
         return JsonResponse({'status': 'ok'})
