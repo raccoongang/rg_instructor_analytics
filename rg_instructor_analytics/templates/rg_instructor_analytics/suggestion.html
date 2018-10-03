@@ -1,10 +1,13 @@
 <%page args="section_data" expression_filter="h"/>
 <%
-    from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _
 %>
 <h1>${_("Suggestions")}</h1>
 
 <div id="suggestion">
-    <div id="suggestion-content">
-    </div>
+  <div id="sug-loader" class="loader hidden">
+    ${_("Computing")}
+    <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
+  </div>
+  <div id="suggestion-content"></div>
 </div>

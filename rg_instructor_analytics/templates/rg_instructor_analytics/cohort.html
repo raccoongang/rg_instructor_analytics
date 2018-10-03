@@ -13,15 +13,26 @@
 %>
 <h1>${_("Clusters")}</h1>
 <h2 class="enrollment-title">${_("Keep an eye on your students’ progress")}</h2>
-<span class="enrollment-title-text">${_("This report constantly divides your students’ progress in clusters: from low-"
-    "performing to high-performing groups. You can take action right away - send appropriate email to clusters in coup"
-    "le of clicks.")}</span>
-<div id="cohort-plot">
+<span class="enrollment-title-text">
+    ${_("This report constantly divides your students’ progress in clusters: from low-"
+    "performing to high-performing groups. You can take action right away - send appropriate email to "
+    "clusters in couple of clicks.")}
+</span>
 
+<div id="cl-loader" class="loader hidden">
+    ${_("Loading")}
+    <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
 </div>
+
+<div id="cohort-plot"></div>
+
+<hr/>
+
 <h2 class="enrollment-title">${_("Send Email")}</h2>
-<span class="enrollment-title-text">${_("Choose clusters you want to send emails to, create email and send. Exactly tha"
-    "t simple.")}</span>
+<span class="enrollment-title-text">
+    ${_("Choose clusters you want to send emails to, create email and send. Exactly that simple.")}
+</span>
+
 <form id="cohort-form">
     <label>
         ${_("Subject: ")}
@@ -29,9 +40,8 @@
         <input type="text" id="email-subject" name="subject" maxlength="128" size="75">
         <span class="tip">${_("(Maximum 128 characters)")}</span>
     </label>
-    <textarea id="email-body">
+    <textarea id="email-body"></textarea>
 
-    </textarea>
     <!--# TODO: we need to put it locally-->
     <script src="/static/rg_instructor_analytics/plugins/jquery.richtext.min.js"></script>
     <link

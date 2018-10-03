@@ -26,7 +26,7 @@ $(function() {
             $content.find('#section-suggestion'))
     };
 
-    const tabHolder = new TabHolder(tabs, courseSelect.val());
+    var tabHolder = new TabHolder(tabs, courseSelect.val());
     tabHolder.toggleToTab('enrollment');
 
     courseSelect.change(function(item) {

@@ -3,14 +3,14 @@ Url config file.
 """
 from django.conf.urls import url
 
-from rg_instructor_analytics.views.Cohort import CohortSendMessage, CohortView
+from rg_instructor_analytics.views.cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.funnel import GradeFunnelView
 from rg_instructor_analytics.views.gradebook import GradebookView
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
-from rg_instructor_analytics.views.Suggestion import SuggestionView
+from rg_instructor_analytics.views.suggestion import SuggestionView
 from rg_instructor_analytics.views.tab_fragment import InstructorAnalyticsFragmentView
 
 urlpatterns = [

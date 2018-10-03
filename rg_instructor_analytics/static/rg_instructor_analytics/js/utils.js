@@ -129,8 +129,12 @@ function TimeFilter(content, action) {
     $(target).addClass('active');
   }
 
-  this.toggleLoader = function () {
-    $loader.toggleClass('hidden');
+  this.setLoader = function () {
+    $loader.removeClass('hidden');
+  };
+  
+  this.removeLoader = function () {
+    $loader.addClass('hidden');
   };
 
 }

@@ -5,8 +5,11 @@ import json
 import sys
 from time import mktime
 
-from django.conf import settings
-from django.http import Http404
+from django.http import Http404, HttpResponseBadRequest
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 from web_fragments.fragment import Fragment
 from web_fragments.views import FragmentView
 
@@ -14,7 +17,7 @@ from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from rg_instructor_analytics.utils import resource_string
-from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseAccessRole
 
 # NOTE(flying-pi) reload(sys) is used for restore method `setdefaultencoding`,
@@ -22,16 +25,68 @@ from student.models import CourseAccessRole
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-JS_URL = '{static_url}rg_instructor_analytics/js/'.format(static_url=settings.STATIC_URL)
-CSS_URL = '{static_url}rg_instructor_analytics/css/'.format(static_url=settings.STATIC_URL)
 
-
-class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
+class InstructorAnalyticsFragmentView(FragmentView):
     """
     Fragment for render tab.
     """
 
-    def get_enroll_info(self, course):
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(InstructorAnalyticsFragmentView, self).dispatch(*args, **kwargs)
+
+    def render_to_fragment(self, request, *args, **kwargs):
+        """
+        Render tab fragment.
+        """
+        try:
+            course_key = CourseKey.from_string(kwargs.get('course_id'))
+            course = get_course_by_id(course_key)
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        available_courses = [
+            {
+                'course_id': str(user_course.id),
+                'course_name': str(user_course.display_name),
+                'is_current': course == user_course,
+            }
+            for user_course in self.get_available_courses(request.user)
+        ]
+
+        enroll_info = {
+            str(c.id): self.get_enroll_info(c)
+            for c in self.get_available_courses(request.user)
+        }
+
+        context = {
+            'course': course,
+            'enroll_info': json.dumps(enroll_info),
+            'available_courses': available_courses
+        }
+
+        html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
+        fragment = Fragment(html)
+        fragment.add_css(resource_string("css/instructor_analytics.css"))
+
+        fragment.add_javascript(resource_string("js/utils.js"))
+        fragment.add_javascript(resource_string("js/tab.js"))
+        fragment.add_javascript(resource_string("js/tab-holder.js"))
+        fragment.add_javascript(resource_string("js/enrollment-tab.js"))
+        fragment.add_javascript(resource_string("js/problem-tab.js"))
+        fragment.add_javascript(resource_string("js/funnel-tab.js"))
+        fragment.add_javascript(resource_string("js/gradebook-tab.js"))
+        fragment.add_javascript(resource_string("js/clusters-tab.js"))
+        fragment.add_javascript(resource_string("js/suggestions-tab.js"))
+        fragment.add_javascript(resource_string("js/base.js"))
+
+        return fragment
+
+    @staticmethod
+    def get_enroll_info(course):
         """
         Return enroll_start and enroll_end for given course.
         """
@@ -48,7 +103,8 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
             'enroll_end': mktime(enroll_end.timetuple()) if enroll_end else 'null',
         }
 
-    def get_available_courses(self, user):
+    @staticmethod
+    def get_available_courses(user):
         """
         Return courses, available for the given user.
         """
@@ -75,47 +131,3 @@ class InstructorAnalyticsFragmentView(AccessMixin, FragmentView):
                 except Http404:
                     continue
         return result
-
-    def process(self, request, **kwargs):
-        """
-        Render tab fragment.
-        """
-        course = kwargs['course']
-        available_courses = [
-            {
-                'course_id': str(c.id),
-                'course_name': str(c.display_name),
-                'is_current': course == c,
-            }
-            for c in self.get_available_courses(request.user)
-        ]
-
-        enroll_info = {
-            str(c.id): self.get_enroll_info(c)
-            for c in self.get_available_courses(request.user)
-        }
-
-        context = {
-            'course': course,
-            'enroll_info': json.dumps(enroll_info),
-            'available_courses': available_courses
-        }
-
-        html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
-        fragment = Fragment(html)
-        fragment.add_css(resource_string("css/instructor_analytics.css"))
-
-        fragment.add_javascript(resource_string("js/utils.js"))
-        fragment.add_javascript(resource_string("js/tab.js"))
-        fragment.add_javascript(resource_string("js/tab-holder.js"))
-        fragment.add_javascript(resource_string("js/enrollment-tab.js"))
-        fragment.add_javascript(resource_string("js/problem-tab.js"))
-        fragment.add_javascript(resource_string("js/funnel-tab.js"))
-        fragment.add_javascript(resource_string("js/gradebook-tab.js"))
-
-        fragment.add_javascript_url(JS_URL + 'CohortTab.js')
-        fragment.add_javascript_url(JS_URL + 'Suggestion.js')
-
-        fragment.add_javascript(resource_string("js/base.js"))
-
-        return fragment

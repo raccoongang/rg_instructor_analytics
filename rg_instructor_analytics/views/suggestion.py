@@ -1,15 +1,20 @@
 """
-Module for the suggestion's tab logic.
+Suggestions tab module.
 """
 from abc import ABCMeta, abstractmethod
 from itertools import izip
 
+from django.http import HttpResponseBadRequest
+from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import View
 import numpy as np
+from opaque_keys import InvalidKeyError
+from opaque_keys.edx.keys import CourseKey
 
 from course_modes.models import CourseMode
 from django_comment_client.utils import JsonResponse
-from rg_instructor_analytics.utils.AccessMixin import AccessMixin
+from rg_instructor_analytics.utils.decorators import instructor_access_required
 from rg_instructor_analytics.views.funnel import GradeFunnelView
 from rg_instructor_analytics.views.problem import ProblemHomeWorkStatisticView
 
@@ -122,11 +127,17 @@ class FunnelSuggestion(BaseSuggestion):
 
         threshold = subsections_percent.mean() + subsections_percent.std()
 
-        description = 'Take a look at `{}`: the number of students that stuck there is {}% higher than average'
+        description = 'Take a look at "{}" - ' \
+                      'the number of students that stuck there is {:01.0f}% higher than average.'
+
         for unit in units:
             percent = get_percent(unit['student_count_in'], unit['student_count'])
             if unit['student_count_in'] > 0 and threshold <= percent < 1.0:
-                self.add_suggestion_item(description.format(unit['name'], int(percent * 100.0)), unit['id'])
+                self.add_suggestion_item(description.format(
+                    '<b>{}</b>'.format(unit['name']),
+                    percent * 100.0),
+                    unit['id']
+                )
 
 
 class ProblemSuggestion(BaseSuggestion):
@@ -171,9 +182,9 @@ class ProblemSuggestion(BaseSuggestion):
                 )
 
 
-class SuggestionView(AccessMixin, View):
+class SuggestionView(View):
     """
-    Api for get courses suggestion.
+    Courses suggestions API view.
     """
 
     suggestion_providers = [
@@ -181,9 +192,25 @@ class SuggestionView(AccessMixin, View):
         ProblemSuggestion(),
     ]
 
-    def process(self, request, **kwargs):
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
         """
-        Process post request.
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
-        result = sum([s.get_suggestion_list(kwargs['course_key']) for s in self.suggestion_providers], [])
+        return super(SuggestionView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        try:
+            stats_course_id = request.POST.get('course_id')
+            course_key = CourseKey.from_string(stats_course_id)
+
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        result = sum([s.get_suggestion_list(course_key) for s in self.suggestion_providers], [])
         return JsonResponse(data={'suggestion': result})
