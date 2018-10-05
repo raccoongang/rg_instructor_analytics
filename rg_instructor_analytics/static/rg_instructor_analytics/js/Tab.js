@@ -14,11 +14,13 @@ function Tab(button, content) {
      * Called for mark this tab active and show content.
      * @param isActive
      */
-    this.setActive = function (isActive) {
+    this.setActive = function (isActive, doLoadData) {
         if (isActive) {
             content.addClass('active-section');
             button.addClass('active-section');
-            // this.loadTabData();
+            if (doLoadData) {
+                this.loadTabData();
+            }
         } else {
             content.removeClass('active-section');
             button.removeClass('active-section');

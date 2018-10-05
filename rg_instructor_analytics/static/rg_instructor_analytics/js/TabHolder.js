@@ -23,7 +23,8 @@ function TabHolder(tabs, course, course_cohort) {
 
     this.toggleToTab = (tab) => {
         for (let tabName in this.tabs) {
-            this.tabs[tabName].setActive(tabName === tab);
+            var doLoadData = tabName === 'funnel';
+            this.tabs[tabName].setActive(tabName === tab, doLoadData);
         }
     };
 
