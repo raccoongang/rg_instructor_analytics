@@ -33,7 +33,11 @@ from xmodule.modulestore.django import modulestore
 try:
     from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
 except ImportError:
-    from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
+    try:
+        from lms.djangoapps.grades.new.course_grade import CourseGradeFactory
+    except ImportError:
+        # Hawthorn release:
+        from lms.djangoapps.grades.course_grade_factory import CourseGradeFactory
 
 
 log = logging.getLogger(__name__)

@@ -10,8 +10,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 from web_fragments.fragment import Fragment
-from web_fragments.views import FragmentView
 
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
@@ -26,7 +26,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 
-class InstructorAnalyticsFragmentView(FragmentView):
+class InstructorAnalyticsFragmentView(EdxFragmentView):
     """
     Fragment for render tab.
     """
