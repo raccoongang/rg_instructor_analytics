@@ -1,29 +1,31 @@
 ## mako
+<%page args="active_tab" />
+
 <%
 from django.utils.translation import ugettext as _
 %>
 <div class="enroll-buttons-holder">
-    <button id="date-btn" class="filter-btn active">${_("Select period")}</button>
-    <div id="date_dropdown" class="dropdown-content">
+    <button class="js-datepicker-btn date-btn filter-btn active">${_("Select period")}</button>
+    <div class="js-datepicker-dropdown dropdown-content">
         <div>
-            <label for="from">${_("From")}</label>
-            <input type="text" id="from" name="from">
-            <label for="to">${_("To")}</label>
-            <input type="text" id="to" name="to">
+            <label for="${active_tab}-from">${_("From")}</label>
+            <input type="text" id="${active_tab}-from" name="from" class="js-from-datepicker">
+            <label for="${active_tab}-to">${_("To")}</label>
+            <input type="text" id="${active_tab}-to" name="to" class="js-to-datepicker">
         </div>
         <div class="spacing"></div>
         <div>
-            <button id="date-apply-btn">${_("Apply")}</button>
+            <button class="js-date-apply-btn">${_("Apply")}</button>
         </div>
     </div>
 
-    <button id="select-1-week" class="filter-btn">${_("Last Week")}</button>
-    <button id="select-2-week" class="filter-btn">${_("Last 2 Weeks")}</button>
-    <button id="select-4-week" class="filter-btn">${_("Last Month")}</button>
-    <button id="select-all-week" class="filter-btn">${_("Since Course Start")}</button>
+    <button class="js-select-1-week filter-btn">${_("Last Week")}</button>
+    <button class="js-select-2-week filter-btn">${_("Last 2 Weeks")}</button>
+    <button class="js-select-4-week filter-btn">${_("Last Month")}</button>
+    <button class="js-select-all-week filter-btn">${_("Since Course Start")}</button>
 </div>
 
-<div id="loader" class="loader hidden">
+<div class="js-loader loader hidden">
   ${_("Loading")}
   <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
 </div>

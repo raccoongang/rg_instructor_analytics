@@ -183,11 +183,11 @@
     box-shadow: none !important;
     text-shadow: none !important;
 }
-#date-btn {
-    padding-right: 20px;
+.date-btn {
+    padding-right: 20px !important;
     position: relative;
 }
-#date-btn:before {
+.date-btn:before {
     content: '\f0d7';
     font-family: 'FontAwesome';
     position: absolute;

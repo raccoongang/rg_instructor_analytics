@@ -100,19 +100,19 @@
                 </section>
 
                 <section id="section-problem" class="idash-section">
-                    <%include file="problems.html" args="section_data={course}" />
+                    <%include file="problems.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
                 </section>
 
                 <section id="section-gradebook" class="idash-section">
-                    <%include file="gradebook.html" args="section_data={course}" />
+                    <%include file="gradebook.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
                 </section>
 
                 <section id="section-cohort" class="idash-section">
-                    <%include file="cohort.html" args="section_data={'course':course}" />
+                    <%include file="cohort.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
                 </section>
 
                 <section id="section-funnel" class="idash-section">
-                    <%include file="funnel.html" args="section_data={'course':course}" />
+                    <%include file="funnel.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
                 </section>
 
                 <section id="section-suggestion" class="idash-section">

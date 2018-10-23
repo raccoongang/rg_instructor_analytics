@@ -3,7 +3,7 @@ function FunnelTab(button, content) {
     var funnelTab = new Tab(button, content);
     var timeFilter = new TimeFilter(content, updateFunnel);
 
-    funnelTab.courseStructureView = content.find('#course-structure');
+    funnelTab.courseStructureView = content.find('.tab-content');
 
     function openLocation() {
         var items = [funnelTab.viewContent.find(
@@ -81,9 +81,31 @@ function FunnelTab(button, content) {
         });
     }
 
-    funnelTab.loadTabData = function () {
-        updateFunnel(timeFilter);
-    };
+    function loadTabData() {
+      try {
+        var courseDatesInfo = $('.course-dates-data').data('course-dates')[funnelTab.tabHolder.course];
+        if (courseDatesInfo.course_is_started) {
+            $('.tab-banner').prop('hidden', true);
+            $('.tab-content').prop('hidden', false);
+            if (courseDatesInfo.course_start !== "null") {
+              timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
+            }
+            if (courseDatesInfo.course_end !== "null") {
+              timeFilter.endDate = moment(courseDatesInfo.course_end * 1000);
+            }
+        } else {
+            $('.tab-banner').prop('hidden', false);
+            $('.tab-content').prop('hidden', true);
+        }
+      }
+      catch (error) {
+        console.error(error);
+      }
+
+      updateFunnel(timeFilter);
+    }
+
+    funnelTab.loadTabData = loadTabData;
 
     return funnelTab;
 }

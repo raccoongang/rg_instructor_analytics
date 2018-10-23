@@ -23,7 +23,7 @@ It adds extra navigation `Instructor analytics` tab for instructors (next to `In
 
 ## Installation
 
-* Add `rg_instructor_analytics` and `web_fragments` to the INSTALLED_APPS (i.e. in `edx-platform/lms/envs/common.py`)
+* Add `rg_instructor_analytics` to the INSTALLED_APPS (i.e. in `edx-platform/lms/envs/common.py`)
 * Add to lms url (i.e. in `edx-platform/lms/urls.py`): 
 ```python
 url(
@@ -41,7 +41,7 @@ FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 
 FEATURES['ENABLE_RG_INSTRUCTOR_ANALYTICS'] = True
 
-INSTALLED_APPS += ('rg_instructor_analytics', 'web_fragments',)
+INSTALLED_APPS += ('rg_instructor_analytics',)
 ```
 * Apply migration
 * Ensure that celerybeat is running

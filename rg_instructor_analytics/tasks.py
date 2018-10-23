@@ -30,6 +30,8 @@ from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCac
 from student.models import CourseEnrollment
 from xmodule.modulestore.django import modulestore
 
+HAWTHORN = False
+
 try:
     from lms.djangoapps.grades.new.course_grade_factory import CourseGradeFactory
 except ImportError:
@@ -38,7 +40,7 @@ except ImportError:
     except ImportError:
         # Hawthorn release:
         from lms.djangoapps.grades.course_grade_factory import CourseGradeFactory
-
+        HAWTHORN = True
 
 log = logging.getLogger(__name__)
 DEFAULT_DATE_TIME = datetime(2000, 1, 1, 0, 0)
@@ -189,7 +191,11 @@ def get_grade_summary(user_id, course):
     Return the grade for the given student in the addressed course.
     """
     try:
-        return CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
+        if HAWTHORN:
+            grade_summary = CourseGradeFactory().read(User.objects.all().filter(id=user_id).first(), course).summary
+        else:
+            grade_summary = CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
+        return grade_summary
     except PermissionDenied:
         return None
 
@@ -213,7 +219,7 @@ def grade_collector_stat():
     collected_stat = []
     for course_string_id, users in users_by_course.iteritems():
         try:
-            course_key = CourseKey.from_string(course_string_id)
+            course_key = CourseKey.from_string(str(course_string_id))
             course = get_course_by_id(course_key, depth=0)
         except (InvalidKeyError, Http404):
             continue

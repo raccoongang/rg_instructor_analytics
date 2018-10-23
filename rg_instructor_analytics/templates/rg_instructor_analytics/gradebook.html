@@ -5,35 +5,41 @@ from django.utils.translation import ugettext as _
 %>
 
 <h1>${_("Gradebook")}</h1>
+<div class="tab-banner" hidden>
+    <h2>${_("Course has not started yet.")}</h2>
+</div>
+<div class="tab-content">
+    <h2 class="enrollment-title">
+        ${_("This reports gives an overview of all students’ progress in a simple spreadsheet form.")}
+    </h2>
+    <span class="enrollment-title-text">
+        ${_("Progress details of any student are available by clicking on the corresponding row of "
+        "the spreadsheet.")}
+    </span>
+    <span class="enrollment-title-text">
+        ${_("You can filter student list by using “Search Student…” field.")}
+        ${_("You can search by first name, last name or email (non-case-sensitive).")}
+    </span>
+    <div class="grades grade-table-wrapper" >
+        <div class="grade-table">
+            <div class="gradebook-table-row" id="gradebook_table_header"></div>
+            <div id="gb-loader" class="loader hidden">
+                ${_("Loading")}
+                <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
+            </div>
+            <div id="gradebook_table_body">
+            </div>
+        </div>
+    </div>
 
-<h2 class="enrollment-title">
-    ${_("This reports gives an overview of all students’ progress in a simple spreadsheet form.")}
-</h2>
-<span class="enrollment-title-text">
-    ${_("Progress details of any student are available by clicking on the corresponding row of "
-    "the spreadsheet.")}
-</span>
-<span class="enrollment-title-text">
-    ${_("You can filter student list by using “Search Student…” field.")}
-    ${_("You can search by first name, last name or email (non-case-sensitive).")}
-</span>
-<div class="grades grade-table-wrapper" >
-    <div class="grade-table">
-        <div class="gradebook-table-row" id="gradebook_table_header"></div>
-        <div id="gb-loader" class="loader hidden">
-            ${_("Loading")}
-            <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
-        </div>
-        <div id="gradebook_table_body">
-        </div>
+    <div class="gradebook-plot">
+        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Progress Graph")}</h2>
+        <span class="enrollment-title-text enrollment-title-text-1 hidden">
+            ${_("This graph shows the current progress details for the selected student. "
+            "It contains progress on each Homework (blue columns) and total course progress (red column).")}
+        </span>
+        <div id = "gradebook-stats-plot"></div>
     </div>
 </div>
 
-<div class="gradebook-plot">
-    <h2 class="enrollment-title enrollment-title-1 hidden">${_("Progress Graph")}</h2>
-    <span class="enrollment-title-text enrollment-title-text-1 hidden">
-        ${_("This graph shows the current progress details for the selected student. "
-        "It contains progress on each Homework (blue columns) and total course progress (red column).")}
-    </span>
-    <div id = "gradebook-stats-plot"></div>
-</div>
+<div class="course-dates-data" data-course-dates="${section_data['course_dates_info']}"></div>

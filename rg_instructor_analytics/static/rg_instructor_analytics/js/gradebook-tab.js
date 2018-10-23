@@ -13,10 +13,22 @@ function GradebookTab(button, content) {
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
     
     greadebookTab.filterString = '';
-    greadebookTab.loadTabData = function() {
+
+    function loadTabData() {
+        var courseDatesInfo = $('.course-dates-data').data('course-dates')[greadebookTab.tabHolder.course];
+        if (courseDatesInfo.course_is_started) {
+            $('.tab-banner').prop('hidden', true);
+            $('.tab-content').prop('hidden', false);
+        } else {
+            $('.tab-banner').prop('hidden', false);
+            $('.tab-content').prop('hidden', true);
+        }
+
         updateData();
-    };
-    
+    }
+
+    greadebookTab.loadTabData = loadTabData;
+
     function toggleLoader() {
         $loader.toggleClass('hidden');
     }

@@ -6,6 +6,7 @@ import sys
 from time import mktime
 
 from django.http import Http404, HttpResponseBadRequest
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from opaque_keys import InvalidKeyError
@@ -58,14 +59,20 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
         ]
 
         enroll_info = {
-            str(c.id): self.get_enroll_info(c)
-            for c in self.get_available_courses(request.user)
+            str(course_item.id): self.get_enroll_info(course_item)
+            for course_item in self.get_available_courses(request.user)
+        }
+
+        course_dates_info = {
+            str(course_item.id): self.get_course_dates_info(course_item)
+            for course_item in self.get_available_courses(request.user)
         }
 
         context = {
             'course': course,
             'enroll_info': json.dumps(enroll_info),
-            'available_courses': available_courses
+            'available_courses': available_courses,
+            'course_dates_info': json.dumps(course_dates_info),
         }
 
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
@@ -131,3 +138,14 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
                 except Http404:
                     continue
         return result
+
+    @staticmethod
+    def get_course_dates_info(course):
+        """
+        Return course_start and course_end for given course.
+        """
+        return {
+            'course_start': mktime(course.start.timetuple()) if course.start else 'null',
+            'course_end': mktime(course.end.timetuple()) if course.end else 'null',
+            'course_is_started': False if course.start > timezone.now() else True
+        }

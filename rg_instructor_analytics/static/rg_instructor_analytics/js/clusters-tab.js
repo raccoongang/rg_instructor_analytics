@@ -118,7 +118,20 @@ function CohortTab(button, content) {
 
     }
 
-    cohortTab.loadTabData = updateCohort;
+    function loadTabData() {
+        var courseDatesInfo = $('.course-dates-data').data('course-dates')[cohortTab.tabHolder.course];
+        if (courseDatesInfo.course_is_started) {
+            $('.tab-banner').prop('hidden', true);
+            $('.tab-content').prop('hidden', false);
+        } else {
+            $('.tab-banner').prop('hidden', false);
+            $('.tab-content').prop('hidden', true);
+        }
+
+        updateCohort();
+    }
+
+    cohortTab.loadTabData = loadTabData;
 
     return cohortTab;
 }

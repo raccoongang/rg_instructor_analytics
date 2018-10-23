@@ -1,7 +1,7 @@
 """
 Progress Funnel sub-tab module.
 """
-from datetime import date
+from datetime import date, timedelta
 import json
 
 from django.db.models import Count, Q
@@ -92,7 +92,7 @@ class GradeFunnelView(View):
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
             "AND t2.module_type = %s)", (course_key, block_type))
 
-        date_range_filter = Q(modified__range=(from_date, to_date)) if from_date and to_date else Q()
+        date_range_filter = Q(modified__range=(from_date, to_date+timedelta(days=1))) if from_date and to_date else Q()
 
         students_course_state_qs = StudentModule.objects.filter(
             date_range_filter,
