@@ -3,7 +3,6 @@ Clusters sub-tab module.
 """
 import math
 
-from django.contrib.auth.models import User
 from django.http.response import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -191,7 +190,7 @@ class CohortSendMessage(View):
             str(email) for email in User.objects.filter(id__in=users_ids_list).values_list('email', flat=True)
         ]
 
-        tasks.send_email_to_cohort.delay(
+        tasks.send_email.delay(
             subject=email_subject,
             message=email_body,
             students=users_emails

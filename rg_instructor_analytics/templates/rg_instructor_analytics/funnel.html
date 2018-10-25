@@ -28,6 +28,26 @@ from django.utils.translation import ugettext as _
   <%include file="time-filter.html" args="active_tab='funnel'"/>
 
   <div class="content"></div>
+  <hr/>
+  <h2 class="enrollment-title">${_("Send Email")}</h2>
+    <span class="enrollment-title-text">
+        ${_("Choose section or subsection with a checkbox. Email will be sent to all the students who stuck there.")}
+    </span>
+
+    <form id="funnel-form-email">
+        <label>
+            ${_("Subject: ")}
+            <br/>
+            <input type="text" id="funnel-email-subject" name="funnel_subject" maxlength="128" size="75">
+            <span class="tip">${_("(Maximum 128 characters)")}</span>
+        </label>
+        <textarea id="funnel-email-body"></textarea>
+
+        <button type="button" class="funnel-send-email-btn" id="funnel-send-email-btn">${_("SEND EMAIL(S)")}</button>
+        <div class="send-email-message error-message hidden">${_("Email(s) sending failed")}</div>
+        <div class="send-email-message success-message hidden">${_("Message sent")}</div>
+        <div class="send-email-message validation-error-message hidden">${_("Required fields")}</div>
+    </form>
 </div>
 
 <div class="course-dates-data" data-course-dates="${section_data['course_dates_info']}"></div>

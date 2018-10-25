@@ -18,6 +18,9 @@ from courseware.models import StudentModule
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseEnrollment
 
+from rg_instructor_analytics import tasks
+
+
 IGNORED_ENROLLMENT_MODES = []
 
 
@@ -30,6 +33,7 @@ def course_element_info(element, level):
         'name': element.display_name,
         'id': element.location.to_deprecated_string(),
         'student_count': 0,
+        'student_emails': [],
         'student_count_in': 0,
         'student_count_out': 0,
         'children': [],
@@ -118,22 +122,28 @@ class GradeFunnelView(View):
         """
         Return activity for each of the section.
         """
-        info = self.get_query_for_course_item_stat(course_key, 'sequential', from_date, to_date)
-        info = (
-            info.values('module_state_key', 'state')
-                .order_by('module_state_key', 'state')
-                .annotate(count=Count('module_state_key'))
-                .values('module_state_key', 'state', 'count')
+        query_info = self.get_query_for_course_item_stat(course_key, 'sequential', from_date, to_date)
+        dict_info = query_info.values(
+            'module_state_key', 'state', 'student__email'
+        ).order_by(
+            'module_state_key', 'state'
+        ).annotate(
+            count=Count('module_state_key')
+        ).values(
+            'module_state_key', 'state', 'count', 'student__email'
         )
         result = {}
-        for i in info:
-            if i['module_state_key'] not in result:
-                result[i['module_state_key']] = []
-            result[i['module_state_key']].append({
-                'count': i['count'],
-                'offset': json.loads(i['state'])['position']
-            })
 
+        for info in dict_info:
+
+            if info['module_state_key'] not in result:
+                result[info['module_state_key']] = []
+
+            result[info['module_state_key']].append({
+                'count': info['count'],
+                'offset': json.loads(info['state'])['position'],
+                'student_email': info['student__email']
+            })
         return result
 
     @staticmethod
@@ -154,11 +164,18 @@ class GradeFunnelView(View):
                             add_as_child(unit_info, course_element_info(child, level=3))
                     add_as_child(subsection_info, unit_info)
                 add_as_child(section_info, subsection_info)
+
                 if subsection_info['id'] in subsection_activity:
-                    for u in subsection_activity[subsection_info['id']]:
-                        subsection_info['children'][u['offset'] - 1]['student_count'] = u['count']
-                        subsection_info['student_count'] += u['count']
+                    for progress_info in subsection_activity[subsection_info['id']]:
+                        progress_unit = subsection_info['children'][progress_info['offset'] - 1]
+                        progress_unit['student_count'] += progress_info['count']
+                        progress_unit['student_emails'] += [progress_info['student_email']]
+
+                        subsection_info['student_count'] += progress_info['count']
+                        subsection_info['student_emails'] += [progress_info['student_email']]
+
                     section_info['student_count'] += subsection_info['student_count']
+                    section_info['student_emails'] += subsection_info['student_emails']
             course_info.append(section_info)
         return course_info
 
@@ -183,3 +200,35 @@ class GradeFunnelView(View):
         courses_structure = self.get_course_info(course_key, subsection_activity)
         self.append_inout_info(courses_structure)
         return courses_structure
+
+
+class GradeFunnelSendMessage(View):
+    """
+    Endpoint for sending email message.
+    """
+
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(GradeFunnelSendMessage, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        emails = request.POST.get('emails')
+        email_subject = request.POST.get('subject')
+        email_body = request.POST.get('body')
+
+        email_list = set([email for email in emails.split(',') if email])
+
+        tasks.send_email.delay(
+            subject=email_subject,
+            message=email_body,
+            students=email_list
+        )
+        return JsonResponse({'status': 'ok'})

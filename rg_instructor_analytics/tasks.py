@@ -47,12 +47,12 @@ DEFAULT_DATE_TIME = datetime(2000, 1, 1, 0, 0)
 
 
 @CELERY_APP.task
-def send_email_to_cohort(subject, message, students):
+def send_email(subject, message, students):
     """
     Send email task.
     """
     context = {'subject': subject, 'body': message}
-    html_content = render_to_string('rg_instructor_analytics/cohort_email_temolate.html', context)
+    html_content = render_to_string('rg_instructor_analytics/send_email.html', context)
     text_content = strip_tags(html_content)
     from_address = configuration_helpers.get_value('email_from_address', settings.DEFAULT_FROM_EMAIL)
     msg = EmailMultiAlternatives(subject, text_content, from_address, students)
