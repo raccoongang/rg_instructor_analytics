@@ -5,7 +5,7 @@ from django.conf.urls import url
 
 from rg_instructor_analytics.views.cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
-from rg_instructor_analytics.views.funnel import GradeFunnelView
+from rg_instructor_analytics.views.funnel import GradeFunnelSendMessage, GradeFunnelView
 from rg_instructor_analytics.views.gradebook import GradebookView
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
@@ -48,6 +48,7 @@ urlpatterns = [
 
     # Progress Funnel tab:
     url(r'^api/funnel/$', GradeFunnelView.as_view(), name='funnel'),
+    url(r'^api/funnel/send_email/$', GradeFunnelSendMessage.as_view(), name='send_email_to_funnel'),
 
     # Suggestions tab:
     url(r'^api/suggestion/$', SuggestionView.as_view(), name='suggestion'),

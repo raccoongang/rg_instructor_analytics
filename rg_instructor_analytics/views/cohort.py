@@ -191,7 +191,7 @@ class CohortSendMessage(View):
             str(email) for email in User.objects.filter(id__in=users_ids_list).values_list('email', flat=True)
         ]
 
-        tasks.send_email_to_cohort.delay(
+        tasks.send_email.delay(
             subject=email_subject,
             message=email_body,
             students=users_emails

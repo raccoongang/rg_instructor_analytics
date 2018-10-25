@@ -825,7 +825,7 @@ body .disc-list {
 .disc-list li {
     display: list-item;
 }
-#email-subject {
+#email-subject, #funnel-email-subject {
     width: 50%;
     margin-right: 15px;
 }
@@ -887,4 +887,13 @@ body .disc-list {
 }
 .success-message {
     color: green;
+}
+
+.funnel-send-email-btn {
+    margin-top: 5px;
+}
+
+.funnel-item-outgoing.input-checkbox {
+    right: -35px;
+    background: none;
 }
