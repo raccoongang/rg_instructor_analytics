@@ -15,10 +15,9 @@ from opaque_keys.edx.keys import CourseKey
 
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
+from rg_instructor_analytics import tasks
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseEnrollment
-
-from rg_instructor_analytics import tasks
 
 
 IGNORED_ENROLLMENT_MODES = []
@@ -96,7 +95,7 @@ class GradeFunnelView(View):
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
             "AND t2.module_type = %s)", (course_key, block_type))
 
-        date_range_filter = Q(modified__range=(from_date, to_date+timedelta(days=1))) if from_date and to_date else Q()
+        date_range_filter = Q(modified__range=(from_date, to_date + timedelta(days=1))) if from_date and to_date else Q()
 
         students_course_state_qs = StudentModule.objects.filter(
             date_range_filter,

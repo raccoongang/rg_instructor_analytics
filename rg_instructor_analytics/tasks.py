@@ -14,8 +14,6 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.db.models import F
-from django.db.models.expressions import RawSQL
-from django.db.models.query_utils import Q
 from django.http.response import Http404
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags

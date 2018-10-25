@@ -3,6 +3,7 @@ Clusters sub-tab module.
 """
 import math
 
+from django.contrib.auth.models import User
 from django.http.response import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
