@@ -163,6 +163,7 @@ function GradebookTab(button, content) {
             });
 
             var studentsGrades = [];
+            debugger;
             var studentPosition = evt.target.dataset['position'];
             var stat;
 

@@ -6,7 +6,7 @@ from django.conf.urls import url
 from rg_instructor_analytics.views.cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.funnel import GradeFunnelSendMessage, GradeFunnelView
-from rg_instructor_analytics.views.gradebook import GradebookView
+from rg_instructor_analytics.views.gradebook import GradebookView, VideoView
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
@@ -41,6 +41,7 @@ urlpatterns = [
 
     # Gradebook tab:
     url(r'^api/gradebook/$', GradebookView.as_view(), name='gradebook_view'),
+    url(r'^api/gradebook/video_views/$', VideoView.as_view(), name='video_views'),
 
     # Clusters tab:
     url(r'^api/cohort/$', CohortView.as_view(), name='cohort_view'),
