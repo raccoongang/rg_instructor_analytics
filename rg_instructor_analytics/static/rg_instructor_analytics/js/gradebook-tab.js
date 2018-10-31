@@ -7,7 +7,9 @@ function GradebookTab(button, content) {
     var greadebookTab = new Tab(button, content);
     var $tbody = $('#gradebook_table_body');
     var $loader = $('#gb-loader');
-    
+    var $loaderDiscussion = $('.gradebook-discussion-plot .loader');
+    var $discussionPlot = $('#gradebook-discussion-stats-plot');
+
     greadebookTab.studentsTable = content.find('#student_table_body');
     greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
@@ -32,6 +34,10 @@ function GradebookTab(button, content) {
     function toggleLoader() {
         $loader.toggleClass('hidden');
     }
+
+    function onError() {
+        alert("Can't load data for selected course!");
+    }
     
     function updateData(filter) {
         var filterString = filter || '';
@@ -41,10 +47,6 @@ function GradebookTab(button, content) {
             greadebookTab.examNames = response.exam_names;
             greadebookTab.studentsNames = response.students_names;
             updateTables(filterString);
-        }
-        
-        function onError() {
-            alert("Can't load data for selected course!");
         }
         
         $.ajax({
@@ -57,6 +59,48 @@ function GradebookTab(button, content) {
             error: onError,
             beforeSend: toggleLoader,
             complete: toggleLoader,
+        });
+    }
+
+    function renderDiscussionActivity(data, userName) {
+        var stat = {
+            y: data.activity_count,
+            x: data.thread_names,
+            type: 'bar',
+            marker:{
+                color: '#568ecc'
+            },
+        };
+
+        var layout = {
+            title: userName,
+            showlegend: false,
+            xaxis: {
+                tickangle: 90,
+            },
+        };
+
+        Plotly.newPlot('gradebook-discussion-stats-plot', [stat], layout, {displayModeBar: false});
+        $loaderDiscussion.addClass('hidden');
+
+    }
+
+    function getDiscussionActivity(studentPosition) {
+        var userName = greadebookTab.studentsNames[studentPosition];
+
+        $discussionPlot.empty();
+        $loaderDiscussion.removeClass('hidden');
+
+        $.ajax({
+            type: "POST",
+            url: "api/gradebook/discussion/",
+            data: {username: userName},
+            dataType: "json",
+            traditional: true,
+            success: function (response) {
+              renderDiscussionActivity(response, userName);
+            },
+            error: onError,
         });
     }
     
@@ -166,6 +210,8 @@ function GradebookTab(button, content) {
             debugger;
             var studentPosition = evt.target.dataset['position'];
             var stat;
+
+            getDiscussionActivity(studentPosition);
 
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
                 studentsGrades.push(
