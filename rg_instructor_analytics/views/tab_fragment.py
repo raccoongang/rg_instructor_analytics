@@ -12,10 +12,10 @@ from django.utils.translation import ugettext as _
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 
+from web_fragments.fragment import Fragment
+
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
-
-from web_fragments.fragment import Fragment
 
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string

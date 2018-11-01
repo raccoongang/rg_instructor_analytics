@@ -1,8 +1,8 @@
 """
 Gradebook sub-tab module.
 """
-import json
 from collections import OrderedDict
+import json
 
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -10,13 +10,17 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
-from lms.djangoapps.courseware.courses import get_course_by_id
+
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+
+from lms.djangoapps.courseware.courses import get_course_by_id
+
+import django_comment_client.utils as utils
+
 from rg_instructor_analytics.models import GradeStatistic
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 
-import django_comment_client.utils as utils
 from rg_instructor_analytics_log_collector.models import DiscussionActivity, VideoViewsByUser
 
 
@@ -81,6 +85,7 @@ class VideoView(View):
     """
     Video Views API view.
     """
+
     @method_decorator(instructor_access_required)
     def dispatch(self, *args, **kwargs):
         """
@@ -95,7 +100,6 @@ class VideoView(View):
 
         :param course_id: (str) context course ID (from urlconf)
         """
-
         try:
             user = User.objects.get(username=request.POST.get('username'))
         except (InvalidKeyError, User.DoesNotExist):
@@ -103,7 +107,7 @@ class VideoView(View):
 
         try:
             course_key = CourseKey.from_string(request.POST.get('course_id'))
-            course = get_course_by_id(course_key)
+            course = get_course_by_id(course_key, depth=4)
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
@@ -163,7 +167,6 @@ class DiscussionActivityView(View):
 
         :param course_id: (str) context course ID (from urlconf)
         """
-
         try:
             user = User.objects.get(username=request.POST.get('username'))
         except (InvalidKeyError, User.DoesNotExist):
@@ -193,7 +196,7 @@ class DiscussionActivityView(View):
             elif thread_type == 'subcategory':
                 subcategory = category_map.get('subcategories', {}).get(thread_name, {})
 
-                for thread_subcategory_name,  thread_subcategory_type in subcategory.get('children', []):
+                for thread_subcategory_name, thread_subcategory_type in subcategory.get('children', []):
                     thread_id = subcategory.get('entries', {}).get(thread_subcategory_name, {}).get('id')
                     thread_names.append('{} / {}'.format(thread_name, thread_subcategory_name))
                     activity_count.append(discussion_activities.filter(commentable_id=thread_id).count())

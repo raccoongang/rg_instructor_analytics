@@ -9,7 +9,7 @@ function GradebookTab(button, content) {
     var $loader = $('#gb-loader');
     var $loaderDiscussion = $('.gradebook-discussion-plot .loader');
     var $discussionPlot = $('#gradebook-discussion-stats-plot');
-    var $loaderVideo = $('.gradebook-video-plot.loader');
+    var $loaderVideo = $('.gradebook-video-plot .loader');
     var $videoPlot = $('#gradebook-video-stats-plot');
 
     greadebookTab.studentsTable = content.find('#student_table_body');
