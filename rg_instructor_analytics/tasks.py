@@ -181,7 +181,8 @@ def enrollment_collector_date_v2(self, course_id, cohort_name, from_timestamp, t
                 if u_e.user.username != name:
                     count += 1
                     name = u_e.user.username
-            except Exception:
+            except Exception as e:
+                log.error("Error occurred while counting enrollments, enrollment id - {}, error - {}".format(u_e.id, e))
                 continue
         return count
 
