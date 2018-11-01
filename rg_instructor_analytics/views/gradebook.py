@@ -101,30 +101,44 @@ class VideoView(View):
         except (InvalidKeyError, User.DoesNotExist):
             return HttpResponseBadRequest(_("Invalid username."))
 
-        course_key = CourseKey.from_string(course_id)
-        course = get_course_by_id(course_key)
+        try:
+            course_key = CourseKey.from_string(request.POST.get('course_id'))
+            course = get_course_by_id(course_key)
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
 
         video_views_by_user = VideoViewsByUser.objects.filter(course=course_key, user_id=user.id)
 
-        video_names = []
-        course_video_info = []
+        videos_names = []
+        videos_time = []
+        videos_completed = []
 
         for section in course.get_children():
             for sub_section in section.get_children():
                 for unit in sub_section.get_children():
                     for block in unit.get_children():
                         if block.location.block_type == 'video':
-                            video_names.append(block.display_name)
-                            video_info = video_views_by_user.objects.filter(
+                            video_name = block.display_name
+                            while video_name in videos_names:
+                                video_name = video_name + '1'
+                            videos_names.append(video_name)
+                            video_info = video_views_by_user.filter(
                                 video_block_id=block.location.block_id
                             ).first()
-                            block_video_info = [video_info.viewed_time, video_info.is_complited] if video_info else [0, False]
-                            course_video_info.append(block_video_info)
+                            if video_info:
+                                video_time = video_info.viewed_time
+                                video_is_completed = video_info.is_completed
+                            else:
+                                video_time = 0
+                                video_is_completed = False
+                            videos_time.append(video_time)
+                            videos_completed.append(video_is_completed)
 
         return JsonResponse(
             data={
-                'video_names': video_names,
-                'course_video_info': course_video_info,
+                'videos_names': videos_names,
+                'videos_time': videos_time,
+                'videos_completed': videos_completed,
             }
         )
 
@@ -155,11 +169,15 @@ class DiscussionActivityView(View):
         except (InvalidKeyError, User.DoesNotExist):
             return HttpResponseBadRequest(_("Invalid username."))
 
+        try:
+            course_key = CourseKey.from_string(request.POST.get('course_id'))
+            course = get_course_by_id(course_key)
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
         thread_names = []
         activity_count = []
 
-        course_key = CourseKey.from_string(course_id)
-        course = get_course_by_id(course_key)
         category_map = utils.get_discussion_category_map(course, user)
 
         discussion_activities = DiscussionActivity.objects.filter(

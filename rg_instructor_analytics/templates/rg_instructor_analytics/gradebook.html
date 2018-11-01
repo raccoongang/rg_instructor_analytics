@@ -41,8 +41,21 @@ from django.utils.translation import ugettext as _
         <div id = "gradebook-stats-plot"></div>
     </div>
 
+    <div class="gradebook-video-plot">
+        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Video Views")}</h2>
+        <span class="enrollment-title-text enrollment-title-text-1 hidden">
+            ${_("This graph indicates the amount of seconds Student watched each of the course videos. Competed "
+            "videos are indicated green.")}
+        </span>
+        <div id="gradebook-video-stats-plot"></div>
+        <div class="loader hidden">
+            ${_("Loading")}
+            <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
+        </div>
+    </div>
+
     <div class="gradebook-discussion-plot">
-        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Discussion activity")}</h2>
+        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Discussion Activity")}</h2>
         <span class="enrollment-title-text enrollment-title-text-1 hidden">
             ${_("This graphic indicates the amount of Student's activity in Discussions including "
             "comments, responses, topics creation, and votes.")}
