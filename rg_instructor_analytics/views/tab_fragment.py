@@ -11,13 +11,11 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-
 from web_fragments.fragment import Fragment
 
+from courseware.courses import get_course_by_id
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
-
-from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from rg_instructor_analytics.utils import resource_string
 from rg_instructor_analytics.utils.decorators import instructor_access_required
