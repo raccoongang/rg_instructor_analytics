@@ -52,10 +52,10 @@ class GradebookView(View):
         enrolled_students = GradeStatistic.objects.filter(course_id=course_key)
         if filter_string:
             enrolled_students = enrolled_students.filter(
-                Q(student__username__icontains=filter_string)
-                | Q(student__first_name__icontains=filter_string)
-                | Q(student__last_name__icontains=filter_string)
-                | Q(student__email__icontains=filter_string)
+                Q(student__username__icontains=filter_string) |
+                Q(student__first_name__icontains=filter_string) |
+                Q(student__last_name__icontains=filter_string) |
+                Q(student__email__icontains=filter_string)
             )
         enrolled_students = enrolled_students\
             .order_by('student__username')\
