@@ -9,13 +9,14 @@ function GradebookTab(button, content) {
     var $loader = $('#gb-loader');
     var $loaderDiscussion = $('.gradebook-discussion-plot .loader');
     var $discussionPlot = $('#gradebook-discussion-stats-plot');
+    var $loaderVideo = $('.gradebook-video-plot .loader');
+    var $videoPlot = $('#gradebook-video-stats-plot');
 
     greadebookTab.studentsTable = content.find('#student_table_body');
     greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
     
     greadebookTab.filterString = '';
-
     function loadTabData() {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[greadebookTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
@@ -41,7 +42,7 @@ function GradebookTab(button, content) {
     
     function updateData(filter) {
         var filterString = filter || '';
-        
+
         function onSuccess(response) {
             greadebookTab.studentInfo = response.student_info;
             greadebookTab.examNames = response.exam_names;
@@ -85,6 +86,34 @@ function GradebookTab(button, content) {
 
     }
 
+    function renderVideoActivity(data, userName) {
+
+        var colorVideoArray = data.videos_completed.map(function (isCompleted) {
+            return isCompleted ? '#50c156' : '#568ecc';
+        });
+
+        var stat = {
+            y: data.videos_time,
+            x: data.videos_names,
+            type: 'bar',
+            marker:{
+                color: colorVideoArray
+            },
+        };
+
+        var layout = {
+            title: userName,
+            showlegend: false,
+            xaxis: {
+                tickangle: 90,
+            },
+        };
+
+        Plotly.newPlot('gradebook-video-stats-plot', [stat], layout, {displayModeBar: false});
+        $loaderVideo.addClass('hidden');
+
+    }
+
     function getDiscussionActivity(studentPosition) {
         var userName = greadebookTab.studentsNames[studentPosition];
 
@@ -103,7 +132,26 @@ function GradebookTab(button, content) {
             error: onError,
         });
     }
-    
+
+    function getVideoActivity(studentPosition) {
+        var userName = greadebookTab.studentsNames[studentPosition];
+
+        $videoPlot.empty();
+        $loaderVideo.removeClass('hidden');
+
+        $.ajax({
+            type: "POST",
+            url: "api/gradebook/video_views/",
+            data: {username: userName},
+            dataType: "json",
+            traditional: true,
+            success: function (response) {
+              renderVideoActivity(response, userName);
+            },
+            error: onError,
+        });
+    }
+
     function updateTables(filterString) {
         var htmlStringStudents = '';
         var value = filterString;
@@ -211,6 +259,7 @@ function GradebookTab(button, content) {
             var stat;
 
             getDiscussionActivity(studentPosition);
+            getVideoActivity(studentPosition);
 
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
                 studentsGrades.push(

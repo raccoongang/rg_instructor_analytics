@@ -29,9 +29,9 @@ class InstructorAnalyticsDashboardTab(CourseTab):
         Return true if the specified user has staff access.
         """
         return bool(
-            user
-            and has_access(user, 'staff', course, course.id)
-            and configuration_helpers.get_value(
+            user and
+            has_access(user, 'staff', course, course.id) and
+            configuration_helpers.get_value(
                 'ENABLE_RG_INSTRUCTOR_ANALYTICS',
                 settings.FEATURES.get('ENABLE_RG_INSTRUCTOR_ANALYTICS', False)
             )
