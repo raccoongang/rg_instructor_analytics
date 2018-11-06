@@ -9,7 +9,6 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-
 from rg_instructor_analytics_log_collector.models import DiscussionActivityByDay, VideoViewsByDay
 
 from rg_instructor_analytics.utils.decorators import instructor_access_required
