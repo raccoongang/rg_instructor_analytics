@@ -83,6 +83,7 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
         fragment.add_javascript(resource_string("js/tab.js"))
         fragment.add_javascript(resource_string("js/tab-holder.js"))
         fragment.add_javascript(resource_string("js/enrollment-tab.js"))
+        fragment.add_javascript(resource_string("js/activity-tab.js"))
         fragment.add_javascript(resource_string("js/problem-tab.js"))
         fragment.add_javascript(resource_string("js/funnel-tab.js"))
         fragment.add_javascript(resource_string("js/gradebook-tab.js"))
