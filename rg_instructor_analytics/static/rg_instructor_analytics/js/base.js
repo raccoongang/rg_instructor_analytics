@@ -9,6 +9,10 @@ $(function() {
             $content.find('#enrollment-stats-btn'),
             $content.find('#section-enrollment-stats')
         ),
+        activity: ActivityTab(
+            $content.find('#activity-btn'),
+            $content.find('#section-activity')
+        ),
         problems: ProblemTab(
             $content.find('#problems-btn'),
             $content.find('#section-problem')),

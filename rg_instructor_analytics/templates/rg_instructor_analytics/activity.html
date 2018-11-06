@@ -1,0 +1,20 @@
+<%page args="section_data" expression_filter="h"/>
+<%
+    from django.utils.translation import ugettext as _
+%>
+
+<h1>${_("Activity")}</h1>
+<div class="tab-banner" hidden>
+  <h2 class="activity-title">${_("Course has not started yet.")}</h2>
+</div>
+<div class="tab-content">
+  <%include file="time-filter.html" args="active_tab='activity'"/>
+  <div class="activity-legend-holder activity-legend-holder__square">
+    <div class="activity-legend-item">${_("Video views count")}</div>
+    <div class="activity-legend-item">${_("Discussion activities count")}</div>
+  </div>
+  <div id="activity-stats-plot"></div>
+</div>
+
+<div class="course-dates-data" data-course-dates="${section_data['course_dates_info']}"></div>
+
