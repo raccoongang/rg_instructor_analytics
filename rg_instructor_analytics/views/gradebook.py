@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from rg_instructor_analytics_log_collector.models import DiscussionActivity, VideoViewsByUser
+from rg_instructor_analytics_log_collector.models import DiscussionActivity, VideoViewsByUser, StudentStepCourse
 
 import django_comment_client.utils as utils
 from lms.djangoapps.courseware.courses import get_course_by_id
@@ -201,5 +201,76 @@ class DiscussionActivityView(View):
             data={
                 'thread_names': thread_names,
                 'activity_count': activity_count,
+            }
+        )
+
+
+class StudentStepView(View):
+    """
+    StudentStepView API view.
+
+    """
+
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(StudentStepView, self).dispatch(*args, **kwargs)
+
+    @staticmethod
+    def post(request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        try:
+            user = User.objects.get(username=request.POST.get('username'))
+        except (InvalidKeyError, User.DoesNotExist):
+            return HttpResponseBadRequest(_("Invalid username."))
+
+        try:
+            course_key = CourseKey.from_string(request.POST.get('course_id'))
+            course = get_course_by_id(course_key, depth=3)
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        ticktext = []
+        tickvals = []
+        units = []
+
+        for section in course.get_children():
+            for subsection in section.get_children():
+                for unit in subsection.get_children():
+                    tickvals.append(unit.location.block_id)
+                    ticktext.append(unit.display_name)
+
+        student_steps = StudentStepCourse.objects.filter(
+            user_id=user.id,
+            course=course_key
+        ).order_by(
+            'log_time'
+        ).values_list(
+            'current_unit',
+            'target_unit'
+        )
+
+        for current, target in student_steps:
+            if units and units[-1] == current:
+                units.append(target)
+            else:
+                units.append(current)
+                units.append(target)
+
+        steps = range(len(units))
+        x_default = [None] * (len(tickvals)-1)
+        return JsonResponse(
+            data={
+                'ticktext': ticktext,
+                'tickvals': tickvals,
+                'units': units,
+                'steps': steps,
+                'x_default': x_default
             }
         )
