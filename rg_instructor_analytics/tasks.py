@@ -1,10 +1,10 @@
 """
 Module for celery tasks.
 """
-from collections import OrderedDict
-from datetime import datetime
 import json
 import logging
+from collections import OrderedDict
+from datetime import datetime
 
 from celery.schedules import crontab
 from celery.task import periodic_task, task
@@ -14,21 +14,19 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.db.models import F
-from django.db.models.expressions import RawSQL
-from django.db.models.query_utils import Q
 from django.http.response import Http404
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from lms import CELERY_APP
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from rg_instructor_analytics.models import GradeStatistic, LastGradeStatUpdate
+from xmodule.modulestore.django import modulestore
 
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
-from lms import CELERY_APP
-from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-from rg_instructor_analytics.models import GradeStatistic, LastGradeStatUpdate
 from student.models import CourseEnrollment
-from xmodule.modulestore.django import modulestore
 
 HAWTHORN = False
 

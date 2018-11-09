@@ -134,7 +134,9 @@ class ProblemHomeWorkStatisticView(View):
         - average count of attempts,
         - correct answers percent (only last grades are taken into account...)
         """
-        date_range_filter = Q(modified__range=(from_date, to_date+timedelta(days=1))) if from_date and to_date else Q()
+        date_range_filter = Q(
+            modified__range=(from_date, to_date + timedelta(days=1))
+        ) if from_date and to_date else Q()
         return (
             StudentModule.objects
             .filter(
@@ -186,7 +188,9 @@ class ProblemsStatisticView(View):
         problems_ids = post_data.getlist('problems')
         problems = [course_key.make_usage_key_from_deprecated_string(p) for p in problems_ids]
 
-        date_range_filter = Q(modified__range=(from_date, to_date+timedelta(days=1))) if from_date and to_date else Q()
+        date_range_filter = Q(
+            modified__range=(from_date, to_date + timedelta(days=1))
+        ) if from_date and to_date else Q()
 
         stats = (
             StudentModule.objects
