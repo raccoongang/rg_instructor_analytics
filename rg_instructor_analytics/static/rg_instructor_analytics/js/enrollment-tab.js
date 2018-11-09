@@ -79,11 +79,16 @@ function EnrollmentTab(button, content) {
           margin: {t: 10}
         },
         yaxis: {
-          nticks: 4,
+          side: 'right',
+          dtick: 1,
           overlaying: 'y2',
+          title: django.gettext('Total'),
+          titlefont: {color: '#70A3FF'},
+          tickfont: {color: '#70A3FF'},
         },
         yaxis2: {
-          side: 'right'
+          title: django.gettext('Enrollments/Unenrollments'),
+          dtick: 1,
         },
         showlegend: false,
       };
