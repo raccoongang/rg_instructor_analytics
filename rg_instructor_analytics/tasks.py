@@ -63,26 +63,32 @@ def get_items_for_grade_update():
     """
     Return an aggregate list of the users by the course, those grades need to be recalculated.
     """
-    last_update_info = LastGradeStatUpdate.objects.all()
+    last_update_info = LastGradeStatUpdate.objects.last()
     # For first update we what get statistic for all enrollments,
     # otherwise - generate diff, based on the student activity.
-    if last_update_info.exists():
-        items_for_update = (
+    if last_update_info:
+        items_for_update = list(
             StudentModule.objects
-            .filter(module_type__exact='problem', modified__gt=last_update_info.last().last_update)
+            .filter(module_type__exact='problem', modified__gt=last_update_info.last_update)
             .values('student__id', 'course_id')
             .order_by('student__id', 'course_id')
+            .distinct()
+        )
+        items_for_update += list(
+            CourseEnrollment.objects
+            .filter(created__gt=last_update_info.last_update)
+            .values('user__id', 'course_id')
+            .annotate(student__id=F('user__id'))
+            .values('student__id', 'course_id')
             .distinct()
         )
     else:
         items_for_update = (
             CourseEnrollment.objects
-            .filter(is_active=True)
             .values('user__id', 'course_id')
-            .order_by('user__id', 'course_id')
-            .distinct()
             .annotate(student__id=F('user__id'))
             .values('student__id', 'course_id')
+            .distinct()
         )
 
     users_by_course = {}

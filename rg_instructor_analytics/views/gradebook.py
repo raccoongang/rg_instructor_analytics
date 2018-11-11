@@ -1,8 +1,8 @@
 """
 Gradebook sub-tab module.
 """
-from collections import OrderedDict
 import json
+from collections import OrderedDict
 
 from django.db.models import Q
 from django.http import HttpResponseBadRequest, JsonResponse
@@ -11,7 +11,6 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-
 from rg_instructor_analytics.models import GradeStatistic
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 
@@ -53,17 +52,15 @@ class GradebookView(View):
                 Q(student__last_name__icontains=filter_string) |
                 Q(student__email__icontains=filter_string)
             )
-        enrolled_students = enrolled_students\
-            .order_by('student__username')\
-            .values('student__username', 'exam_info')
+        enrolled_students = enrolled_students.order_by('student__username')
 
-        student_info = [
-            json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student['exam_info'])
-            for student in enrolled_students
-        ]
-        students_names = [student['student__username'] for student in enrolled_students]
+        student_info = []
+        students_names = []
+        for student in enrolled_students:
+            student_info.append(json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student.exam_info))
+            students_names.append([student.student.username, student.is_enrolled])
+
         exam_names = list(student_info[0].keys()) if len(student_info) > 0 else []
-
         return JsonResponse(
             data={
                 'student_info': student_info,

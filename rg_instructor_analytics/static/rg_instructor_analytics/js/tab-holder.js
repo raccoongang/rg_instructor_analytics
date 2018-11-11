@@ -49,7 +49,9 @@ function TabHolder(tabs, course) {
         holder.course = course;
         for (var tabName in tabs) {
             if (tabs.hasOwnProperty(tabName)) {
-                tabs[tabName].loadTabData();
+                if (tabs[tabName].isActive) {
+                    tabs[tabName].loadTabData();
+                }
             }
         }
     }
