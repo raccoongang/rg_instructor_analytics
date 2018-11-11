@@ -31,9 +31,8 @@ class GradeStatistic(models.Model):
     @property
     def is_enrolled(self):
         """
-        Returns True if the user is enrolled in the course. Otherwise, returns False.
+        Return True if the user is enrolled in the course. Otherwise, returns False.
         """
-
         return CourseEnrollment.is_enrolled(self.student, self.course_id)
 
 
