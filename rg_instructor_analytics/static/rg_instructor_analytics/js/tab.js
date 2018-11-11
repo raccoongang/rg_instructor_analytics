@@ -12,12 +12,14 @@ function Tab(button, content) {
     this.content = content;
     this.tabHolder = undefined;
     this.locationToOpen = undefined;
+    this.isActive = false;
 
     /**
      * Called for mark this tab active and show content.
      * @param isActive
      */
     this.setActive = function (isActive) {
+        this.isActive = isActive;
         if (isActive) {
             content.addClass('active-section');
             button.addClass('active-section');
