@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
-
 from student.models import CourseEnrollment
 
 
