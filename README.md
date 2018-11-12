@@ -49,7 +49,7 @@ INSTALLED_APPS += ('rg_instructor_analytics',)
     * for common.py
     ```python
     RG_ANALYTICS_GRADE_STAT_UPDATE = {
-        'minute': '*',
+        'minute': '0',
         'hour': '*/6',
         'day_of_week': '*',
         'day_of_month': '*',
@@ -60,7 +60,7 @@ INSTALLED_APPS += ('rg_instructor_analytics',)
 
     ```json
     "RG_ANALYTICS_GRADE_STAT_UPDATE": {
-        "minute": "*",
+        "minute": "0",
         "hour": "*/6",
         "day_of_week": "*",
         "day_of_month": "*",

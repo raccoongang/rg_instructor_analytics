@@ -116,7 +116,8 @@ def get_grade_summary(user_id, course):
 cron_grade_settings = getattr(
     settings, 'RG_ANALYTICS_GRADE_STAT_UPDATE',
     {
-        'hour': '*/12',
+        'minute': '0',
+        'hour': '*/6',
     }
 )
 
@@ -127,6 +128,7 @@ def grade_collector_stat():
     Task for update user grades.
     """
     this_update_date = datetime.now()
+    logging.info('Task grade_collector_stat started at {}'.format(this_update_date))
     users_by_course = get_items_for_grade_update()
 
     collected_stat = []
