@@ -18,4 +18,3 @@ try:
 except AttributeError:
     settings.MAKO_TEMPLATE_DIRS_BASE.append(ANALYTICS_TEMPLATE_DIR)
     log.debug('MAKO_TEMPLATE_DIRS_BASE: {}'.format(settings.MAKO_TEMPLATE_DIRS_BASE))
-
