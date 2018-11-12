@@ -89,9 +89,11 @@ function GradebookTab(button, content) {
         for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
             var htmlStringResults = '';
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
+                let studentInfo = greadebookTab.studentInfo[i][greadebookTab.examNames[nameIndex]];
+                studentInfo = studentInfo !== undefined ? studentInfo : 'n/a';
                 htmlStringResults += `
                     <div class="gradebook-table-cell">
-                        ${greadebookTab.studentInfo[i][greadebookTab.examNames[nameIndex]]}
+                        ${studentInfo}
                     </div>
                 `
             }
@@ -107,19 +109,19 @@ function GradebookTab(button, content) {
 
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
 
-        //Make cells width equal to biggest cell
+        // Make cells width equal to biggest cell
         // let maxLength = 0;
         // let $tableCells = $('.gradebook-table-cell:not(:first-child)');
-        //
+
         // $tableCells.each((item) => {
         //     let width = $tableCells[item].clientWidth;
         //     if (maxLength < width) {
         //         maxLength = width;
         //     }
         // });
-        //
+
         // $tableCells.each((item) => {
-        //     $tableCells[item].style.flex = `auto`;
+        //     $tableCells[item].style.flex = `1 0 70px`;
         // });
 
         $(greadebookTab.gradebookTableBody).click(function (element) {

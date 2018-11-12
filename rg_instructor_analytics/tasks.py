@@ -316,8 +316,8 @@ def grade_collector_stat():
                     continue
                 exam_info = OrderedDict()
                 for grade in grades['section_breakdown']:
-                    exam_info[grade['label']] = int(grade['percent'] * 100.0)
-                exam_info['total'] = int(grades['percent'] * 100.0)
+                    exam_info[grade['label']] = int(round(grade['percent'] * 100.0))
+                exam_info['total'] = int(round(grades['percent'] * 100.0))
 
                 collected_stat.append(
                     (
