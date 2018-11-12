@@ -111,7 +111,7 @@ function GradebookTab(button, content) {
 
         // Make cells width equal to biggest cell
         // let maxLength = 0;
-        // let $tableCells = $('.gradebook-table-cell:not(:first-child)');
+        let $tableCells = $('.gradebook-table-cell:not(:first-child)');
 
         // $tableCells.each((item) => {
         //     let width = $tableCells[item].clientWidth;
@@ -120,9 +120,9 @@ function GradebookTab(button, content) {
         //     }
         // });
 
-        // $tableCells.each((item) => {
-        //     $tableCells[item].style.flex = `1 0 70px`;
-        // });
+        $tableCells.each((item) => {
+            $tableCells[item].style.flex = `1 0 70px`;
+        });
 
         $(greadebookTab.gradebookTableBody).click(function (element) {
             let colorArray = greadebookTab.examNames.map((item, idx, arr) => {
