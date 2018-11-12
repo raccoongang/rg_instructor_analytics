@@ -57,15 +57,15 @@ class GradebookView(View):
                 Q(student__last_name__icontains=filter_string) |
                 Q(student__email__icontains=filter_string)
             )
-        enrolled_students = enrolled_students\
-            .order_by('student__username')\
-            .values('student__username', 'exam_info')
 
-        student_info = [
-            json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student['exam_info'])
-            for student in enrolled_students
-        ]
-        students_names = [student['student__username'] for student in enrolled_students]
+        enrolled_students = enrolled_students.order_by('student__username')
+
+        student_info = []
+        students_names = []
+        for student in enrolled_students:
+            student_info.append(json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student.exam_info))
+            students_names.append([student.student.username, student.is_enrolled])
+
         exam_names = list(student_info[0].keys()) if len(student_info) > 0 else []
 
         return JsonResponse(
