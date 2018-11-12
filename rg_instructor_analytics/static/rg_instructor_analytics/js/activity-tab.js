@@ -6,8 +6,10 @@
 function ActivityTab(button, content) {
   var activityTab = new Tab(button, content);
   var timeFilter = new TimeFilter(content, updateActivity);
+  var $tabBanner = content.find('.tab-banner');
+  var $tabContent = content.find('.tab-content');
 
-  function updateActivity(timeFilter) {
+  function updateActivity() {
 
     function onError() {
       alert("Can't load data for selected period!");
@@ -71,25 +73,23 @@ function ActivityTab(button, content) {
     try {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[activityTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
-            if (courseDatesInfo.course_start !== "null") {
-              timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
-            }
-            if (courseDatesInfo.course_end !== "null") {
-              timeFilter.endDate = moment(courseDatesInfo.course_end * 1000);
-            }
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
+            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
+            timeFilter.endDate = moment();
+            timeFilter.minDate = timeFilter.startDate;
+
+            timeFilter.makeActive(content.find(".js-datepicker-btn"));
+            timeFilter.setMinDate();
+            updateActivity();
         } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
         }
     }
     catch (error) {
         console.error(error);
     }
-
-    updateActivity(timeFilter);
-
   }
 
   activityTab.loadTabData = loadTabData;

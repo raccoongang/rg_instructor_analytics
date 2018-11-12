@@ -5,6 +5,9 @@
  */
 function GradebookTab(button, content) {
     var greadebookTab = new Tab(button, content);
+    var $tabBanner = content.find('.tab-banner');
+    var $tabContent = content.find('.tab-content');
+
     var $tbody = $('#gradebook_table_body');
     var $loader = $('#gb-loader');
     var $statsPlot = $('#gradebook-stats-plot');
@@ -18,17 +21,17 @@ function GradebookTab(button, content) {
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
     
     greadebookTab.filterString = '';
+
     function loadTabData() {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[greadebookTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
+            updateData();
         } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
         }
-
-        updateData();
     }
 
     greadebookTab.loadTabData = loadTabData;

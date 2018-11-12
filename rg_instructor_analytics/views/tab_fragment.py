@@ -137,10 +137,9 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
     @staticmethod
     def get_course_dates_info(course):
         """
-        Return course_start and course_end for given course.
+        Return course_start and course_is_started for given course.
         """
         return {
             'course_start': mktime(course.start.timetuple()) if course.start else 'null',
-            'course_end': mktime(course.end.timetuple()) if course.end else 'null',
-            'course_is_started': False if course.start > timezone.now() else True
+            'course_is_started': False if course.start and course.start > timezone.now() else True
         }
