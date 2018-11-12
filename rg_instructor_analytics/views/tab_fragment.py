@@ -11,6 +11,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 from web_fragments.fragment import Fragment
 
 from courseware.courses import get_course_by_id
@@ -98,17 +99,10 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
         """
         Return enroll_start and enroll_end for given course.
         """
-        enroll_start = course.enrollment_start
-        if enroll_start is None:
-            enroll_start = course.start
-
-        enroll_end = course.enrollment_end
-        if enroll_end is None:
-            enroll_end = course.end
-
+        enrollment_by_day = EnrollmentByDay.objects.filter(course=course.id).order_by('day').first()
+        enroll_start = enrollment_by_day and enrollment_by_day.day
         return {
             'enroll_start': mktime(enroll_start.timetuple()) if enroll_start else 'null',
-            'enroll_end': mktime(enroll_end.timetuple()) if enroll_end else 'null',
         }
 
     @staticmethod
