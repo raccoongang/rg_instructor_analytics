@@ -44,28 +44,27 @@ function GradebookTab(button, content) {
     function updateTables() {
         var htmlStringStudents = '';
         var htmlStringResults = '';
-
-        var htmlTemp = `<div class="gradebook-table-cell"><form class="student-search">
-            <input 
-                value="${django.gettext(inputValue)}" 
-                type="search" 
-                class="student-search-field" 
-                placeholder="Search students"
-            />
-            </form></div>`;
-
         greadebookTab.gradebookTableHeader.empty();
-        greadebookTab.gradebookTableBody.empty();
-
+        
+        var htmlTemp = `<table class="table table-striped rg-table"><thead><tr><th><form class="student-search"><input value="${django.gettext(inputValue)}" type="search" class="student-search-field" placeholder="Search students"/></form></th>`;
+        
         for (var i = 0; i < greadebookTab.examNames.length; i++) {
-            htmlTemp += `
-                <div class="gradebook-table-cell">
-                    <div class="assignment-label">${greadebookTab.examNames[i]}</div>
-                </div>
-            `;
+            htmlTemp += `<th class="">${greadebookTab.examNames[i]}</th>`;
         }
-        greadebookTab.gradebookTableHeader.append(htmlTemp);
+        htmlTemp += `</tr></thead><tbody>`;
 
+        for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
+            var htmlStringResults = ``;
+            for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
+                let studentInfo = greadebookTab.studentInfo[i][greadebookTab.examNames[nameIndex]];
+                studentInfo = studentInfo !== undefined ? studentInfo : 0;
+                htmlStringResults += `<td>${studentInfo}</td>`;
+            }
+            htmlTemp += `<tr><td><a data-position="${i}">${greadebookTab.studentsNames[i]}</a></td>${htmlStringResults}</tr>`;
+        }
+        htmlTemp += `</tbody></table>`;
+
+        greadebookTab.gradebookTableHeader.append(htmlTemp);
         let $input = $('.student-search-field');
         $input[0].addEventListener('keyup', function(e){
             if (e.keyCode == 13) {
@@ -84,47 +83,9 @@ function GradebookTab(button, content) {
             e.target.value = inputValue;
         });
 
-        greadebookTab.studentsTable.empty();
-
-        for (var i = 0; i < greadebookTab.studentInfo.length; i++) {
-            var htmlStringResults = '';
-            for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
-                let studentInfo = greadebookTab.studentInfo[i][greadebookTab.examNames[nameIndex]];
-                studentInfo = studentInfo !== undefined ? studentInfo : 'n/a';
-                htmlStringResults += `
-                    <div class="gradebook-table-cell">
-                        ${studentInfo}
-                    </div>
-                `
-            }
-
-            htmlStringStudents +=
-                `<div class="gradebook-table-row">
-                    <div class="gradebook-table-cell">
-                        <a data-position="${i}">${greadebookTab.studentsNames[i]}</a>
-                    </div>
-                    ${htmlStringResults}
-                </div>`;
-        }
-
-        greadebookTab.gradebookTableBody.append(htmlStringStudents);
-
-        // Make cells width equal to biggest cell
-        // let maxLength = 0;
-        let $tableCells = $('.gradebook-table-cell:not(:first-child)');
-
-        // $tableCells.each((item) => {
-        //     let width = $tableCells[item].clientWidth;
-        //     if (maxLength < width) {
-        //         maxLength = width;
-        //     }
-        // });
-
-        $tableCells.each((item) => {
-            $tableCells[item].style.flex = `1 0 70px`;
-        });
-
-        $(greadebookTab.gradebookTableBody).click(function (element) {
+        $('tr td a').click(function (element) {
+            $('.rg-table tr:not(element.currentTarget)').removeClass('active');
+            $(element.currentTarget).parent('td').parent('tr').toggleClass('active');
             let colorArray = greadebookTab.examNames.map((item, idx, arr) => {
                 if (idx === arr.length - 1) {
                     return '#c14f84';
@@ -153,20 +114,8 @@ function GradebookTab(button, content) {
                 showlegend: false,
                 xaxis: {domain: [0, 0.97]},
             };
-            $('.gradebook-table-row').removeClass('active');
-            $(element.target).closest('.gradebook-table-row').toggleClass('active');
-            $('.enrollment-title-1.hidden').removeClass('hidden');
-            $('.enrollment-title-text-1.hidden').removeClass('hidden');
             Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});
         })
     }
-    let $tbody = $('#gradebook_table_body');
-    $tbody.on('scroll',() => {
-
-        let scrollLeft = $tbody.scrollLeft();
-    
-        $('#gradebook_table_header').css("left", -scrollLeft);
-        $('.gradebook-table-cell:first-child').css("left", scrollLeft)
-    });
     return greadebookTab;
 }

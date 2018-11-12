@@ -74,10 +74,7 @@
 .gradebook-table-row {
     display: flex;
 }
-.gradebook-table-row.active .gradebook-table-cell {
-    background: rgb(49,204,245);
-    
-}
+
 .gradebook-table-cell {
     box-sizing: border-box;
     padding: 7px 5px;
@@ -755,9 +752,11 @@
 }
 
 #gradebook_table_header {
-    position: absolute;
+    /*position: absolute;*/
     width: 100%;
-    z-index: 2;
+    /*z-index: 2;*/
+    max-height: 300px;
+    overflow-y: auto;
 }
 .x-axis li {
     display: flex;
@@ -894,4 +893,37 @@ body .disc-list {
 
 .select-disabled {
     background-color: rgb(206, 206, 206)
+}
+
+.rg-table {
+    width: 100%;
+    text-align: center;
+}
+
+.rg-table tr:hover {
+    cursor: pointer;
+}
+
+.rg-table th {
+    background-color: rgb(210,210,210);
+    padding: 0 10px;
+    border: 2px solid white;
+}
+
+
+.rg-table td {
+    padding: 0 10px;
+    background-color: #f1f1f1;
+    border: 2px solid white;
+}
+
+.rg-table tr th:first-child, .rg-table tr td:first-child {
+    width: 200px;
+}
+
+.rg-table tr th, .rg-table tr td {
+    width: 70px;
+}
+.rg-table tr.active td {
+    background: rgb(49,204,245);
 }
