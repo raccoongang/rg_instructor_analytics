@@ -151,15 +151,20 @@ class GradeFunnelView(View):
                 subsection_info = course_element_info(subsection, level=1)
                 for unit in subsection.get_children():
                     unit_info = course_element_info(unit, level=2)
-                    for child in unit.get_children():
-                        if child.location.category == 'problem':
-                            add_as_child(unit_info, course_element_info(child, level=3))
                     add_as_child(subsection_info, unit_info)
                 add_as_child(section_info, subsection_info)
                 if subsection_info['id'] in subsection_activity:
-                    for u in subsection_activity[subsection_info['id']]:
-                        subsection_info['children'][u['offset'] - 1]['student_count'] = u['count']
-                        subsection_info['student_count'] += u['count']
+                    for progress_info in subsection_activity[subsection_info['id']]:
+                        if subsection_info['children']:
+
+                            try:
+                                progress_unit = subsection_info['children'][progress_info['offset'] - 1]
+                            except IndexError:
+                                progress_unit = subsection_info['children'][-1]
+
+                            progress_unit['student_count'] += progress_info['count']
+                            subsection_info['student_count'] += progress_info['count']
+
                     section_info['student_count'] += subsection_info['student_count']
             course_info.append(section_info)
         return course_info
