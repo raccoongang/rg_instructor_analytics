@@ -198,7 +198,7 @@ function GradebookTab(button, content) {
     }
 
     function getStudentStep(studentPosition) {
-        var userName = greadebookTab.studentsNames[studentPosition];
+        var userName = greadebookTab.studentsNames[studentPosition][0];
         $studentStepPlot.empty();
         $loaderStudentStep.removeClass('hidden');
 
