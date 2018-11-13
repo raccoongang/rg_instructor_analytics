@@ -23,6 +23,9 @@ It adds extra navigation `Instructor analytics` tab for instructors (next to `In
 
 ## Installation
 
+`Instructor Analytics` must be installed together with the [Util for the tracking log parsing](https://github.com/raccoongang/rg_instructor_analytics_log_collector/tree/release-0.2.0).
+ Install this utility from branch `release-0.2.0` before installing `Instructor Analytics`.
+
 * Add `rg_instructor_analytics` to the INSTALLED_APPS (i.e. in `edx-platform/lms/envs/common.py`)
 * Add to lms url (i.e. in `edx-platform/lms/urls.py`): 
 ```python
@@ -49,7 +52,7 @@ INSTALLED_APPS += ('rg_instructor_analytics',)
     * for common.py
     ```python
     RG_ANALYTICS_GRADE_STAT_UPDATE = {
-        'minute': '*',
+        'minute': '0',
         'hour': '*/6',
         'day_of_week': '*',
         'day_of_month': '*',
@@ -60,7 +63,7 @@ INSTALLED_APPS += ('rg_instructor_analytics',)
 
     ```json
     "RG_ANALYTICS_GRADE_STAT_UPDATE": {
-        "minute": "*",
+        "minute": "0",
         "hour": "*/6",
         "day_of_week": "*",
         "day_of_month": "*",

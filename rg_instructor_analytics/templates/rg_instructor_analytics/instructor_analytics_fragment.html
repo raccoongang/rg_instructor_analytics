@@ -38,6 +38,14 @@
 
                     <li class="nav-item">
                         <button type="button"
+                                id="activity-btn"
+                                class="btn-link"
+                                data-section="activity">${_("Activity")}
+                        </button>
+                    </li>
+
+                    <li class="nav-item">
+                        <button type="button"
                                 id="problems-btn"
                                 class="btn-link problems"
                                 data-section="problems">${_("Problems")}
@@ -97,6 +105,10 @@
 
                 <section id="section-enrollment-stats" class="idash-section">
                     <%include file="enrollment_stats.html" args="section_data=enroll_info" />
+                </section>
+
+                <section id="section-activity" class="idash-section">
+                    <%include file="activity.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
                 </section>
 
                 <section id="section-problem" class="idash-section">

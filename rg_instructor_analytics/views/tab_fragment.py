@@ -11,6 +11,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
+from rg_instructor_analytics_log_collector.models import EnrollmentByDay
 from web_fragments.fragment import Fragment
 
 from courseware.courses import get_course_by_id
@@ -83,6 +84,7 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
         fragment.add_javascript(resource_string("js/tab.js"))
         fragment.add_javascript(resource_string("js/tab-holder.js"))
         fragment.add_javascript(resource_string("js/enrollment-tab.js"))
+        fragment.add_javascript(resource_string("js/activity-tab.js"))
         fragment.add_javascript(resource_string("js/problem-tab.js"))
         fragment.add_javascript(resource_string("js/funnel-tab.js"))
         fragment.add_javascript(resource_string("js/gradebook-tab.js"))
@@ -97,17 +99,10 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
         """
         Return enroll_start and enroll_end for given course.
         """
-        enroll_start = course.enrollment_start
-        if enroll_start is None:
-            enroll_start = course.start
-
-        enroll_end = course.enrollment_end
-        if enroll_end is None:
-            enroll_end = course.end
-
+        enrollment_by_day = EnrollmentByDay.objects.filter(course=course.id).order_by('day').first()
+        enroll_start = enrollment_by_day and enrollment_by_day.day
         return {
             'enroll_start': mktime(enroll_start.timetuple()) if enroll_start else 'null',
-            'enroll_end': mktime(enroll_end.timetuple()) if enroll_end else 'null',
         }
 
     @staticmethod
@@ -142,10 +137,9 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
     @staticmethod
     def get_course_dates_info(course):
         """
-        Return course_start and course_end for given course.
+        Return course_start and course_is_started for given course.
         """
         return {
             'course_start': mktime(course.start.timetuple()) if course.start else 'null',
-            'course_end': mktime(course.end.timetuple()) if course.end else 'null',
-            'course_is_started': False if course.start > timezone.now() else True
+            'course_is_started': False if course.start and course.start > timezone.now() else True
         }

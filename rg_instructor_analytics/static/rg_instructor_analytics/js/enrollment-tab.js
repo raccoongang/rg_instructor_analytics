@@ -10,7 +10,7 @@ function EnrollmentTab(button, content) {
   /**
    * Send ajax to server side according selected date range and redraw plot
    */
-  function updateEnrolls(timeFilter) {
+  function updateEnrolls() {
 
     function onSuccess(response) {
       var totalTrace;
@@ -76,14 +76,18 @@ function EnrollmentTab(button, content) {
         hovermode: 'closest',
         xaxis: {
           type: "date",
-          margin: {t: 10}
+          margin: {t: 10},
         },
         yaxis: {
-          nticks: 4,
+          side: 'right',
           overlaying: 'y2',
+          title: django.gettext('Total'),
+          titlefont: {color: '#70A3FF'},
+          tickfont: {color: '#70A3FF'},
         },
         yaxis2: {
-          side: 'right'
+          title: django.gettext('Enrollments/Unenrollments'),
+          gridcolor: '#cecece'
         },
         showlegend: false,
       };
@@ -116,19 +120,24 @@ function EnrollmentTab(button, content) {
   function loadTabData() {
     try {
       var enrollInfo = $('#enrollment-data').data('enroll')[enrollTab.tabHolder.course];
+      var startDate = moment();
 
       if (enrollInfo.enroll_start !== "null") {
-        timeFilter.startDate = moment(enrollInfo.enroll_start * 1000);
+        startDate = moment(enrollInfo.enroll_start * 1000);
       }
-      if (enrollInfo.enroll_end !== "null") {
-        timeFilter.endDate = moment(enrollInfo.enroll_end * 1000);
-      }
+
+      timeFilter.minDate = startDate;
+      timeFilter.startDate = startDate;
+      timeFilter.endDate = moment();
+      timeFilter.makeActive(content.find(".js-datepicker-btn"));
+      timeFilter.setMinDate();
+
     }
     catch (error) {
       console.error(error);
     }
 
-    updateEnrolls(timeFilter);
+    updateEnrolls();
   }
 
   enrollTab.loadTabData = loadTabData;

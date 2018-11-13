@@ -205,7 +205,8 @@
     justify-content: space-between;
     margin-top: 16px;
 }
-.enrollment-legend-holder {
+.enrollment-legend-holder,
+.activity-legend-holder {
     max-width: 768px;
     display: flex;
     justify-content: space-around;
@@ -213,7 +214,8 @@
     z-index: 1;
     margin-top: 40px;
 }
-.enrollment-legend-item {
+.enrollment-legend-item,
+.activity-legend-item {
     position: relative;
     padding-left: 40px;
 }
@@ -454,7 +456,8 @@
     z-index: 1;
     margin-top: 30px;
 }
-.enrollment-legend-holder__square .enrollment-legend-item:before {
+.enrollment-legend-holder__square .enrollment-legend-item:before,
+.activity-legend-holder__square .activity-legend-item:before{
     content: '';
     height: 16px;
     width: 16px;
@@ -465,7 +468,8 @@
     transform: translate(0,-50%);
     border: none;
 }
-.enrollment-legend-holder__square .enrollment-legend-item {
+.enrollment-legend-holder__square .enrollment-legend-item,
+.activity-legend-holder__square .activity-legend-item {
     font-weight: 600;
     font-size: 14px;
 }
@@ -474,6 +478,12 @@
 }
 .enrollment-legend-holder__square .enrollment-legend-item:nth-child(2):before {
     background: #c14f84;
+}
+.activity-legend-holder__square .activity-legend-item:nth-child(1):before {
+    background: #568ecc;
+}
+.activity-legend-holder__square .activity-legend-item:nth-child(2):before {
+    background: #50c156;
 }
 .instructor-dashboard-wrapper-2 .idash-section .wrapper-problem-response button {
     position: relative;

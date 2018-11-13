@@ -3,6 +3,7 @@ Url config file.
 """
 from django.conf.urls import url
 
+from rg_instructor_analytics.views.activity import ActivityView
 from rg_instructor_analytics.views.cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.funnel import GradeFunnelSendMessage, GradeFunnelView
@@ -18,6 +19,9 @@ from rg_instructor_analytics.views.tab_fragment import InstructorAnalyticsFragme
 urlpatterns = [
     # Enrollment stats tab:
     url(r'^api/enroll_statics/$', EnrollmentStatisticView.as_view(), name='enrollment_statistic_view'),
+
+    # Activity tab:
+    url(r'^api/activity/$', ActivityView.as_view(), name='activity_view'),
 
     # Problems tab:
     url(

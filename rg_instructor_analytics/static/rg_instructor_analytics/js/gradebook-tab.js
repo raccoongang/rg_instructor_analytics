@@ -5,8 +5,12 @@
  */
 function GradebookTab(button, content) {
     var greadebookTab = new Tab(button, content);
+    var $tabBanner = content.find('.tab-banner');
+    var $tabContent = content.find('.tab-content');
+
     var $tbody = $('#gradebook_table_body');
     var $loader = $('#gb-loader');
+    var $statsPlot = $('#gradebook-stats-plot');
     var $loaderDiscussion = $('.gradebook-discussion-plot .loader');
     var $discussionPlot = $('#gradebook-discussion-stats-plot');
     var $loaderVideo = $('.gradebook-video-plot .loader');
@@ -19,17 +23,17 @@ function GradebookTab(button, content) {
     greadebookTab.gradebookTableBody = content.find('#gradebook_table_body');
     
     greadebookTab.filterString = '';
+
     function loadTabData() {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[greadebookTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
+            updateData();
         } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
         }
-
-        updateData();
     }
 
     greadebookTab.loadTabData = loadTabData;
@@ -44,6 +48,9 @@ function GradebookTab(button, content) {
     
     function updateData(filter) {
         var filterString = filter || '';
+        greadebookTab.gradebookTableHeader.empty();
+        greadebookTab.gradebookTableBody.empty();
+        $statsPlot.addClass('hidden');
 
         function onSuccess(response) {
             greadebookTab.studentInfo = response.student_info;
@@ -115,7 +122,8 @@ function GradebookTab(button, content) {
     }
 
     function getDiscussionActivity(studentPosition) {
-        var userName = greadebookTab.studentsNames[studentPosition];
+        var userName = greadebookTab.studentsNames[studentPosition][0];
+
         $discussionPlot.empty();
         $loaderDiscussion.removeClass('hidden');
 
@@ -133,7 +141,8 @@ function GradebookTab(button, content) {
     }
 
     function getVideoActivity(studentPosition) {
-        var userName = greadebookTab.studentsNames[studentPosition];
+        var userName = greadebookTab.studentsNames[studentPosition][0];
+
         $videoPlot.empty();
         $loaderVideo.removeClass('hidden');
 
@@ -208,6 +217,7 @@ function GradebookTab(button, content) {
 
     function updateTables(filterString) {
         var htmlStringStudents = '';
+        var htmlStringStudentsUnenroll = '';
         var value = filterString;
         var $searchInput;
         var htmlTemp;
@@ -268,26 +278,43 @@ function GradebookTab(button, content) {
         
         for (var j = 0; j < greadebookTab.studentInfo.length; j++) {
             var htmlStringResults = '';
+            var studentName = greadebookTab.studentsNames[j][0];
+            var isEnrolled =  greadebookTab.studentsNames[j][1];
             
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
                 var exName = greadebookTab.studentInfo[j][greadebookTab.examNames[nameIndex]];
                 htmlStringResults += '<div class="gradebook-table-cell">' + exName + '</div>';
             }
-            
-            htmlStringStudents += _.template(
-                '<div class="gradebook-table-row">' +
-                    '<div class="gradebook-table-cell">' +
-                        '<a data-position="<%= dataPosition %>"><%= studentName %></a>' +
-                    '</div>' +
-                    htmlStringResults +
-                '</div>'
-            )({
-                studentName: greadebookTab.studentsNames[j],
-                dataPosition: j,
-            });
+
+            if (isEnrolled) {
+                htmlStringStudents += _.template(
+                    '<div class="gradebook-table-row">' +
+                        '<div class="gradebook-table-cell">' +
+                            '<a data-position="<%= dataPosition %>"><%= studentName %></a>' +
+                        '</div>' +
+                        htmlStringResults +
+                    '</div>'
+                )({
+                    studentName: studentName,
+                    dataPosition: j,
+                });
+            } else {
+                htmlStringStudentsUnenroll += _.template(
+                    '<div class="gradebook-table-row">' +
+                        '<div class="gradebook-table-cell">' +
+                            '<a data-position="<%= dataPosition %>"><%= studentName %> (unenroll)</a>' +
+                        '</div>' +
+                        htmlStringResults +
+                    '</div>'
+                )({
+                    studentName: studentName,
+                    dataPosition: j,
+                });
+            }
         }
         
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
+        greadebookTab.gradebookTableBody.append(htmlStringStudentsUnenroll);
         
         //Make cells width equal to biggest cell
         var maxLength = 0;
@@ -320,6 +347,7 @@ function GradebookTab(button, content) {
             getVideoActivity(studentPosition);
             getStudentStep(studentPosition);
 
+            $statsPlot.removeClass('hidden');
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
                 studentsGrades.push(
                   greadebookTab.studentInfo[studentPosition][greadebookTab.examNames[nameIndex]]

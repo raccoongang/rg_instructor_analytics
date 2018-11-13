@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
+from student.models import CourseEnrollment
 
 
 class GradeStatistic(models.Model):
@@ -25,6 +26,13 @@ class GradeStatistic(models.Model):
         """
 
         unique_together = ('course_id', 'student',)
+
+    @property
+    def is_enrolled(self):
+        """
+        Return True if the user is enrolled in the course. Otherwise, returns False.
+        """
+        return CourseEnrollment.is_enrolled(self.student, self.course_id)
 
 
 # TODO replace this table with the Redis.
