@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from rg_instructor_analytics_log_collector.models import DiscussionActivity, VideoViewsByUser, StudentStepCourse
+from rg_instructor_analytics_log_collector.models import DiscussionActivity, StudentStepCourse, VideoViewsByUser
 
 import django_comment_client.utils as utils
 from lms.djangoapps.courseware.courses import get_course_by_id
@@ -264,7 +264,7 @@ class StudentStepView(View):
                 units.append(target)
 
         steps = range(len(units))
-        x_default = [None] * (len(tickvals)-1)
+        x_default = [None] * (len(tickvals) - 1)
         return JsonResponse(
             data={
                 'ticktext': ticktext,
