@@ -21,7 +21,10 @@ function GradebookTab(button, content) {
             console.log('Gradebook tab', response);
             if (!response.students_names.length){
                 greadebookTab.gradebookTableHeader.html(
-                    `<div>There is nothing to show</div>`
+                    `<div style="width: 100%;
+                                 text-align: center;
+                                 margin: 0 auto;
+                                 padding: 150px 0;">No data to display</div>`
                 );
                 return
             }

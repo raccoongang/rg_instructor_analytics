@@ -32,6 +32,7 @@ from openedx.core.djangoapps.site_configuration import helpers as configuration_
 from rg_instructor_analytics.models import EnrollmentByStudent, EnrollmentTabCache, GradeStatistic, LastGradeStatUpdate
 from student.models import CourseEnrollment
 from xmodule.modulestore.django import modulestore
+from course_groups.models import CourseUserGroup
 
 
 try:
@@ -160,7 +161,11 @@ def enrollment_collector_date_v2(self, course_id, cohort_name, from_timestamp, t
     from_date = datetime.fromtimestamp(from_timestamp).date()
     to_date = datetime.fromtimestamp(to_timestamp).date() + timedelta(days=1)
     course_key = CourseKey.from_string(course_id)
-    cohort = cohorts.get_cohort_by_name(course_key, cohort_name) if cohort_name else None
+    try:
+        cohort = cohorts.get_cohort_by_name(course_key, cohort_name) if cohort_name else None
+    except CourseUserGroup.DoesNotExist:
+        cohort = None
+
     filter_args = dict(
         course_id=course_key
     )

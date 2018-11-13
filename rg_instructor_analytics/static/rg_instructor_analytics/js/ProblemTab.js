@@ -26,7 +26,10 @@ function ProblemTab(button, content) {
             });
             if (!showChart){
                 $('#problem-homeworks-stats-plot').html(
-                    `<div style="padding:20px;text-align:center;">There is no data to show</div>`
+                    `<div style="width: 100%;
+                                 text-align: center;
+                                 margin: 0 auto;
+                                 padding: 150px 0;">No data to display</div>`
                 );
                 return
             }

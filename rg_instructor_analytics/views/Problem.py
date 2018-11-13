@@ -95,8 +95,8 @@ class ProblemHomeWorkStatisticView(AccessMixin, View):
                     problem_id = child.location.to_deprecated_string()
                     if problem_id in academic_performance:
                         current_performance = academic_performance[problem_id]
-                        stat['correct_answer'][-1] += current_performance['grade_avg']
-                        stat['attempts'][-1] += current_performance['attempts_avg']
+                        stat['correct_answer'][-1] += current_performance.get('grade_avg', 0) or 0
+                        stat['attempts'][-1] += current_performance.get('attempts_avg', 0) or 0
                         problems_in_hw += 1
 
                     stat['problems'][-1].append(problem_id)

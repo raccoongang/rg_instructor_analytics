@@ -87,7 +87,10 @@ function EnrollmentTab(button, content) {
             console.log('Enrollments tab', response);
             if (!response.dates_enroll.length) {
                 $('#enrollment-stats-plot').html(
-                    `<div style="padding:20px;text-align:center;">There are no any enrollments in the given period!</div>`
+                    `<div style="width: 100%;
+                                 text-align: center;
+                                 margin: 0 auto;
+                                 padding: 150px 0;">No data to display</div>`
                 );
                 $("#select_cohort").removeClass('select-disabled').removeAttr('disabled');
                 $("#select_course").removeClass('select-disabled').removeAttr('disabled');

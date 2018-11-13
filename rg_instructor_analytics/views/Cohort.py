@@ -116,7 +116,6 @@ class CohortView(AccessMixin, View):
             .filter(**filter_args)
             .values('student_id', 'student__username', 'total')
         )
-        print(grade_stat.count())
         # Return empty lost of the cohorts, when precollect statistic is empty.
         if len(grade_stat) == 0:
             return JsonResponse(data={'labels': [], 'values': [], 'cohorts': []})
