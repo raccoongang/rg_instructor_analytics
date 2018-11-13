@@ -7,6 +7,8 @@ function ProblemTab(button, content) {
     var problemTab = new Tab(button, content);
     var problemDetail = problemTab.content.find("#problem-body");
     var timeFilter = new TimeFilter(content, updateHomeWork);
+    var $tabBanner = content.find('.tab-banner');
+    var $tabContent = content.find('.tab-content');
 
     function openLocation(){
         problemTab.content.find(`*[data-edxid="${problemTab.locationToOpen.value}"]`).click();
@@ -16,7 +18,7 @@ function ProblemTab(button, content) {
     /**
     * Homework`s stats drawer
     */
-    function updateHomeWork(timeFilter) {
+    function updateHomeWork() {
         function onSuccess(response) {
             var $homework = $('#problem-homeworks-stats-plot');
             var maxAttempts = Math.max(...response.attempts);
@@ -265,26 +267,28 @@ function ProblemTab(button, content) {
 
     function loadTabData() {
       try {
-        var courseDatesInfo = $('.course-dates-data').data('course-dates')[funnelTab.tabHolder.course];
+        var courseDatesInfo = $('.course-dates-data').data('course-dates')[problemTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
-            if (courseDatesInfo.course_start !== "null") {
-              timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
-            }
-            if (courseDatesInfo.course_end !== "null") {
-              timeFilter.endDate = moment(courseDatesInfo.course_end * 1000);
-            }
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
+
+            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
+            timeFilter.minDate = timeFilter.startDate;
+            timeFilter.endDate = moment();
+
+            timeFilter.makeActive(content.find(".js-datepicker-btn"));
+            timeFilter.setMinDate();
+
+            updateHomeWork();
         } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
         }
       }
       catch (error) {
         console.error(error);
       }
 
-      updateHomeWork(timeFilter);
     }
 
     problemTab.loadTabData = loadTabData;
