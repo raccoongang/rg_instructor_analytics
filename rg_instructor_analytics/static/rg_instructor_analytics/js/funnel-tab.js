@@ -2,6 +2,8 @@ function FunnelTab(button, content) {
     'use strict';
     var funnelTab = new Tab(button, content);
     var timeFilter = new TimeFilter(content, updateFunnel);
+    var $tabBanner = content.find('.tab-banner');
+    var $tabContent = content.find('.tab-content');
 
     //WYSIWYG init
     content.find('#funnel-email-body').richText();
@@ -9,7 +11,7 @@ function FunnelTab(button, content) {
     var $subject = content.find('#funnel-email-subject');
     var $richTextEditor = content.find('.richText-editor');
 
-    funnelTab.courseStructureView = content.find('.tab-content');
+    funnelTab.courseStructureView = $tabContent;
 
     content.find('#funnel-send-email-btn').click(function () {
         var $funnelCheckbox = content.find("input:checkbox[name=funnel_send_email]:checked");
@@ -90,7 +92,7 @@ function FunnelTab(button, content) {
         funnelTab.locationToOpen = undefined;
     }
 
-    function updateFunnel(timeFilter) {
+    function updateFunnel() {
         function onSuccess(response) {
             funnelTab.courseStructure = response.courses_structure;
 
@@ -165,24 +167,23 @@ function FunnelTab(button, content) {
       try {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[funnelTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
-            if (courseDatesInfo.course_start !== "null") {
-              timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
-            }
-            if (courseDatesInfo.course_end !== "null") {
-              timeFilter.endDate = moment(courseDatesInfo.course_end * 1000);
-            }
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
+            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
+            timeFilter.endDate = moment();
+            timeFilter.minDate = timeFilter.startDate;
+
+            timeFilter.makeActive(content.find(".js-datepicker-btn"));
+            timeFilter.setMinDate();
+            updateFunnel();
         } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
         }
       }
       catch (error) {
         console.error(error);
       }
-
-      updateFunnel(timeFilter);
     }
 
     funnelTab.loadTabData = loadTabData;
