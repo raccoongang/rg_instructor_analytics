@@ -2,8 +2,10 @@ function FunnelTab(button, content) {
     'use strict';
     var funnelTab = new Tab(button, content);
     var timeFilter = new TimeFilter(content, updateFunnel);
+    var $tabBanner = content.find('.tab-banner');
+    var $tabContent = content.find('.tab-content');
 
-    funnelTab.courseStructureView = content.find('.tab-content');
+    funnelTab.courseStructureView = $tabContent;
 
     function openLocation() {
         var items = [funnelTab.viewContent.find(
@@ -18,7 +20,7 @@ function FunnelTab(button, content) {
         funnelTab.locationToOpen = undefined;
     }
 
-    function updateFunnel(timeFilter) {
+    function updateFunnel() {
         function onSuccess(response) {
             funnelTab.courseStructure = response.courses_structure;
 
@@ -84,25 +86,29 @@ function FunnelTab(button, content) {
     function loadTabData() {
       try {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[funnelTab.tabHolder.course];
+        var startDate = moment();
+
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
-            if (courseDatesInfo.course_start !== "null") {
-              timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
-            }
-            if (courseDatesInfo.course_end !== "null") {
-              timeFilter.endDate = moment(courseDatesInfo.course_end * 1000);
-            }
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
+
+            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
+            timeFilter.minDate = timeFilter.startDate;
+            timeFilter.endDate = moment();
+            timeFilter.makeActive(content.find(".js-datepicker-btn"));
+            timeFilter.setMinDate();
+
+            updateFunnel();
+
         } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
         }
       }
       catch (error) {
         console.error(error);
       }
 
-      updateFunnel(timeFilter);
     }
 
     funnelTab.loadTabData = loadTabData;

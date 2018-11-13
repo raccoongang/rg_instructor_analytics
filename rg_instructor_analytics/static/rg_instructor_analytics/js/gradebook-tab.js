@@ -8,6 +8,8 @@ function GradebookTab(button, content) {
     var $tbody = $('#gradebook_table_body');
     var $loader = $('#gb-loader');
     var $statsPlot = $('#gradebook-stats-plot');
+    var $tabBanner = content.find('.tab-banner');
+    var $tabContent = content.find('.tab-content');
     
     greadebookTab.studentsTable = content.find('#student_table_body');
     greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
@@ -18,14 +20,14 @@ function GradebookTab(button, content) {
     function loadTabData() {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[greadebookTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
-        } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
-        }
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
 
-        updateData();
+            updateData();
+        } else {
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
+        }
     }
 
     greadebookTab.loadTabData = loadTabData;

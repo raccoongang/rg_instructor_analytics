@@ -1,6 +1,8 @@
 function CohortTab(button, content) {
     var cohortTab = new Tab(button, content);
     var $loader = $('#cl-loader');
+    var $tabBanner = content.find('.tab-banner');
+    var $tabContent = content.find('.tab-content');
 
     cohortTab.cohortList = content.find('#cohort-check-list');
     cohortTab.emailBody = cohortTab.content.find('#email-body');
@@ -121,14 +123,14 @@ function CohortTab(button, content) {
     function loadTabData() {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[cohortTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
-            $('.tab-banner').prop('hidden', true);
-            $('.tab-content').prop('hidden', false);
+            $tabBanner.prop('hidden', true);
+            $tabContent.prop('hidden', false);
+            updateCohort();
         } else {
-            $('.tab-banner').prop('hidden', false);
-            $('.tab-content').prop('hidden', true);
+            $tabBanner.prop('hidden', false);
+            $tabContent.prop('hidden', true);
         }
 
-        updateCohort();
     }
 
     cohortTab.loadTabData = loadTabData;
