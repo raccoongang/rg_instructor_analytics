@@ -17,6 +17,20 @@ function ProblemTab(button, content) {
     */
     function updateHomeWork() {
         function onSuccess(response) {
+            console.log('Problems', response);
+            let showChart = false;
+            response.attempts.forEach((item) => {
+                if (item) {
+                    showChart = true;
+                }
+            });
+            if (!showChart){
+                $('#problem-homeworks-stats-plot').html(
+                    `<div style="padding:20px;text-align:center;">There is no data to show</div>`
+                );
+                return
+            }
+            
             let maxAttempts = Math.max(...response.attempts);
             let countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
             let correctAnswer = [...response.correct_answer];

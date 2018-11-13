@@ -18,6 +18,14 @@ function GradebookTab(button, content) {
     function updateData(filterString = '', resetCohort) {
         
         function onSuccess(response) {
+            console.log('Gradebook tab', response);
+            if (!response.students_names.length){
+                greadebookTab.gradebookTableHeader.html(
+                    `<div>There is nothing to show</div>`
+                );
+                return
+            }
+            
             greadebookTab.studentInfo = response.student_info;
             greadebookTab.examNames = response.exam_names;
             greadebookTab.studentsNames = response.students_names;

@@ -84,6 +84,16 @@ function EnrollmentTab(button, content) {
         $("#select_course").addClass('select-disabled').get(0).disabled = true;
 
         function onSuccess(response) {
+            console.log('Enrollments tab', response);
+            if (!response.dates_enroll.length) {
+                $('#enrollment-stats-plot').html(
+                    `<div style="padding:20px;text-align:center;">There are no any enrollments in the given period!</div>`
+                );
+                $("#select_cohort").removeClass('select-disabled').removeAttr('disabled');
+                $("#select_course").removeClass('select-disabled').removeAttr('disabled');
+                return;
+            }
+            
             function dataFixFunction(x) {
                 var result = new Date(x);
                 result.setHours(0);

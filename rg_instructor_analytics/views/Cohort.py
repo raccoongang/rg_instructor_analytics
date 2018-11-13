@@ -110,12 +110,13 @@ class CohortView(AccessMixin, View):
             course_id=kwargs['course_key']
         )
         if kwargs['cohort']:
-            filter_args.update(dict(student__in=kwargs['cohort'].users.all().values_list('id', flat=True)))
+            filter_args.update(dict(student_id__in=kwargs['cohort'].users.all().values_list('id', flat=True)))
         grade_stat = (
             GradeStatistic.objects
             .filter(**filter_args)
             .values('student_id', 'student__username', 'total')
         )
+        print(grade_stat.count())
         # Return empty lost of the cohorts, when precollect statistic is empty.
         if len(grade_stat) == 0:
             return JsonResponse(data={'labels': [], 'values': [], 'cohorts': []})
