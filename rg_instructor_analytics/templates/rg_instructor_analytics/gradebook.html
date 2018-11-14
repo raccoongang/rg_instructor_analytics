@@ -66,6 +66,18 @@ from django.utils.translation import ugettext as _
             <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
         </div>
     </div>
+
+    <div class="gradebook-student-step-plot">
+        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Student Step")}</h2>
+        <span class="enrollment-title-text enrollment-title-text-1 hidden">
+            ${_("Student's path through the course .")}
+        </span>
+        <div id="gradebook-student-step-stats-plot"></div>
+        <div class="loader hidden">
+            ${_("Loading")}
+            <img src="/static/debug_toolbar/img/ajax-loader.gif" alt="loader">
+        </div>
+    </div>
 </div>
 
 <div class="course-dates-data" data-course-dates="${section_data['course_dates_info']}"></div>

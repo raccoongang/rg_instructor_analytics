@@ -7,7 +7,9 @@ from rg_instructor_analytics.views.activity import ActivityView
 from rg_instructor_analytics.views.cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
 from rg_instructor_analytics.views.funnel import GradeFunnelSendMessage, GradeFunnelView
-from rg_instructor_analytics.views.gradebook import DiscussionActivityView, GradebookView, VideoView
+from rg_instructor_analytics.views.gradebook import (
+    DiscussionActivityView, GradebookView, StudentStepView, VideoView
+)
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView
 )
@@ -47,6 +49,7 @@ urlpatterns = [
     url(r'^api/gradebook/$', GradebookView.as_view(), name='gradebook_view'),
     url(r'^api/gradebook/video_views/$', VideoView.as_view(), name='video_views'),
     url(r'^api/gradebook/discussion/$', DiscussionActivityView.as_view(), name='gradebook_discussion_view'),
+    url(r'^api/gradebook/student_step/$', StudentStepView.as_view(), name='gradebook_student_step_view'),
 
     # Clusters tab:
     url(r'^api/cohort/$', CohortView.as_view(), name='cohort_view'),
