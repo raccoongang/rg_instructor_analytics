@@ -2,6 +2,7 @@
 Module for funnel subtab.
 """
 import json
+import logging
 
 from django.db.models import Count
 from django.db.models.expressions import RawSQL
@@ -12,6 +13,8 @@ from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
 from rg_instructor_analytics.utils.AccessMixin import AccessMixin
 from student.models import CourseEnrollment
+
+log = logging.getLogger(__name__)
 
 
 def info_for_course_element(element, level):
@@ -98,26 +101,26 @@ class GradeFunnelView(AccessMixin, View):
         """
         course_info = []
         course = get_course_by_id(course_key, depth=4)
-        try:
-            for section in course.get_children():
-                section_info = info_for_course_element(section, level=0)
-                for subsection in section.get_children():
-                    subsection_info = info_for_course_element(subsection, level=1)
-                    for unit in subsection.get_children():
-                        unit_info = info_for_course_element(unit, level=2)
-                        for child in unit.get_children():
-                            if child.location.category == 'problem':
-                                add_as_child(unit_info, info_for_course_element(child, level=3))
-                        add_as_child(subsection_info, unit_info)
-                    add_as_child(section_info, subsection_info)
-                    if subsection_info['id'] in subsection_activity:
-                        for u in subsection_activity[subsection_info['id']]:
+        for section in course.get_children():
+            section_info = info_for_course_element(section, level=0)
+            for subsection in section.get_children():
+                subsection_info = info_for_course_element(subsection, level=1)
+                for unit in subsection.get_children():
+                    unit_info = info_for_course_element(unit, level=2)
+                    for child in unit.get_children():
+                        if child.location.category == 'problem':
+                            add_as_child(unit_info, info_for_course_element(child, level=3))
+                    add_as_child(subsection_info, unit_info)
+                add_as_child(section_info, subsection_info)
+                if subsection_info['id'] in subsection_activity:
+                    for u in subsection_activity[subsection_info['id']]:
+                        try:
                             subsection_info['children'][u['offset'] - 1]['student_count'] = u['count']
-                            subsection_info['student_count'] += u['count']
-                        section_info['student_count'] += subsection_info['student_count']
-                course_info.append(section_info)
-        except:
-            pass
+                        except IndexError as e:
+                            log.error('Error occured while building a funnel chart, error message - {}'.format(e))
+                        subsection_info['student_count'] += u['count']
+                    section_info['student_count'] += subsection_info['student_count']
+            course_info.append(section_info)
         return course_info
 
     def append_inout_info(self, statistic, accomulate=0):
@@ -138,7 +141,6 @@ class GradeFunnelView(AccessMixin, View):
         Structure of the node described inside function info_for_course_element.
         """
         subsection_activity = self.get_progress_info_for_subsection(course_key, cohort)
-        print("Subsection activity - ", subsection_activity)
         courses_structure = self.get_course_info(course_key, subsection_activity)
         self.append_inout_info(courses_structure)
         return courses_structure

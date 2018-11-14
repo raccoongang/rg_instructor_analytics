@@ -59,7 +59,10 @@ class AccessMixin(object):
                       course_id)
             return HttpResponseBadRequest()
 
-        cohort = cohorts.get_cohort_by_name(course_key, cohort_name) if cohort_name else None
+        try:
+            cohort = cohorts.get_cohort_by_name(course_key, cohort_name) if cohort_name else None
+        except cohorts.CourseUserGroup.DoesNotExist:
+            cohort = None
 
         course = get_course_by_id(course_key, depth=0)
         # set cohorts ones for all views
