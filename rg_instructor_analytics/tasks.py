@@ -149,6 +149,88 @@ def enrollment_collector_date():
                 },
             )
 
+
+def perform_analyzing(from_date, to_date, all_enrollments, filter_args, add_zero=False):
+    dates_enroll = []
+    dates_total = []
+    counts_enroll = []
+    counts_unenroll = []
+    dates_unenroll = []
+    counts_total = []
+
+    def daterange(date1, date2):
+        for n in range(int((date2 - date1).days) + 1):
+            yield date1 + timedelta(n)
+
+    def _count_users(user_enrollments):
+        name = None
+        count = 0
+        for u_e in user_enrollments:
+            try:
+                if u_e.user.username != name:
+                    count += 1
+                    name = u_e.user.username
+            except Exception as e:
+                log.error("Error occurred while counting enrollments, enrollment id - {}, error - {}".format(u_e.id, e))
+                continue
+        return count
+
+    for _date in daterange(from_date, to_date):
+        date_added = False
+        if all_enrollments.filter(created__range=(
+                datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())),
+                is_active=True).exists():
+            dates_enroll.append(_date.strftime("%Y-%m-%d"))
+            users_enrollment = all_enrollments.filter(created__range=(
+                datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())),
+                is_active=True)
+
+            enroll_users_count = _count_users(users_enrollment)
+
+            counts_enroll.append(enroll_users_count)
+            date_added = True
+            dates_total.append(_date.strftime("%Y-%m-%d"))
+        elif add_zero:
+            dates_enroll.append(_date.strftime("%Y-%m-%d"))
+            counts_enroll.append(_count_users([]))
+            date_added = True
+            dates_total.append(_date.strftime("%Y-%m-%d"))
+
+        if all_enrollments.filter(created__range=(
+                datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())),
+                is_active=False).exists():
+            dates_unenroll.append(_date.strftime("%Y-%m-%d"))
+
+            users_unenrollment = all_enrollments.filter(created__range=(
+                datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())),
+                is_active=False)
+
+            unenroll_users_count1 = _count_users(users_unenrollment)
+
+            counts_unenroll.append(unenroll_users_count1)
+            if not date_added:
+                dates_total.append(_date.strftime("%Y-%m-%d"))
+        elif add_zero:
+            dates_unenroll.append(_date.strftime("%Y-%m-%d"))
+            counts_unenroll.append(_count_users([]))
+            if not date_added:
+                dates_total.append(_date.strftime("%Y-%m-%d"))
+
+        if date_added:
+            total = CourseEnrollment.objects.filter(created__lte=datetime.combine(_date, datetime.max.time()),
+                                                    is_active=True, **filter_args)
+            counts_total.append(total.count())
+
+    return {
+        'dates_total': dates_total,
+        'counts_total': counts_total,
+        'dates_enroll': dates_enroll,
+        'dates_unenroll': dates_unenroll,
+        'counts_enroll': counts_enroll,
+        'counts_unenroll': counts_unenroll
+    }
+
+
 @task(bind=True)
 def enrollment_collector_date_v2(self, course_id, cohort_name, from_timestamp, to_timestamp):
     """
@@ -173,74 +255,10 @@ def enrollment_collector_date_v2(self, course_id, cohort_name, from_timestamp, t
             user__in=cohort.users.all().values_list('id', flat=True)
         ))
 
-    def daterange(date1, date2):
-        for n in range(int((date2 - date1).days) + 1):
-            yield date1 + timedelta(n)
-
-    def _count_users(user_enrollments):
-        name = None
-        count = 0
-        for u_e in user_enrollments:
-            try:
-                if u_e.user.username != name:
-                    count += 1
-                    name = u_e.user.username
-            except Exception as e:
-                log.error("Error occurred while counting enrollments, enrollment id - {}, error - {}".format(u_e.id, e))
-                continue
-        return count
-
     all_enrollments = CourseEnrollment.history.filter(~Q(history_type='+'), **filter_args)
 
-    dates_enroll = []
-    dates_total = []
-    counts_enroll = []
-    counts_unenroll = []
-    dates_unenroll = []
-    counts_total = []
+    data = perform_analyzing(from_date, to_date, all_enrollments, filter_args, add_zero=True)
 
-    for _date in daterange(from_date, to_date):
-        date_added = False
-        if all_enrollments.filter(created__range=(
-        datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())), is_active=True).exists():
-            dates_enroll.append(_date.strftime("%Y-%m-%d"))
-            users_enrollment = all_enrollments.filter(created__range=(
-            datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())),
-                                                        is_active=True)
-
-            enroll_users_count = _count_users(users_enrollment)
-
-            counts_enroll.append(enroll_users_count)
-            date_added = True
-            dates_total.append(_date.strftime("%Y-%m-%d"))
-
-        if all_enrollments.filter(created__range=(
-        datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())), is_active=False).exists():
-            dates_unenroll.append(_date.strftime("%Y-%m-%d"))
-
-            users_unenrollment = all_enrollments.filter(created__range=(
-                datetime.combine(_date, datetime.min.time()), datetime.combine(_date, datetime.max.time())),
-                is_active=False)
-
-            unenroll_users_count1 = _count_users(users_unenrollment)
-
-            counts_unenroll.append(unenroll_users_count1)
-            if not date_added:
-                dates_total.append(_date.strftime("%Y-%m-%d"))
-
-        if date_added:
-
-            total = CourseEnrollment.objects.filter(created__lte=datetime.combine(_date, datetime.max.time()),
-                                                  is_active=True, **filter_args)
-            counts_total.append(total.count())
-    data = {
-        'dates_total': dates_total,
-        'counts_total': counts_total,
-        'dates_enroll': dates_enroll,
-        'dates_unenroll': dates_unenroll,
-        'counts_enroll': counts_enroll,
-        'counts_unenroll': counts_unenroll
-    }
     self.update_state(state=states.SUCCESS)
     return data
 

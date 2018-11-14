@@ -84,8 +84,21 @@ function EnrollmentTab(button, content) {
         $("#select_course").addClass('select-disabled').get(0).disabled = true;
 
         function onSuccess(response) {
-            console.log('Enrollments tab', response);
-            if (!response.dates_enroll.length) {
+            let showChart = false;
+            
+            response.counts_enroll.forEach((item) => {
+                if (item > 0) {
+                    showChart = true
+                }
+            });
+            
+            response.counts_unenroll.forEach((item) => {
+                if (item > 0) {
+                    showChart = true
+                }
+            });
+            
+            if (!showChart) {
                 $('#enrollment-stats-plot').html(
                     `<div style="width: 100%;
                                  text-align: center;
@@ -117,7 +130,7 @@ function EnrollmentTab(button, content) {
                 hovermode: 'closest',
                 hoverdistance: 1000,
                 spikedistance: 1000,
-                type: 'scatter'
+                type: 'scatter',
             };
             let enrollTrace = {
                 x: response.dates_enroll.map(dataFixFunction),
@@ -156,11 +169,13 @@ function EnrollmentTab(button, content) {
                 yaxis: {
                     nticks: 4,
                     overlaying: 'y2',
+                    title: 'Total User Count'
                 },
                 yaxis2: {
-                    side: 'right'
+                    side: 'right',
+                    title: 'Enrollments Count'
                 },
-                showlegend: false,
+                showlegend: false
             };
             let data = [unenrollTrace, enrollTrace, totalTrace];
             $("#enrollment-stats-plot").html('');

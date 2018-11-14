@@ -18,7 +18,6 @@ function GradebookTab(button, content) {
     function updateData(filterString = '', resetCohort) {
         
         function onSuccess(response) {
-            console.log('Gradebook tab', response);
             if (!response.students_names.length){
                 greadebookTab.gradebookTableHeader.html(
                     `<div style="width: 100%;

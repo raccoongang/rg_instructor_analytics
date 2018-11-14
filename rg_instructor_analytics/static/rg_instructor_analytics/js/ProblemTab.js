@@ -17,7 +17,6 @@ function ProblemTab(button, content) {
     */
     function updateHomeWork() {
         function onSuccess(response) {
-            console.log('Problems', response);
             let showChart = false;
             response.attempts.forEach((item) => {
                 if (item) {
@@ -379,7 +378,6 @@ function BaseQuestion(questionHtml, stringProblemID) {
     * @param response
     */
     this.onGettingStat = function (response) {
-        console.log(this.questionHtml);
         switch (response.type) {
             case 'bar':
                 this.displayBar(response.stats);

@@ -57,7 +57,6 @@ function CohortTab(button, content) {
 
     function updateCohort() {
         function onSuccess(response) {
-            console.log('Clusters', response);
             if (!response.values.length) {
                 $('#cohort-plot').html(
                     `<div style="width: 100%;
