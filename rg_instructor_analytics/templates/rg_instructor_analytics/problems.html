@@ -6,64 +6,63 @@ from django.utils.translation import ugettext as _
 
 <h1>${_("Problems")}</h1>
 <div class="tab-banner" hidden>
-  <h2 class="enrollment-title">${_("Course has not started yet.")}</h2>
+  <h2 class="analytics-title">${_("Course has not started yet.")}</h2>
 </div>
 <div class="tab-content">
   ## MAIN section ##
-  <h2 class="enrollment-title">
+  <h2 class="analytics-title">
     ${_("This report helps detect assessments that are most problematic for students.")}
   </h2>
   <ul class="disc-list">
-    <li class="enrollment-title-text">
+    <li class="analytics-title-text">
       ${_("Blue columns represent average count of attempts for all assessments in a subsection.")}
     </li>
-    <li class="enrollment-title-text">
+    <li class="analytics-title-text">
       ${_("Red columns represent average level of student’s success in a subsection (%)")}
     </li>
   </ul>
 
-  <span class="enrollment-title-text">
+  <span class="analytics-title-text">
       ${_("Click on the area that represents a subsection (only subsections that contain "
       "graded assessments are displayed) to get more detailed information.")}
   </span>
 
   <%include file="time-filter.html" args="active_tab='problems'"/>
 
-  <div class="enrollment-legend-holder enrollment-legend-holder__square">
-    <div class="enrollment-legend-item">Average attempts count</div>
-    <div class="enrollment-legend-item">Average success level, %</div>
+  <div class="analytics-legend-holder analytics-legend-holder__square">
+    <div class="analytics-legend-item">Average attempts count</div>
+    <div class="analytics-legend-item">Average success level, %</div>
   </div>
 
   <div id="problem-homeworks-stats-plot"></div>
 
   ## DETAILS section ##
-  <h2 class="enrollment-title enrollment-title-1 hidden">${_("Details")}</h2>
-  <span class="enrollment-title-text enrollment-title-text-1 hidden">
-      ${_("This level of the report indexes units from assessments success perspective")}
-  </span>
-  <ul class="disc-list">
-    <li class="enrollment-title-text">
-      ${_("Blue column = 100% if students gave correct answers with 1st attempt")}
-    </li>
-    <li class="enrollment-title-text">
-      ${_("Red column = 100% if students gave incorrect answers and used all the attempts")}
-    </li>
-  </ul>
+  <div class="js-problem-details" hidden>
+    <h2 class="analytics-title">${_("Details")}</h2>
+    <span class="analytics-title-text">
+        ${_("This level of the report indexes units from assessments success perspective")}
+    </span>
+    <ul class="disc-list">
+      <li class="analytics-title-text">
+        ${_("Blue column = 100% if students gave correct answers with 1st attempt")}
+      </li>
+      <li class="analytics-title-text">
+        ${_("Red column = 100% if students gave incorrect answers and used all the attempts")}
+      </li>
+    </ul>
 
-  <span class="enrollment-title-text enrollment-title-text-1 hidden">
-    ${_("Click on the area that represents a unit to get detailed information.")}
-  </span>
-  <div class="enrollment-legend-holder enrollment-legend-holder__square enrollment-legend-holder__square-1 hidden">
-    <div class="enrollment-legend-item">${_("Correct Answers, %")}</div>
-    <div class="enrollment-legend-item">${_("Incorrect Answers, %")}</div>
+    <span class="analytics-title-text">
+      ${_("Click on the area that represents a unit to get detailed information.")}
+    </span>
+    <div class="analytics-legend-holder analytics-legend-holder__square">
+      <div class="analytics-legend-item">${_("Correct Answers, %")}</div>
+      <div class="analytics-legend-item">${_("Incorrect Answers, %")}</div>
+    </div>
   </div>
+
   <div id="problems-stats-plot"></div>
 
   ## PROBLEM section ##
-  <h2 class="enrollment-title enrollment-title-2 hidden">${_("Problem")}</h2>
-  <span class="enrollment-title-text enrollment-title-text-2 hidden">
-    ${_("This level of the report indexes units from assessments success perspective")}
-  </span>
   <div id="problem-body"></div>
 </div>
 

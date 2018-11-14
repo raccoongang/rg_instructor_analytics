@@ -9,6 +9,7 @@ function ProblemTab(button, content) {
     var timeFilter = new TimeFilter(content, updateHomeWork);
     var $tabBanner = content.find('.tab-banner');
     var $tabContent = content.find('.tab-content');
+    var $problemDetailSection = content.find('.js-problem-details');
 
     function openLocation(){
         problemTab.content.find(`*[data-edxid="${problemTab.locationToOpen.value}"]`).click();
@@ -95,7 +96,7 @@ function ProblemTab(button, content) {
 
             $homework.off('click');
             $homework.on('click', function (e) {
-                $('.enrollment-title-1.hidden, .enrollment-title-text-1.hidden,  .enrollment-legend-holder__square-1').removeClass('hidden');
+                $problemDetailSection.prop('hidden', false);
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
                     loadHomeWorkProblems(response.problems[attr.attribute]);
@@ -271,6 +272,7 @@ function ProblemTab(button, content) {
         if (courseDatesInfo.course_is_started) {
             $tabBanner.prop('hidden', true);
             $tabContent.prop('hidden', false);
+            $problemDetailSection.prop('hidden', true);
             timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
             timeFilter.endDate = moment();
             timeFilter.minDate = timeFilter.startDate;

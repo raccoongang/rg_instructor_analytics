@@ -7,6 +7,8 @@ function GradebookTab(button, content) {
     var greadebookTab = new Tab(button, content);
     var $tabBanner = content.find('.tab-banner');
     var $tabContent = content.find('.tab-content');
+    var $tabSubtitle = content.find('.js-analytics-subtitle');
+    var $tabSubtitleText = content.find('.js-analytics-subtitle-text');
 
     var $tbody = $('#gradebook_table_body');
     var $loader = $('#gb-loader');
@@ -29,6 +31,8 @@ function GradebookTab(button, content) {
         if (courseDatesInfo.course_is_started) {
             $tabBanner.prop('hidden', true);
             $tabContent.prop('hidden', false);
+            $tabSubtitle.addClass('hidden');
+            $tabSubtitleText.addClass('hidden');
             updateData();
         } else {
             $tabBanner.prop('hidden', false);
@@ -373,8 +377,8 @@ function GradebookTab(button, content) {
 
             $('.gradebook-table-row').removeClass('active');
             $(evt.target).closest('.gradebook-table-row').toggleClass('active');
-            $('.enrollment-title-1.hidden').removeClass('hidden');
-            $('.enrollment-title-text-1.hidden').removeClass('hidden');
+            $tabSubtitle.removeClass('hidden');
+            $tabSubtitleText.removeClass('hidden');
 
             Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});
         })
