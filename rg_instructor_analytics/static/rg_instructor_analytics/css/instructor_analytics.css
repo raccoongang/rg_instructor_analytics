@@ -205,8 +205,7 @@
     justify-content: space-between;
     margin-top: 16px;
 }
-.enrollment-legend-holder,
-.activity-legend-holder {
+.analytics-legend-holder {
     max-width: 768px;
     display: flex;
     justify-content: space-around;
@@ -214,12 +213,12 @@
     z-index: 1;
     margin-top: 40px;
 }
-.enrollment-legend-item,
+.analytics-legend-item,
 .activity-legend-item {
     position: relative;
     padding-left: 40px;
 }
-.enrollment-legend-item:before {
+.analytics-legend-item:before {
     content: '';
     height: 2px;
     border-bottom: 4px solid #eccada;
@@ -230,25 +229,25 @@
     top: 50%;
     transform: translate(0,-50%);
 }
-.enrollment-legend-item:first-child:before {
+.analytics-legend-item:first-child:before {
     background: #68b22c;
     border-bottom: 4px solid #d1e8bf;
 }
-.enrollment-legend-item:nth-child(2):before {
+.analytics-legend-item:nth-child(2):before {
     background: #c14f84;
     border-color: #eccada;
 }
-.enrollment-legend-item:nth-child(3):before {
+.analytics-legend-item:nth-child(3):before {
     background: #568ecc;
     border-bottom: none;
 }
-.enrollment-title,
+.analytics-title,
 .hd.hd-3.problem-header {
     font-size: 18px;
     color: #020202;
     margin-bottom: 16px;
 }
-.enrollment-title-text,
+.analytics-title-text,
 .problem p {
     font-size: 13px;
     color: #3f3f3f;
@@ -456,7 +455,7 @@
     z-index: 1;
     margin-top: 30px;
 }
-.enrollment-legend-holder__square .enrollment-legend-item:before,
+.analytics-legend-holder__square .analytics-legend-item:before,
 .activity-legend-holder__square .activity-legend-item:before{
     content: '';
     height: 16px;
@@ -468,15 +467,15 @@
     transform: translate(0,-50%);
     border: none;
 }
-.enrollment-legend-holder__square .enrollment-legend-item,
+.analytics-legend-holder__square .analytics-legend-item,
 .activity-legend-holder__square .activity-legend-item {
     font-weight: 600;
     font-size: 14px;
 }
-.enrollment-legend-holder__square .enrollment-legend-item:nth-child(1):before {
+.analytics-legend-holder__square .analytics-legend-item:nth-child(1):before {
     background: #0075b4;
 }
-.enrollment-legend-holder__square .enrollment-legend-item:nth-child(2):before {
+.analytics-legend-holder__square .analytics-legend-item:nth-child(2):before {
     background: #c14f84;
 }
 .activity-legend-holder__square .activity-legend-item:nth-child(1):before {

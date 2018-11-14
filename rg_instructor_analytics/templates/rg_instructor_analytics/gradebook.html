@@ -9,14 +9,14 @@ from django.utils.translation import ugettext as _
     <h2>${_("Course has not started yet.")}</h2>
 </div>
 <div class="tab-content">
-    <h2 class="enrollment-title">
+    <h2 class="analytics-title">
         ${_("This reports gives an overview of all students’ progress in a simple spreadsheet form.")}
     </h2>
-    <span class="enrollment-title-text">
+    <span class="analytics-title-text">
         ${_("Progress details of any student are available by clicking on the corresponding row of "
         "the spreadsheet.")}
     </span>
-    <span class="enrollment-title-text">
+    <span class="analytics-title-text">
         ${_("You can filter student list by using “Search Student…” field.")}
         ${_("You can search by first name, last name or email (non-case-sensitive).")}
     </span>
@@ -33,8 +33,8 @@ from django.utils.translation import ugettext as _
     </div>
 
     <div class="gradebook-plot">
-        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Progress Graph")}</h2>
-        <span class="enrollment-title-text enrollment-title-text-1 hidden">
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Progress Graph")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
             ${_("This graph shows the current progress details for the selected student. "
             "It contains progress on each Homework (blue columns) and total course progress (red column).")}
         </span>
@@ -42,8 +42,8 @@ from django.utils.translation import ugettext as _
     </div>
 
     <div class="gradebook-video-plot">
-        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Video Views")}</h2>
-        <span class="enrollment-title-text enrollment-title-text-1 hidden">
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Video Views")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
             ${_("This graph indicates the amount of seconds Student watched each of the course videos. Competed "
             "videos are indicated green.")}
         </span>
@@ -55,8 +55,8 @@ from django.utils.translation import ugettext as _
     </div>
 
     <div class="gradebook-discussion-plot">
-        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Discussion Activity")}</h2>
-        <span class="enrollment-title-text enrollment-title-text-1 hidden">
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Discussion Activity")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
             ${_("This graphic indicates the amount of Student's activity in Discussions including "
             "comments, responses, topics creation, and votes.")}
         </span>
@@ -68,8 +68,8 @@ from django.utils.translation import ugettext as _
     </div>
 
     <div class="gradebook-student-step-plot">
-        <h2 class="enrollment-title enrollment-title-1 hidden">${_("Student Step")}</h2>
-        <span class="enrollment-title-text enrollment-title-text-1 hidden">
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Student Step")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
             ${_("Student's path through the course .")}
         </span>
         <div id="gradebook-student-step-stats-plot"></div>
