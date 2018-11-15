@@ -7,10 +7,12 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
+
 from lms.djangoapps.courseware.courses import get_course_by_id
+
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from rg_instructor_analytics_log_collector.models import DiscussionActivityByDay, VideoViewsByDay, StudentStepCourse
+from rg_instructor_analytics_log_collector.models import DiscussionActivityByDay, StudentStepCourse, VideoViewsByDay
 
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 
@@ -25,6 +27,7 @@ class ActivityView(View):
         """
         See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
+
         return super(ActivityView, self).dispatch(*args, **kwargs)
 
     def get_daily_activity_for_course(self, from_date, to_date, course_key):
@@ -90,14 +93,14 @@ class ActivityView(View):
                         count_visits.append(
                             StudentStepCourse.objects.filter(
                                 current_unit=unit.location.block_id,
-                                log_time__range=(from_date, to_date+timedelta(days=1)),
+                                log_time__range=(from_date, to_date + timedelta(days=1)),
                             ).count()
                         )
                     else:
                         count_visits.append(
                             StudentStepCourse.objects.filter(
                                 target_unit=unit.location.block_id,
-                                log_time__range=(from_date, to_date+timedelta(days=1)),
+                                log_time__range=(from_date, to_date + timedelta(days=1)),
                             ).count()
                         )
 
