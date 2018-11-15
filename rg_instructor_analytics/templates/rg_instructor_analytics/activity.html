@@ -5,15 +5,26 @@
 
 <h1>${_("Activities")}</h1>
 <div class="tab-banner" hidden>
-  <h2 class="analytics-title">${_("Course has not started yet.")}</h2>
+    <h2 class="analytics-title">${_("Course has not started yet.")}</h2>
 </div>
+
 <div class="tab-content">
-  <%include file="time-filter.html" args="active_tab='activity'"/>
-  <div class="analytics-legend-holder activity-legend-holder__square">
-    <div class="activity-legend-item">${_("Video views count")}</div>
-    <div class="activity-legend-item">${_("Discussion activities count")}</div>
-  </div>
-  <div id="activity-stats-plot"></div>
+    <%include file="time-filter.html" args="active_tab='activity'"/>
+    <div class="item-content hidden">
+        <div class="analytics-legend-holder activity-legend-holder__square">
+            <div class="activity-legend-item">${_("Video views count")}</div>
+            <div class="activity-legend-item">${_("Discussion activities count")}</div>
+        </div>
+        <div id="activity-stats-plot"></div>
+    </div>
+    <div class="item-content hidden">
+        <h2 class="analytics-title js-analytics-subtitle">${_("Transition Pattern through Units")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text">
+            ${_("This graph indicates the amount of visits of each Unit and bring you the whole perspective "
+            "of what part of Course was the most difficult or interesting for your Students.")}
+        </span>
+        <div id="activity-unit-visits-stats-plot"></div>
+    </div>
 </div>
 
 <div class="course-dates-data" data-course-dates="${section_data['course_dates_info']}"></div>
