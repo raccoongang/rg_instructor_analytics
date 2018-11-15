@@ -12,8 +12,8 @@ from lms.djangoapps.courseware.courses import get_course_by_id
 
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from rg_instructor_analytics_log_collector.models import DiscussionActivityByDay, StudentStepCourse, VideoViewsByDay
 
+from rg_instructor_analytics_log_collector.models import DiscussionActivityByDay, StudentStepCourse, VideoViewsByDay
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 
 
@@ -27,14 +27,12 @@ class ActivityView(View):
         """
         See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
-
         return super(ActivityView, self).dispatch(*args, **kwargs)
 
     def get_daily_activity_for_course(self, from_date, to_date, course_key):
         """
         Get statistic of video and discussion activities by days.
         """
-
         video_dates = []
         video_activities = []
 
@@ -77,7 +75,6 @@ class ActivityView(View):
         """
         Get statistic of visiting units.
         """
-
         course = get_course_by_id(course_key, depth=3)
         ticktext = []
         tickvals = []
