@@ -9,7 +9,9 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from rg_instructor_analytics_log_collector.models import DiscussionActivityByDay, StudentStepCourse, VideoViewsByDay
+from rg_instructor_analytics_log_collector.models import (
+    CourseVisitsByDay, DiscussionActivityByDay, StudentStepCourse, VideoViewsByDay
+)
 
 from lms.djangoapps.courseware.courses import get_course_by_id
 from rg_instructor_analytics.utils.decorators import instructor_access_required
@@ -62,11 +64,21 @@ class ActivityView(View):
         discussion_dates = list(discussion_activities_set.values_list('day', flat=True))
         discussion_activities = list(discussion_activities_set.values_list('total', flat=True))
 
+        course_visits_set = CourseVisitsByDay.objects.filter(
+            course=course_key,
+            day__range=(from_date, to_date),
+        ).order_by('day')
+
+        course_dates = list(course_visits_set.values_list('day', flat=True))
+        course_activities = list(course_visits_set.values_list('total', flat=True))
+
         return {
             'video_dates': video_dates,
             'video_activities': video_activities,
             'discussion_dates': discussion_dates,
             'discussion_activities': discussion_activities,
+            'course_dates': course_dates,
+            'course_activities': course_activities,
         }
 
     def get_unit_visits(self, from_date, to_date, course_key):

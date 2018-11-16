@@ -12,7 +12,8 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from rg_instructor_analytics_log_collector.models import DiscussionActivity, StudentStepCourse, VideoViewsByUser
+from rg_instructor_analytics_log_collector.models import DiscussionActivity, LastCourseVisitByUser, StudentStepCourse, \
+    VideoViewsByUser
 
 import django_comment_client.utils as utils
 from lms.djangoapps.courseware.courses import get_course_by_id
@@ -49,30 +50,40 @@ class GradebookView(View):
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
-        enrolled_students = GradeStatistic.objects.filter(course_id=course_key)
+        course_students = GradeStatistic.objects.filter(course_id=course_key)
         if filter_string:
-            enrolled_students = enrolled_students.filter(
+            course_students = course_students.filter(
                 Q(student__username__icontains=filter_string) |
                 Q(student__first_name__icontains=filter_string) |
                 Q(student__last_name__icontains=filter_string) |
                 Q(student__email__icontains=filter_string)
             )
 
-        enrolled_students = enrolled_students.order_by('student__username')
+        course_students = course_students.order_by('student__username')
 
-        student_info = []
-        students_names = []
-        for student in enrolled_students:
-            student_info.append(json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student.exam_info))
-            students_names.append([student.student.username, student.is_enrolled])
+        students_last_visit_dict = dict(LastCourseVisitByUser.objects.filter(
+            course=course_key
+        ).values_list('user_id', 'log_time'))
 
-        exam_names = list(student_info[0].keys()) if len(student_info) > 0 else []
+        student_exam_values = []
+        students_info = []
+
+        for student in course_students:
+            student_exam_values.append(json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student.exam_info))
+            student_last_visit_date = students_last_visit_dict.get(student.student.id, '')
+            student_last_visit = student_last_visit_date and student_last_visit_date.strftime("%d %B %Y")
+            students_info.append({'username': student.student.username,
+                                  'is_enrolled': student.is_enrolled,
+                                  'last_visit': student_last_visit
+                                  })
+
+        exam_names = list(student_exam_values[0].keys()) if len(student_exam_values) > 0 else []
 
         return JsonResponse(
             data={
-                'student_info': student_info,
+                'student_exam_values': student_exam_values,
                 'exam_names': exam_names,
-                'students_names': students_names,
+                'students_info': students_info,
             }
         )
 

@@ -33,18 +33,19 @@ from django.utils.translation import ugettext as _
     </div>
 
     <div class="gradebook-plot">
+        <h4 class="last-student-visit-banner js-last-student-visit" hidden></h4>
         <h2 class="analytics-title js-analytics-subtitle hidden">${_("Progress Graph")}</h2>
         <span class="analytics-title-text js-analytics-subtitle-text hidden">
             ${_("This graph shows the current progress details for the selected student. "
             "It contains progress on each Homework (blue columns) and total course progress (red column).")}
         </span>
-        <div id = "gradebook-stats-plot"></div>
+        <div id="gradebook-stats-plot"></div>
     </div>
 
     <div class="gradebook-video-plot">
         <h2 class="analytics-title js-analytics-subtitle hidden">${_("Video Views")}</h2>
         <span class="analytics-title-text js-analytics-subtitle-text hidden">
-            ${_("This graph indicates the amount of seconds Student watched each of the course videos. Competed "
+            ${_("This graph indicates the amount of seconds Student watched each of the course videos. Completed "
             "videos are indicated green.")}
         </span>
         <div id="gradebook-video-stats-plot"></div>
