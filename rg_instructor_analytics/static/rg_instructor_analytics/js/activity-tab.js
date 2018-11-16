@@ -75,7 +75,7 @@ function ActivityTab(button, content) {
           },
       };
 
-      Plotly.newPlot('activity-unit-visits-stats-plot', [stat], layout);
+      Plotly.newPlot('activity-unit-visits-stats-plot', [stat], layout, {displayModeBar: false});
 
   }
 
