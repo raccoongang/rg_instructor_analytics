@@ -484,6 +484,9 @@
 .activity-legend-holder__square .activity-legend-item:nth-child(2):before {
     background: #50c156;
 }
+.activity-legend-holder__square .activity-legend-item:nth-child(3):before {
+    background: #8e28c1;
+}
 .instructor-dashboard-wrapper-2 .idash-section .wrapper-problem-response button {
     position: relative;
     padding-right: 20px;
@@ -905,4 +908,11 @@ body .disc-list {
 .funnel-item-outgoing.input-checkbox {
     right: -35px;
     background: none;
+}
+
+.last-student-visit-banner {
+    font-size: 16px;
+    padding: 15px;
+    background: #f1f1f1;
+    margin-bottom: 10px;
 }

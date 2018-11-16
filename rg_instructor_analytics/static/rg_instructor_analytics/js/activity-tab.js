@@ -43,7 +43,17 @@ function ActivityTab(button, content) {
         }
       };
 
-      var stat = [videoActivities, discussionActivities];
+      var courseActivities = {
+        x: data.course_dates.map(dataFixFunction),
+        y: data.course_activities,
+        name: 'Visit',
+        type: 'bar',
+        marker:{
+            color: '#8e28c1'
+        }
+      };
+
+      var stat = [videoActivities, discussionActivities, courseActivities];
 
       var layout = {
         barmode: 'group',
