@@ -1,7 +1,7 @@
 """
 Gradebook sub-tab module.
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.http import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
@@ -9,8 +9,11 @@ from django.utils.translation import ugettext as _
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from rg_instructor_analytics_log_collector.models import CourseVisitsByDay, DiscussionActivityByDay, VideoViewsByDay
+from rg_instructor_analytics_log_collector.models import (
+    CourseVisitsByDay, DiscussionActivityByDay, StudentStepCourse, VideoViewsByDay
+)
 
+from lms.djangoapps.courseware.courses import get_course_by_id
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 
 
@@ -26,13 +29,10 @@ class ActivityView(View):
         """
         return super(ActivityView, self).dispatch(*args, **kwargs)
 
-    def get_daily_activity_for_course(self, from_timestamp, to_timestamp, course_key):
+    def get_daily_activity_for_course(self, from_date, to_date, course_key):
         """
         Get statistic of video and discussion activities by days.
         """
-        from_date = datetime.fromtimestamp(from_timestamp).date()
-        to_date = datetime.fromtimestamp(to_timestamp).date()
-
         video_dates = []
         video_activities = []
 
@@ -81,6 +81,42 @@ class ActivityView(View):
             'course_activities': course_activities,
         }
 
+    def get_unit_visits(self, from_date, to_date, course_key):
+        """
+        Get statistic of visiting units.
+        """
+        course = get_course_by_id(course_key, depth=3)
+        ticktext = []
+        tickvals = []
+        count_visits = []
+
+        for section in course.get_children():
+            for subsection in section.get_children():
+                len_units = len(subsection.get_children())
+                for index, unit in enumerate(subsection.get_children(), start=1):
+                    tickvals.append(unit.location.block_id)
+                    ticktext.append(unit.display_name)
+                    if len_units == index:
+                        count_visits.append(
+                            StudentStepCourse.objects.filter(
+                                current_unit=unit.location.block_id,
+                                log_time__range=(from_date, to_date + timedelta(days=1)),
+                            ).count()
+                        )
+                    else:
+                        count_visits.append(
+                            StudentStepCourse.objects.filter(
+                                target_unit=unit.location.block_id,
+                                log_time__range=(from_date, to_date + timedelta(days=1)),
+                            ).count()
+                        )
+
+        return {
+            'ticktext': ticktext,
+            'tickvals': tickvals,
+            'count_visits': count_visits
+        }
+
     def post(self, request, course_id):
         """
         POST request handler.
@@ -97,6 +133,14 @@ class ActivityView(View):
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
-        return JsonResponse(
-            data=self.get_daily_activity_for_course(from_timestamp, to_timestamp, course_key)
-        )
+        from_date = datetime.fromtimestamp(from_timestamp).date()
+        to_date = datetime.fromtimestamp(to_timestamp).date()
+
+        unit_visits = self.get_unit_visits(from_date, to_date, course_key)
+        daily_activities = self.get_daily_activity_for_course(from_date, to_date, course_key)
+
+        return JsonResponse(data={
+            'daily_activities': daily_activities,
+            'unit_visits': unit_visits
+
+        })
