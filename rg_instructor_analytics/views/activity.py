@@ -7,14 +7,12 @@ from django.http import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
-
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-
-from lms.djangoapps.courseware.courses import get_course_by_id
-
 from rg_instructor_analytics_log_collector.models import DiscussionActivityByDay, StudentStepCourse, VideoViewsByDay
 from rg_instructor_analytics.utils.decorators import instructor_access_required
+
+from lms.djangoapps.courseware.courses import get_course_by_id
 
 
 class ActivityView(View):
