@@ -19,6 +19,7 @@ function GradebookTab(button, content) {
     var $videoPlot = $('#gradebook-video-stats-plot');
     var $loaderStudentStep = $('.gradebook-student-step-plot .loader');
     var $studentStepPlot = $('#gradebook-student-step-stats-plot');
+    var $lastVisitInfo = $('.js-last-student-visit');
 
     greadebookTab.studentsTable = content.find('#student_table_body');
     greadebookTab.gradebookTableHeader = content.find('#gradebook_table_header');
@@ -55,11 +56,15 @@ function GradebookTab(button, content) {
         greadebookTab.gradebookTableHeader.empty();
         greadebookTab.gradebookTableBody.empty();
         $statsPlot.addClass('hidden');
+        $discussionPlot.empty();
+        $videoPlot.empty();
+        $studentStepPlot.empty();
+        $lastVisitInfo.prop('hidden', true).empty();
 
         function onSuccess(response) {
-            greadebookTab.studentInfo = response.student_info;
+            greadebookTab.studentExamValues = response.student_exam_values;
             greadebookTab.examNames = response.exam_names;
-            greadebookTab.studentsNames = response.students_names;
+            greadebookTab.studentInfo = response.students_info;
             updateTables(filterString);
         }
         
@@ -126,7 +131,7 @@ function GradebookTab(button, content) {
     }
 
     function getDiscussionActivity(studentPosition) {
-        var userName = greadebookTab.studentsNames[studentPosition][0];
+        var userName = greadebookTab.studentInfo[studentPosition]['username'];
 
         $discussionPlot.empty();
         $loaderDiscussion.removeClass('hidden');
@@ -145,7 +150,7 @@ function GradebookTab(button, content) {
     }
 
     function getVideoActivity(studentPosition) {
-        var userName = greadebookTab.studentsNames[studentPosition][0];
+        var userName = greadebookTab.studentInfo[studentPosition]['username'];
 
         $videoPlot.empty();
         $loaderVideo.removeClass('hidden');
@@ -202,7 +207,7 @@ function GradebookTab(button, content) {
     }
 
     function getStudentStep(studentPosition) {
-        var userName = greadebookTab.studentsNames[studentPosition][0];
+        var userName = greadebookTab.studentInfo[studentPosition]['username'];
         $studentStepPlot.empty();
         $loaderStudentStep.removeClass('hidden');
 
@@ -238,12 +243,6 @@ function GradebookTab(button, content) {
             '</form>' +
             '</div>'
         );
-        
-        greadebookTab.gradebookTableHeader.empty();
-        greadebookTab.gradebookTableBody.empty();
-        $discussionPlot.empty();
-        $videoPlot.empty();
-        $studentStepPlot.empty();
 
         for (var i = 0; i < greadebookTab.examNames.length; i++) {
             htmlTemplate += (
@@ -280,13 +279,13 @@ function GradebookTab(button, content) {
         });
         greadebookTab.studentsTable.empty();
         
-        for (var j = 0; j < greadebookTab.studentInfo.length; j++) {
+        for (var j = 0; j < greadebookTab.studentExamValues.length; j++) {
             var htmlStringResults = '';
-            var studentName = greadebookTab.studentsNames[j][0];
-            var isEnrolled =  greadebookTab.studentsNames[j][1];
+            var studentName = greadebookTab.studentInfo[j]['username'];
+            var isEnrolled =  greadebookTab.studentInfo[j]['is_enrolled'];
             
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
-                var exName = greadebookTab.studentInfo[j][greadebookTab.examNames[nameIndex]];
+                var exName = greadebookTab.studentExamValues[j][greadebookTab.examNames[nameIndex]];
                 htmlStringResults += '<div class="gradebook-table-cell">' + exName + '</div>';
             }
 
@@ -346,6 +345,8 @@ function GradebookTab(button, content) {
             var studentsGrades = [];
             var studentPosition = evt.target.dataset['position'];
             var stat;
+            var lastVisit = greadebookTab.studentInfo[studentPosition]['last_visit'];
+            $lastVisitInfo.prop('hidden', false).html('Date of the last Course visit: ' + lastVisit);
 
             getDiscussionActivity(studentPosition);
             getVideoActivity(studentPosition);
@@ -354,7 +355,7 @@ function GradebookTab(button, content) {
             $statsPlot.removeClass('hidden');
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
                 studentsGrades.push(
-                  greadebookTab.studentInfo[studentPosition][greadebookTab.examNames[nameIndex]]
+                  greadebookTab.studentExamValues[studentPosition][greadebookTab.examNames[nameIndex]]
                 );
             }
 
@@ -370,7 +371,7 @@ function GradebookTab(button, content) {
             var data = [stat];
 
             var layout = {
-                title: greadebookTab.studentInfo[evt.target.dataset['position']].username,
+                title: greadebookTab.studentExamValues[evt.target.dataset['position']].username,
                 showlegend: false,
                 xaxis: {domain: [0, 0.97]},
             };
