@@ -146,7 +146,8 @@ function FunnelTab(button, content) {
                       '<span class="funnel-item-outgoing"><%= outcoming %></span>' +
                       '<%if (level < 2) {%>' +
                       '<span class="funnel-item-outgoing input-checkbox">' +
-                          '<input type="checkbox" class="level-<%= level %>" name="funnel_send_email" <%if (studentEmails.length == 0) {%>disabled <%}%> value="<%= studentEmails %>">' +
+                          '<input type="checkbox" class="level-<%= level %>" id="level-<%= level %>" name="funnel_send_email" <%if (studentEmails.length == 0) {%>disabled <%}%> value="<%= studentEmails %>">' +
+                          '<label for="level-<%= level %>"></label>' +
                           '<%if (studentEmails.length != 0) {%>' +
                               '<button class="emails-list-button show-emails-button">Show emails</button>' +
                           '<%}%>' +
@@ -156,11 +157,13 @@ function FunnelTab(button, content) {
                       '<span class="funnel-item-stuck">stuck: <%= stuck %></span>' +
                   '</div>' +
                   '<%if (studentEmails.length != 0) {%>' +
-                      '<ul class="emails-list" hidden>' +
+                      '<div class="emails-list" hidden>' +
+                        '<span>' +
                         '<%for (var i = 0; i < studentEmails.length; i++) {%>' +
-                            '<li><%= studentEmails[i] %></li>' +
+                            '<strong><%= studentEmails[i] %></strong>' +
                         '<%}%>' +
-                      '</ul>' +
+                        '</span>' +
+                      '</div>' +
                   '<%}%>' +
                   '<%= children %>' +
               '</div>'

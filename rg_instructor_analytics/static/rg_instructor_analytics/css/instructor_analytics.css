@@ -165,7 +165,7 @@
     max-width: 100%;
 }
 .idash-section {
-    max-width: 768px;
+    max-width: 830px;
     margin: 0 auto;
     width: 100%;
 }
@@ -314,7 +314,7 @@
 .funnel-item-0 > .funnel-item-content {
     border-radius: 5px;
     background-color: #8392cb;
-    width: 554px;
+    width: 530px;
     min-height: 80px;
     color: #c5d1ff;
     margin-bottom: 3px;
@@ -414,7 +414,8 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
+    padding: 20px 0 20px 62px;
 }
 .funnel-item-stuck {
     position: absolute;
@@ -906,8 +907,38 @@ body .disc-list {
 }
 
 .funnel-item-outgoing.input-checkbox {
-    right: -35px;
-    background: none;
+    right: -73px;
+    margin: 0;
+    padding: 0;
+    width: 165px;
+    display: flex;
+    justify-content: space-between;
+    background: none !important;
+}
+
+.funnel-item-outgoing.input-checkbox input[type="checkbox"]{
+    display: none;
+}
+
+.funnel-item-outgoing.input-checkbox input[type="checkbox"] + label {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #0075b4;
+    display: block;
+    position: relative;
+    margin: 3px 5px 0 0;
+}
+
+.funnel-item-outgoing.input-checkbox input[type="checkbox"]:checked + label:before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    background: #0075b4;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -5px 0 0 -5px;
 }
 
 .last-student-visit-banner {
@@ -915,4 +946,43 @@ body .disc-list {
     padding: 15px;
     background: #f1f1f1;
     margin-bottom: 10px;
+}
+
+.emails-list-button {
+    width: 132px;
+    padding: 8px 0 6px !important;
+}
+
+.funnel-item .emails-list {
+    width: 100%;
+    text-align: center;
+}
+.funnel-item .emails-list span {
+    padding: 6px;
+    font-size: 14px;
+    display: block;
+    margin: 10px 0;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.funnel-item .emails-list span strong {
+    font-weight: normal;
+    display: block;
+}
+
+.funnel-item-0 > .emails-list span {
+    border: 1px solid #5f76b8;
+    max-width: 555px;
+}
+
+.funnel-item-1 > .emails-list span {
+    border: 1px solid #4cba69;
+    max-width: 420px;
+}
+
+.funnel-item-2 > .emails-list span {
+    border: 1px solid #36cec5;
+    max-width: 360px;
 }
