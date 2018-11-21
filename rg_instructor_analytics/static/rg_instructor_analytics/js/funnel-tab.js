@@ -77,6 +77,11 @@ function FunnelTab(button, content) {
           $blockContent.find("[name=funnel_send_email].level-1:checked").length === $blockContent.find("[name=funnel_send_email].level-1:enabled").length
         )
       });
+
+      $("label.funnel-checkbox-label").on('click', function (ev) {
+        ev.stopPropagation();
+      });
+
     }
 
     function showEmailList() {
@@ -146,8 +151,8 @@ function FunnelTab(button, content) {
                       '<span class="funnel-item-outgoing"><%= outcoming %></span>' +
                       '<%if (level < 2) {%>' +
                       '<span class="funnel-item-outgoing input-checkbox">' +
-                          '<input type="checkbox" class="level-<%= level %>" id="level-<%= level %>" name="funnel_send_email" <%if (studentEmails.length == 0) {%>disabled <%}%> value="<%= studentEmails %>">' +
-                          '<label for="level-<%= level %>"></label>' +
+                          '<input type="checkbox" class="level-<%= level %>" id="level-<%= level %>-<%= blockId %>" name="funnel_send_email" <%if (studentEmails.length == 0) {%>disabled <%}%> value="<%= studentEmails %>">' +
+                          '<label for="level-<%= level %>-<%= blockId %>" class="funnel-checkbox-label"></label>' +
                           '<%if (studentEmails.length != 0) {%>' +
                               '<button class="emails-list-button show-emails-button">Show emails</button>' +
                           '<%}%>' +
@@ -178,7 +183,8 @@ function FunnelTab(button, content) {
               stuck: item.student_count,
               studentEmails: item.student_emails,
               children: children,
-              level: item.level
+              level: item.level,
+              blockId: item.id
             })
         }
 
