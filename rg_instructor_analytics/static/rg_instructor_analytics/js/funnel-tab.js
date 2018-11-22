@@ -77,6 +77,32 @@ function FunnelTab(button, content) {
           $blockContent.find("[name=funnel_send_email].level-1:checked").length === $blockContent.find("[name=funnel_send_email].level-1:enabled").length
         )
       });
+
+      $("label.funnel-checkbox-label").on('click', function (ev) {
+        ev.stopPropagation();
+      });
+
+    }
+
+    function showEmailList() {
+      $('.emails-list-button').on('click', function (ev) {
+        ev.stopPropagation();
+        var $ev = $(ev.currentTarget);
+        var $blockContent = $ev.parents('.funnel-item-content');
+        if ($ev.hasClass('show-emails-button')) {
+            $ev.text('Hide emails');
+            $ev.removeClass('show-emails-button');
+            $blockContent.next('.emails-list').prop('hidden', false);
+        } else {
+            $ev.text('Show emails');
+            $ev.addClass('show-emails-button');
+            $blockContent.next('.emails-list').prop('hidden', true);
+        }
+      });
+
+      $('.emails-list').on('click', function (ev) {
+        ev.stopPropagation();
+      });
     }
 
     function openLocation() {
@@ -100,6 +126,8 @@ function FunnelTab(button, content) {
             funnelTab.viewContent.empty();
             funnelTab.viewContent.append(generateFunnel(funnelTab.courseStructure));
             setActionChecbox();
+            showEmailList();
+
             $('.funnel-item-0').on('click', function (e) {
                 $(e.target).closest('.funnel-item').toggleClass('active');
             });
@@ -123,12 +151,25 @@ function FunnelTab(button, content) {
                       '<span class="funnel-item-outgoing"><%= outcoming %></span>' +
                       '<%if (level < 2) {%>' +
                       '<span class="funnel-item-outgoing input-checkbox">' +
-                          '<input type="checkbox" class="level-<%= level %>" name="funnel_send_email" <%if (studentEmails.length == 0) {%>disabled <%}%> value="<%= studentEmails %>">' +
+                          '<input type="checkbox" class="level-<%= level %>" id="level-<%= level %>-<%= blockId %>" name="funnel_send_email" <%if (studentEmails.length == 0) {%>disabled <%}%> value="<%= studentEmails %>">' +
+                          '<label for="level-<%= level %>-<%= blockId %>" class="funnel-checkbox-label"></label>' +
+                          '<%if (studentEmails.length != 0) {%>' +
+                              '<button class="emails-list-button show-emails-button">Show emails</button>' +
+                          '<%}%>' +
                       '</span>' +
                       '<%}%>' +
                       '<span class="funnel-item-name"><%= itemName %></span>' +
                       '<span class="funnel-item-stuck">stuck: <%= stuck %></span>' +
                   '</div>' +
+                  '<%if (studentEmails.length != 0) {%>' +
+                      '<div class="emails-list" hidden>' +
+                        '<span>' +
+                        '<%for (var i = 0; i < studentEmails.length; i++) {%>' +
+                            '<strong><%= studentEmails[i] %></strong>' +
+                        '<%}%>' +
+                        '</span>' +
+                      '</div>' +
+                  '<%}%>' +
                   '<%= children %>' +
               '</div>'
             );
@@ -142,7 +183,8 @@ function FunnelTab(button, content) {
               stuck: item.student_count,
               studentEmails: item.student_emails,
               children: children,
-              level: item.level
+              level: item.level,
+              blockId: item.id
             })
         }
 
