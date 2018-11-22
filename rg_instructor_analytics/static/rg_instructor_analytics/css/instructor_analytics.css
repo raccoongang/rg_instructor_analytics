@@ -1012,3 +1012,7 @@ body .disc-list {
 .emails-list-button {
     margin: 15px 0 !important;
 }
+
+#cohort-send-email-btn {
+    margin: 15px 0 !important;
+}
