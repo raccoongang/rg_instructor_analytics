@@ -14,30 +14,30 @@ function CohortTab(button, content) {
         var $subject = content.find('#email-subject');
         var $richTextEditor = content.find('.richText-editor');
         var $cohortCheckbox = content.find("input:checkbox[name=cohort-checkbox]:checked");
-        var ids = '';
+        var emails = '';
         var request;
 
         function isValid(data) {
-            return !!data.users_ids && !!data.subject && !!data.body
+            return !!data.users_emails && !!data.subject && !!data.body
         }
 
         content.find('.send-email-message').addClass('hidden');
 
         $cohortCheckbox.each(function () {
-            if (ids.length > 0) {
-                ids += ',';
+            if (emails.length > 0) {
+                emails += ',';
             }
-            ids += $(this).val();
+            emails += $(this).val();
         });
 
         request = {
-            users_ids: ids,
+            users_emails: emails,
             subject: $subject.val(),
             body: $richTextEditor.html(),
         };
 
         if (!isValid(request)) {
-            content.find('.send-email-message.validation-error-message').removeClass('hidden');
+            contreqent.find('.send-email-message.validation-error-message').removeClass('hidden');
             return;
         }
 
@@ -63,6 +63,13 @@ function CohortTab(button, content) {
         $loader.toggleClass('hidden');
     }
 
+    function showEmailList() {
+      $('.emails-list-button').on('click', function (ev) {
+        ev.preventDefault();
+        $(ev.currentTarget).parents('.block-emails-list').find('.cohort-emails-list').toggleClass('hidden');
+      });
+    }
+
     function updateCohort() {
         function onSuccess(response) {
             var plot = {
@@ -76,9 +83,9 @@ function CohortTab(button, content) {
             cohortTab.cohortList.empty();
             for (var i = 0; i < response.cohorts.length; i++) {
                 var item = 'cohort-checkbox' + i;
-                var studentsId = response.cohorts[i].students_id;
+                var studentsEmails = response.cohorts[i].students_emails;
                 var label  = response.labels[i];
-                
+
                 cohortTab.cohortList.append(
                     _.template(
                         '<li>' +
@@ -87,20 +94,33 @@ function CohortTab(button, content) {
                                     'id="<%= item %>" ' +
                                     'name="cohort-checkbox" ' +
                                     'type="checkbox" ' +
-                                    'value="<%= studentsId %>" ' +
+                                    '<%if (studentsEmails.length == 0) {%> disabled <%}%>' +
+                                    'value="<%= studentsEmails %>"' +
                                 '>' +
                                 '<label for="<%= item %>" class="emails-label">' +
                                     '<%= label %>' +
                                 '</label>' +
+                                '<%if (studentsEmails.length != 0) {%>' +
+                                '<div class="block-emails-list">' +
+                                    '<span class="cohort-emails-list">' +
+                                      '<button class="emails-list-button">Show emails</button>' +
+                                    '</span>' +
+                                    '<span class="cohort-emails-list hidden">' +
+                                      '<button class="emails-list-button">Hide emails</button>' +
+                                      '<span><%= studentsEmails.join(", ") %></span>' +
+                                    '</span>' +
+                                '</div>' +
+                                '<%}%>' +
                             '</div>' +
                         '</li>'
                     )({
                         item: item,
-                        studentsId: studentsId,
+                        studentsEmails: studentsEmails,
                         label: label,
                     })
                 )
             }
+            showEmailList();
         }
 
         function onError() {
