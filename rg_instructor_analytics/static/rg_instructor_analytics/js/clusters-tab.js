@@ -107,7 +107,7 @@ function CohortTab(button, content) {
                                     '</span>' +
                                     '<span class="cohort-emails-list hidden">' +
                                       '<button class="emails-list-button">Hide emails</button>' +
-                                      '<span><%= studentsEmails.join(", ") %></span>' +
+                                      '<div class="emails-list-holder"><%= studentsEmails.join(", ") %></div>' +
                                     '</span>' +
                                 '</div>' +
                                 '<%}%>' +

@@ -969,7 +969,7 @@ body .disc-list {
     margin: 10px 0;
     border-radius: 5px;
     max-height: 400px;
-    overflow-y: scroll;
+    overflow: auto;
 }
 
 .funnel-item .emails-list span strong {
@@ -990,4 +990,17 @@ body .disc-list {
 .funnel-item-2 > .emails-list span {
     border: 1px solid #36cec5;
     max-width: 360px;
+}
+
+/* Clusters */
+
+.cohort-emails-list {
+    display: block;
+}
+
+.emails-list-holder {
+    max-height: 200px;
+    overflow: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
 }
