@@ -994,6 +994,10 @@ body .disc-list {
 
 /* Clusters */
 
+#cohort-check-list {
+    margin-bottom: 0 !important;
+}
+
 .cohort-emails-list {
     display: block;
 }
@@ -1003,4 +1007,8 @@ body .disc-list {
     overflow: auto;
     border: 1px solid #ccc;
     padding: 10px;
+}
+
+.emails-list-button {
+    margin: 15px 0 !important;
 }
