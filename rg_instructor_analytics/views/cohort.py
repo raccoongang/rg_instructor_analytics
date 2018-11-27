@@ -3,7 +3,6 @@ Clusters sub-tab module.
 """
 import math
 
-from django.contrib.auth.models import User
 from django.http.response import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -44,7 +43,7 @@ class CohortView(View):
         grade_stats = (
             GradeStatistic.objects
             .filter(course_id=course_key)
-            .values('student_id', 'student__username', 'total')
+            .values('student__email', 'total')
         )
 
         if not grade_stats:
@@ -52,8 +51,7 @@ class CohortView(View):
 
         cohorts = self.generate_cohort_by_mean_and_dispersion([
             {
-                'id': grade['student_id'],
-                'username': grade['student__username'],
+                'email': grade['student__email'],
                 'grade': grade['total']
             } for grade in grade_stats
         ])
@@ -78,7 +76,6 @@ class CohortView(View):
 
         :param student_info [
                     {
-                        'id': 'user id',
                         'username': 'user name',
                         'grade': 'user grade'
                     }
@@ -91,8 +88,7 @@ class CohortView(View):
         3. Return [
             {
                 'max_progress': 'max progress in this cohort',
-                'students_id': 'list of hte students ids',
-                'students_username': 'list of hte students usernames',
+                'students_emails': 'list of hte students emails',
                 'percent': 'percent of this cohort in course enrollments'
             } for t in thresholds
         ]
@@ -131,17 +127,15 @@ class CohortView(View):
             {
                 'max_progress': 'max progress in this cohort',
                 'students_id': 'list of hte students ids',
-                'students_username': 'list of hte students usernames',
                 'percent': 'percent of this cohort in course enrollments'
             } for t in thresholds
         ]
         """
-        gistogram = {t: {'students_id': [], 'students_names': [], 'count': 0} for t in thresholds}
+        gistogram = {t: {'students_emails': [], 'count': 0} for t in thresholds}
         for s in student_info:
             for t in thresholds:
                 if (s['grade'] < t) or (s['grade'] == t and (t in [0, 1])):
-                    gistogram[t]['students_id'].append(s['id'])
-                    gistogram[t]['students_names'].append(s['username'])
+                    gistogram[t]['students_emails'].append(s['email'])
                     gistogram[t]['count'] += 1
                     break
 
@@ -150,8 +144,7 @@ class CohortView(View):
         return [
             {
                 'max_progress': int(t * 100.0),
-                'students_id': gistogram[t]['students_id'],
-                'students_username': gistogram[t]['students_names'],
+                'students_emails': gistogram[t]['students_emails'],
                 'percent': int(float(gistogram[t]['count']) / student_count * 100.0)
             } for t in thresholds
         ]
@@ -175,25 +168,16 @@ class CohortSendMessage(View):
 
         :param course_id: (str) context course ID (from urlconf)
         """
-        users_ids = request.POST.get('users_ids')
+        users_emails = request.POST.get('users_emails')
         email_subject = request.POST.get('subject')
         email_body = request.POST.get('body')
 
-        try:
-            if users_ids is None:
-                raise ValueError
-        except ValueError:
-            return HttpResponseBadRequest(_("No users provided."))
-
-        users_ids_list = [int(id) for id in users_ids.split(',') if id != '']
-
-        users_emails = [
-            str(email) for email in User.objects.filter(id__in=users_ids_list).values_list('email', flat=True)
-        ]
+        if not (users_emails and email_subject and email_body):
+            return HttpResponseBadRequest(_("Not all field are filled."))
 
         tasks.send_email.delay(
             subject=email_subject,
             message=email_body,
-            students=users_emails
+            students=users_emails.split(',')
         )
         return JsonResponse({'status': 'ok'})
