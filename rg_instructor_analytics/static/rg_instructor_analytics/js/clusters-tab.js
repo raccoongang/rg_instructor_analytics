@@ -3,6 +3,7 @@ function CohortTab(button, content) {
     var $loader = $('#cl-loader');
     var $tabBanner = content.find('.tab-banner');
     var $tabContent = content.find('.tab-content');
+    var timerId;
 
     cohortTab.cohortList = content.find('#cohort-check-list');
     cohortTab.emailBody = cohortTab.content.find('#email-body');
@@ -21,7 +22,13 @@ function CohortTab(button, content) {
             return !!data.users_emails && !!data.subject && !!data.body
         }
 
-        content.find('.send-email-message').addClass('hidden');
+        function showInfoMsg(msg){
+            msg.removeClass('hidden');
+            clearTimeout(timerId);
+            timerId = setTimeout(function () {
+                msg.addClass('hidden');
+            }, 3000);
+        }
 
         $cohortCheckbox.each(function () {
             if (emails.length > 0) {
@@ -37,7 +44,7 @@ function CohortTab(button, content) {
         };
 
         if (!isValid(request)) {
-            contreqent.find('.send-email-message.validation-error-message').removeClass('hidden');
+            showInfoMsg(content.find('.send-email-message.validation-error-message'));
             return;
         }
 
@@ -47,14 +54,14 @@ function CohortTab(button, content) {
             data: request,
             dataType: "json",
             success: function () {
-                content.find('.send-email-message.success-message').removeClass('hidden');
+                showInfoMsg(content.find('.send-email-message.success-message'));
                 // clear fields
                 $subject.val('');
                 $richTextEditor.html('');
                 $cohortCheckbox.prop('checked', false)
             },
             error: function () {
-                content.find('.send-email-message.error-message').removeClass('hidden');
+                showInfoMsg(content.find('.send-email-message.error-message'));
             },
         });
     });
