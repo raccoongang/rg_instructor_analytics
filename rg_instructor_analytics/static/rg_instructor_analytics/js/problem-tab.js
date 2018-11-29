@@ -17,10 +17,10 @@ function ProblemTab(button, content) {
     var $problemLegend = content.find('.js-legend-holder');
 
     var $emailTemplate = '<div>' +
-                            '<h2 class="analytics-title"><%= blockName.charAt(0).toUpperCase() + blockName.slice(1) %> Details</h2>' +
+                            '<h2 class="analytics-title"><%= blockTitle %> Details</h2>' +
                             '<%if (studentsEmails.length != 0) {%>' +
                             '<div class="block-emails-list">' +
-                                '<span><%= blockName.charAt(0).toUpperCase() + blockName.slice(1) %> statistics is based on submits of ' +
+                                '<span><%= blockTitle %> statistics is based on submits of ' +
                                     '<%= studentsEmails.length %> student(s) </span>' +
                                 '<span class="<%= blockName %>-emails-span">' +
                                   '<button class="emails-list-button">Show emails</button>' +
@@ -202,7 +202,11 @@ function ProblemTab(button, content) {
             $problemEmailList.empty();
             $subsectionEmailList.empty();
 
-            $subsectionEmailList.append(_.template($emailTemplate)({studentsEmails: studentsEmails, blockName: 'subsection'}));
+            $subsectionEmailList.append(_.template($emailTemplate)({
+                studentsEmails: studentsEmails,
+                blockName: 'subsection',
+                blockTitle: 'Subsection'
+            }));
             showEmailList('.subsection-emails-span');
             $problemDetailSection.prop('hidden', false);
 
@@ -326,7 +330,11 @@ function ProblemTab(button, content) {
         function onSuccess(response) {
             var studentsEmails = response.students_emails;
             $problemEmailList.empty();
-            $problemEmailList.append(_.template($emailTemplate)({studentsEmails: studentsEmails, blockName: 'problem'}));
+            $problemEmailList.append(_.template($emailTemplate)({
+                studentsEmails: studentsEmails,
+                blockName: 'problem',
+                blockTitle: 'Problem'
+            }));
 
             showEmailList('.problem-emails-span');
         }
