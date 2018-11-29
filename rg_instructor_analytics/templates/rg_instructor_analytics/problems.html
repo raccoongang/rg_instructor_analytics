@@ -29,12 +29,14 @@ from django.utils.translation import ugettext as _
 
   <%include file="time-filter.html" args="active_tab='problems'"/>
 
-  <div class="analytics-legend-holder analytics-legend-holder__square">
+  <div class="js-legend-holder analytics-legend-holder analytics-legend-holder__square hidden">
     <div class="analytics-legend-item">Average attempts count</div>
     <div class="analytics-legend-item">Average success level, %</div>
   </div>
 
   <div id="problem-homeworks-stats-plot"></div>
+
+  <div class="subsection-emails-list"></div>
 
   ## DETAILS section ##
   <div class="js-problem-details" hidden>
@@ -63,6 +65,7 @@ from django.utils.translation import ugettext as _
   <div id="problems-stats-plot"></div>
 
   ## PROBLEM section ##
+  <div class="problem-emails-list"></div>
   <div id="problem-body"></div>
 </div>
 

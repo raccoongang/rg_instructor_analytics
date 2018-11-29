@@ -10,6 +10,29 @@ function ProblemTab(button, content) {
     var $tabBanner = content.find('.tab-banner');
     var $tabContent = content.find('.tab-content');
     var $problemDetailSection = content.find('.js-problem-details');
+    var $homework = content.find('#problem-homeworks-stats-plot');
+    var $problemStatsPlot = content.find('#problems-stats-plot');
+    var $subsectionEmailList = content.find('.subsection-emails-list');
+    var $problemEmailList = content.find('.problem-emails-list');
+    var $problemLegend = content.find('.js-legend-holder');
+
+    var $emailTemplate = '<div>' +
+                            '<%if (studentsEmails.length != 0) {%>' +
+                            '<div class="block-emails-list">' +
+                                '<span>Count of students <%= studentsEmails.length %></span>' +
+                                '<span class="<%= blockName %>-emails-span">' +
+                                  '<button class="emails-list-button">Show emails</button>' +
+                                '</span>' +
+                                '<span class="<%= blockName %>-emails-span hidden">' +
+                                  '<button class="emails-list-button">Hide emails</button>' +
+                                  '<div class="emails-list-holder"><%= studentsEmails.join(", ") %></div>' +
+                                '</span>' +
+                            '</div>' +
+                            '<%} else {%>' +
+                                '<span>Nothing to show</span>' +
+                            '<%}%>' +
+                        '</div>'
+
 
     function openLocation(){
         problemTab.content.find(`*[data-edxid="${problemTab.locationToOpen.value}"]`).click();
@@ -20,8 +43,14 @@ function ProblemTab(button, content) {
     * Homework`s stats drawer
     */
     function updateHomeWork() {
+        $subsectionEmailList.empty();
+        $problemEmailList.empty();
+        $problemStatsPlot.empty();
+        $homework.empty();
+        problemDetail.empty();
+        $problemLegend.addClass('hidden');
+
         function onSuccess(response) {
-            var $homework = $('#problem-homeworks-stats-plot');
             var maxAttempts = Math.max(...response.attempts);
             var countAttempts = [Math.min(...response.attempts), maxAttempts / 2, maxAttempts];
             var correctAnswer = [...response.correct_answer];
@@ -31,6 +60,9 @@ function ProblemTab(button, content) {
 
             var bars = '',
                 index = 0;
+
+            $problemLegend.removeClass('hidden');
+
             for (let item in yAxis) {
                 let attempts = (100 * response.attempts[index]) / maxAttempts;
                 let percent = correctAnswer[index] * 100;
@@ -96,7 +128,6 @@ function ProblemTab(button, content) {
 
             $homework.off('click');
             $homework.on('click', function (e) {
-                $problemDetailSection.prop('hidden', false);
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
                     loadHomeWorkProblems(response.problems[attr.attribute]);
@@ -136,12 +167,21 @@ function ProblemTab(button, content) {
         });
     }
 
+
+    function showEmailList(emailsSpan) {
+      $('.emails-list-button').on('click', function (ev) {
+        ev.preventDefault();
+        $(ev.currentTarget).parents('.block-emails-list').find(emailsSpan).toggleClass('hidden');
+      });
+    }
+
     /**
     * `Homework` problem statistics
     * @param hwProblem string id of the problem
     */
     function loadHomeWorkProblems(hwProblem) {
         function onSuccess(response) {
+            var studentsEmails = response.students_emails;
             const correct = response.correct;
             const incorrect = response.incorrect;
             const absIncorrect = incorrect.map(x => Math.abs(x));
@@ -154,6 +194,14 @@ function ProblemTab(button, content) {
 
             let index = 0;
             let bars = '';
+
+            problemDetail.empty();
+            $problemEmailList.empty();
+            $subsectionEmailList.empty();
+
+            $subsectionEmailList.append(_.template($emailTemplate)({studentsEmails: studentsEmails, blockName: 'subsection'}));
+            showEmailList('.subsection-emails-span');
+            $problemDetailSection.prop('hidden', false);
 
             for (let item in yAxis) {
                 const correctBar = 100 * correct[index] / totalMax;
@@ -196,13 +244,14 @@ function ProblemTab(button, content) {
             axis = `<ul class="y-axis-l">${axis}</ul>`
             bars += axis;
             
-            $('#problems-stats-plot').html(bars);
+            $problemStatsPlot.html(bars);
 
-            $('#problems-stats-plot').off('click');
-            $('#problems-stats-plot').on('click', function (e) {
+            $problemStatsPlot.off('click');
+            $problemStatsPlot.on('click', function (e) {
                 if ($(e.target).closest('li').data()) {
                     let attr = $(e.target).closest('li').data();
                     displayProblemView(hwProblem[attr.attribute]);
+                    studentDataProblemView(hwProblem[attr.attribute]);
                 }
             });
         }
@@ -257,6 +306,40 @@ function ProblemTab(button, content) {
             type: "POST",
             url: "api/problem_statics/problem_detail/",
             data: { problem: stringProblemID },
+            dataType: "json",
+            traditional: true,
+            success: onSuccess,
+            error: onError,
+            beforeSend: timeFilter.setLoader,
+            complete: timeFilter.removeLoader,
+        });
+    }
+
+    /**
+    * function for the render student emails block
+    * @param stringProblemID string problem id
+    */
+    function studentDataProblemView(stringProblemID) {
+        function onSuccess(response) {
+            var studentsEmails = response.students_emails;
+            $problemEmailList.empty();
+            $problemEmailList.append(_.template($emailTemplate)({studentsEmails: studentsEmails, blockName: 'problem'}));
+
+            showEmailList('.problem-emails-span');
+        }
+
+        function onError() {
+            alert("Can't load student data for selected course!");
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "api/problem_statics/problem_student_data/",
+            data: {
+                problem: stringProblemID,
+                from: timeFilter.timestampRange.from,
+                to: timeFilter.timestampRange.to
+            },
             dataType: "json",
             traditional: true,
             success: onSuccess,

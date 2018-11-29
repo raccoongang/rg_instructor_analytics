@@ -207,6 +207,12 @@ class ProblemsStatisticView(View):
             .values('module_state_key', 'grades', 'max_grades', 'attempts')
         )
 
+        students_emails = list(StudentModule.objects.filter(
+            date_range_filter,
+            module_state_key__in=problems,
+            grade__isnull=False
+        ).values_list('student__email', flat=True).distinct())
+
         problems_stat = [None] * len(problems_ids)
         for s in stats:
             problems_stat[problems_ids.index(s['module_state_key'])] = s
@@ -222,7 +228,7 @@ class ProblemsStatisticView(View):
 
         incorrect, correct = tuple(map(list, zip(*[record(s) for s in problems_stat]))) or ([], [])
 
-        return JsonResponse(data={'incorrect': incorrect, 'correct': correct})
+        return JsonResponse(data={'incorrect': incorrect, 'correct': correct, 'students_emails': students_emails})
 
 
 class ProblemDetailView(View):
@@ -377,3 +383,49 @@ class ProblemQuestionView(View):
             result = {}
 
         return JsonResponse(data=result)
+
+
+class ProblemStudentDataView(View):
+    """
+    Problem student data API view.
+    """
+
+    @method_decorator(instructor_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(ProblemStudentDataView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        post_data = request.POST
+        course_id = post_data.get('course_id')
+        problem = post_data.get('problem')
+
+        try:
+            from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
+            to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
+            course_key = CourseKey.from_string(course_id)
+        except ValueError:
+            return HttpResponseBadRequest(_("Invalid date range."))
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+
+        problem_key = course_key.make_usage_key_from_deprecated_string(problem)
+
+        date_range_filter = Q(modified__range=(
+            from_date, to_date + timedelta(days=1))
+        ) if from_date and to_date else Q()
+
+        students_emails = list(StudentModule.objects.filter(
+            date_range_filter,
+            module_state_key=problem_key,
+            grade__isnull=False
+        ).values_list('student__email', flat=True).distinct())
+
+        return JsonResponse(data={'students_emails': students_emails})
