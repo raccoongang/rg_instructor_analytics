@@ -537,7 +537,7 @@
     height: 400px;
     position: relative;
     padding: 30px 50px;
-    margin-bottom: 140px;
+    margin-bottom: 100px;
     text-align: center;
 }
 #problem-homeworks-stats-plot .plot-body {
@@ -596,7 +596,7 @@
     padding: 3px 5px;
     color: #568ecc;
     position: absolute;
-    bottom: -130px;
+    bottom: -100px;
     z-index: 2;
     min-width: 110px;
     height: 20px;
@@ -832,7 +832,7 @@ body .xmodule_display.xmodule_CapaModule div.problem ul {
 }
 body .disc-list {
     list-style: disc;
-    padding: 0 0 0 40px;
+    padding: 0 0 0 15px;
     margin: 0;
 }
 .disc-list li {
@@ -1056,4 +1056,34 @@ body .disc-list {
 
 .block-emails-list {
     margin-left: 33px;
+}
+
+#section-problem .block-emails-list {
+    margin-left: 0;
+}
+
+#section-problem .subsection-emails-span,
+#section-problem .problem-emails-span {
+    margin-left: 15px;
+}
+
+#section-problem .subsection-emails-list,
+#section-problem .block-emails-list {
+    margin-bottom: 20px;
+}
+
+#section-problem .problem-header {
+    margin-bottom: 0;
+}
+
+#section-problem .problem {
+    padding-top: 0;
+}
+
+#section-problem .question-description {
+    margin: 0 0 25px 0;
+}
+
+.content-wrapper {
+    padding-bottom: 0;
 }
