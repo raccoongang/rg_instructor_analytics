@@ -17,9 +17,11 @@ function ProblemTab(button, content) {
     var $problemLegend = content.find('.js-legend-holder');
 
     var $emailTemplate = '<div>' +
+                            '<h2 class="analytics-title"><%= blockName.charAt(0).toUpperCase() + blockName.slice(1) %> Details</h2>' +
                             '<%if (studentsEmails.length != 0) {%>' +
                             '<div class="block-emails-list">' +
-                                '<span>Count of students <%= studentsEmails.length %></span>' +
+                                '<span><%= blockName.charAt(0).toUpperCase() + blockName.slice(1) %> statistics is based on submits of ' +
+                                    '<%= studentsEmails.length %> student(s) </span>' +
                                 '<span class="<%= blockName %>-emails-span">' +
                                   '<button class="emails-list-button">Show emails</button>' +
                                 '</span>' +
