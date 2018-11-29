@@ -1083,3 +1083,7 @@ body .disc-list {
 #section-problem .question-description {
     margin: 0 0 25px 0;
 }
+
+.content-wrapper {
+    padding-bottom: 0;
+}
