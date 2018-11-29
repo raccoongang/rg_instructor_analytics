@@ -49,6 +49,7 @@ function ProblemTab(button, content) {
         $homework.empty();
         problemDetail.empty();
         $problemLegend.addClass('hidden');
+        $problemDetailSection.prop('hidden', true);
 
         function onSuccess(response) {
             var maxAttempts = Math.max(...response.attempts);
