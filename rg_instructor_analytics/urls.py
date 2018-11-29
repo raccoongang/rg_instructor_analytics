@@ -11,7 +11,7 @@ from rg_instructor_analytics.views.gradebook import (
     DiscussionActivityView, GradebookView, StudentStepView, VideoView
 )
 from rg_instructor_analytics.views.problem import (
-    ProblemDetailView, ProblemHomeWorkStatisticView, ProblemStudentDataView, ProblemQuestionView, ProblemsStatisticView
+    ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView, ProblemStudentDataView
 )
 from rg_instructor_analytics.views.suggestion import SuggestionView
 from rg_instructor_analytics.views.tab_fragment import InstructorAnalyticsFragmentView
