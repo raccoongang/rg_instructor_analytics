@@ -17,10 +17,15 @@ from web_fragments.fragment import Fragment
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 from rg_instructor_analytics.utils import resource_string
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseAccessRole
+
+try:
+    from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
+except ImportError:
+    # edx-ficus
+    from web_fragments.views import FragmentView as EdxFragmentView
 
 # NOTE(flying-pi) reload(sys) is used for restore method `setdefaultencoding`,
 # which set flag PYTHONIOENCODING to utf8.
