@@ -228,7 +228,7 @@ class GradeFunnelSendMessage(View):
         email_subject = request.POST.get('subject')
         email_body = request.POST.get('body')
 
-        email_list = set([email for email in emails.split(',') if email])
+        email_list = [set([email for email in emails.split(',') if email])]
 
         tasks.send_email.delay(
             subject=email_subject,
