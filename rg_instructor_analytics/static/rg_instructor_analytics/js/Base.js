@@ -1,6 +1,6 @@
 (function() {
     /*
-    Get favicon from the <body> and up it to the <head>.
+    Get favicon from the <body> and add it to the <head>.
     */
     var link = document.querySelector("link[rel*='icon']");
     document.getElementsByTagName('head')[0].appendChild(link);
