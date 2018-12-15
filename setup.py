@@ -11,7 +11,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name="rg_instructor_analytics",
-    version="0.1",
+    version="0.1.1",
     install_requires=[
         "setuptools",
         "web-fragments==0.2.2",

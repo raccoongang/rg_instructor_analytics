@@ -1,3 +1,11 @@
+(function() {
+    /*
+    Get favicon from the <body> and add it to the <head>.
+    */
+    var link = document.querySelector("link[rel*='icon']");
+    document.getElementsByTagName('head')[0].appendChild(link);
+})();
+
 $(function() {
     'use strict';
     const CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
