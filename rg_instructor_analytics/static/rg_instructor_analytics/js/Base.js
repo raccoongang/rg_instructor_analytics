@@ -1,4 +1,7 @@
 (function() {
+    /*
+    Gets favicon from body and up it to head.
+    */
     var link = document.querySelector("link[rel*='icon']");
     document.getElementsByTagName('head')[0].appendChild(link);
 })();
