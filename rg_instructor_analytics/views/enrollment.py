@@ -125,7 +125,7 @@ class EnrollmentStatisticView(View):
         dates_total.append(to_date)
         counts_total.append(counts_total[-1])
 
-        nticks_y1 = max(counts_total) if counts_total else 0
+        nticks_y1 = max(counts_total) - min(counts_total) if counts_total else 0
 
         # nticks_y2 = 0
         # if counts_enroll:
