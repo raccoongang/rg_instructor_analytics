@@ -126,18 +126,8 @@ class EnrollmentStatisticView(View):
         counts_total.append(counts_total[-1])
 
         nticks_y1 = max(counts_total) - min(counts_total) if counts_total else 0
-
-        # nticks_y2 = 0
-        # if counts_enroll:
-        #     nticks_y2 = max(counts_enroll)
-        #     if counts_unenroll:
-        #         nticks_y2 = max(nticks_y2, max(counts_unenroll))
-        # elif counts_unenroll:
-        #     nticks_y2 = max(counts_unenroll)
-
-        max_enroll = max(counts_enroll) if counts_enroll else 0
-        nticks_y2 = max(max_enroll, max(counts_unenroll)) if counts_unenroll else max_enroll
-
+        counts_enroll_unenroll = counts_enroll + counts_unenroll
+        nticks_y2 = max(counts_enroll_unenroll) if counts_enroll_unenroll else 0
 
         dates_delta = to_date - from_date
 

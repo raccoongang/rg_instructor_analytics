@@ -72,11 +72,9 @@ class ActivityView(View):
         course_dates = list(course_visits_set.values_list('day', flat=True))
         course_activities = list(course_visits_set.values_list('total', flat=True))
 
-        nticks_y = max(max(video_activities), max(discussion_activities), max(course_activities))
+        activities = video_activities + discussion_activities + course_activities
+        nticks_y = max(activities) if activities else 0
         customize_yticks = True if nticks_y <= 3 else False  # y-axis
-
-        print "----- customize_yticks", customize_yticks
-        print "----- nticks_y", nticks_y
 
         return {
             'video_dates': video_dates,
