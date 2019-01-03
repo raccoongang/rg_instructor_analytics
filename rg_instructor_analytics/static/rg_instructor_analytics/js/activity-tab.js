@@ -51,11 +51,21 @@ function ActivityTab(button, content) {
 
       var stat = [videoActivities, discussionActivities, courseActivities];
 
+      var x_template = {
+      type: "date"
+      };
+
+      var y_template = {
+      };
+
+      if (dailyActivities.customize_yticks) {
+        y_template["nticks"] = dailyActivities.nticks_y+1
+      }
+
       var layout = {
         barmode: 'group',
-        xaxis: {
-          type: "date"
-        },
+        xaxis: x_template,
+        yaxis: y_template,
         showlegend: false
       };
 
