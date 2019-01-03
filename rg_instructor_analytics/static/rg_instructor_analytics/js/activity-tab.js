@@ -83,9 +83,17 @@ function ActivityTab(button, content) {
           name: '',
       };
 
+      var x_template = {
+      };
+
+      if (Math.max(...unitVisits.count_visits) <= 5) {
+      x_template["nticks"] = Math.max(...unitVisits.count_visits)+1
+      }
+
       var layout = {
           showlegend: false,
           height: heightLayout > 450 && heightLayout || 450,
+          xaxis: x_template,
           yaxis: {
               ticktext: unitVisits.ticktext,
               tickvals: unitVisits.tickvals,
