@@ -126,12 +126,20 @@ function GradebookTab(button, content) {
             },
         };
 
+        var y_template = {
+        };
+
+        if (Math.max(...data.videos_time) <= 5) {
+            y_template["nticks"] = Math.max(...data.videos_time)+1
+        }
+
         var layout = {
             title: userName,
             showlegend: false,
             xaxis: {
                 tickangle: 90,
             },
+            yaxis: y_template,
         };
 
         Plotly.newPlot('gradebook-video-stats-plot', [stat], layout, {displayModeBar: false});
