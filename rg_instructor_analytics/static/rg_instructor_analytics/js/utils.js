@@ -15,6 +15,7 @@ function TimeFilter(content, action) {
 
   this.$fromDatePicker = content.find(".js-from-datepicker")
     .datepicker({
+//      maxDate: moment().format(momentDateFormat),
       dateFormat: pickerDateFormat,
       onSelect: function(dateStr) {
         filter.$toDatePicker.datepicker("option", "minDate", dateStr);
@@ -122,6 +123,18 @@ function TimeFilter(content, action) {
     periodDiv.removeClass('show');
     content.find('.filter-btn').removeClass('active');
     $(target).addClass('active');
+  };
+
+  this.setDisable = function () {
+    if ((moment().subtract(1, 'weeks').startOf('isoWeek') - filter.startDate) < 0) {
+      content.find(".js-select-1-week").prop("disabled", true);
+    }
+    if ((moment().subtract(2, 'weeks').startOf('isoWeek') - filter.startDate) < 0) {
+      content.find(".js-select-2-week").prop("disabled", true);
+    }
+    if ((moment().subtract(1, 'months').startOf('month') - filter.startDate) < 0) {
+      content.find(".js-select-4-week").prop("disabled", true);
+    }
   };
 
   this.setLoader = function () {
