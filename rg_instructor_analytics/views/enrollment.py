@@ -133,7 +133,7 @@ class EnrollmentStatisticView(View):
 
         customize_xticks = True if dates_delta.days <= 5 else False  # x-axis "Date"
         customize_y1ticks = True if nticks_y1 <= 3 else False  # y-axis "Total"
-        customize_y2ticks = True if 0 < nticks_y2 <= 3 else False  # y-axis "Enrolled/Unenrolled"
+        customize_y2ticks = True if nticks_y2 <= 3 else False  # y-axis "Enrolled/Unenrolled"
 
         return {
             'dates_total': dates_total, 'counts_total': counts_total,
