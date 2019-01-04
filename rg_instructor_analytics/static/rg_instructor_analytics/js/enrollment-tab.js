@@ -26,6 +26,35 @@ function EnrollmentTab(button, content) {
         return result;
       }
 
+      var x_template = {
+        type: "date",
+        margin: {t: 10}
+      };
+      if (response.customize_xticks) {
+        x_template["tick0"] = response.dates_total[0];
+        x_template["dtick"] = 86400000.0;
+        x_template["tickformat"] = "%d %b %Y";
+      }
+
+      var y1_template = {
+        side: 'right',
+        overlaying: 'y2',
+        title: django.gettext('Total'),
+        titlefont: {color: '#70A3FF'},
+        tickfont: {color: '#70A3FF'},
+      };
+      if (response.customize_y1ticks) {
+        y1_template["nticks"] = response.nticks_y1+1
+      }
+
+      var y2_template = {
+        title: django.gettext('Enrollments/Unenrollments'),
+        gridcolor: '#cecece',
+      };
+      if (response.customize_y2ticks) {
+        y2_template["nticks"] = response.nticks_y2+1
+      }
+
       totalTrace = {
         x: response.dates_total.map(dataFixFunction),
         y: response.counts_total,
@@ -74,21 +103,9 @@ function EnrollmentTab(button, content) {
 
       layout = {
         hovermode: 'closest',
-        xaxis: {
-          type: "date",
-          margin: {t: 10},
-        },
-        yaxis: {
-          side: 'right',
-          overlaying: 'y2',
-          title: django.gettext('Total'),
-          titlefont: {color: '#70A3FF'},
-          tickfont: {color: '#70A3FF'},
-        },
-        yaxis2: {
-          title: django.gettext('Enrollments/Unenrollments'),
-          gridcolor: '#cecece'
-        },
+        xaxis: x_template,
+        yaxis: y1_template,
+        yaxis2: y2_template,
         showlegend: false,
       };
 

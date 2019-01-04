@@ -91,12 +91,20 @@ function GradebookTab(button, content) {
             },
         };
 
+        var y_template = {
+        };
+
+        if (Math.max(...data.activity_count) <= 5) {
+            y_template["nticks"] = Math.max(...data.activity_count)+1
+        }
+
         var layout = {
             title: userName,
             showlegend: false,
             xaxis: {
                 tickangle: 90,
             },
+            yaxis: y_template,
         };
 
         Plotly.newPlot('gradebook-discussion-stats-plot', [stat], layout, {displayModeBar: false});
@@ -118,12 +126,20 @@ function GradebookTab(button, content) {
             },
         };
 
+        var y_template = {
+        };
+
+        if (Math.max(...data.videos_time) <= 5) {
+            y_template["nticks"] = Math.max(...data.videos_time)+1
+        }
+
         var layout = {
             title: userName,
             showlegend: false,
             xaxis: {
                 tickangle: 90,
             },
+            yaxis: y_template,
         };
 
         Plotly.newPlot('gradebook-video-stats-plot', [stat], layout, {displayModeBar: false});
@@ -189,10 +205,18 @@ function GradebookTab(button, content) {
             }
         };
 
+        var x_template = {
+        };
+
+        if (Math.max(...data.steps) <= 5) {
+            x_template["nticks"] = Math.max(...data.steps)+1
+        }
+
         var layout = {
             title: userName,
             showlegend: false,
             height: heightLayout > 450 && heightLayout || 450,
+            xaxis: x_template,
             yaxis: {
                 ticktext: data.ticktext,
                 tickvals: data.tickvals,

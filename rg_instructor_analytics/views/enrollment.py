@@ -125,10 +125,23 @@ class EnrollmentStatisticView(View):
         dates_total.append(to_date)
         counts_total.append(counts_total[-1])
 
+        nticks_y1 = max(counts_total) - min(counts_total) if counts_total else 0
+        counts_enroll_unenroll = counts_enroll + counts_unenroll
+        nticks_y2 = max(counts_enroll_unenroll) if counts_enroll_unenroll else 0
+
+        dates_delta = to_date - from_date
+
+        customize_xticks = True if dates_delta.days <= 5 else False  # x-axis "Date"
+        customize_y1ticks = True if nticks_y1 <= 3 else False  # y-axis "Total"
+        customize_y2ticks = True if 0 < nticks_y2 <= 3 else False  # y-axis "Enrolled/Unenrolled"
+
         return {
             'dates_total': dates_total, 'counts_total': counts_total,
             'dates_enroll': dates_enroll, 'counts_enroll': counts_enroll,
             'dates_unenroll': dates_unenroll, 'counts_unenroll': counts_unenroll,
+            'customize_xticks': customize_xticks,
+            'customize_y1ticks': customize_y1ticks, 'customize_y2ticks': customize_y2ticks,
+            'nticks_y1': nticks_y1, 'nticks_y2': nticks_y2,
         }
 
     def post(self, request, course_id):
