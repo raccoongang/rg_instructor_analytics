@@ -275,6 +275,7 @@ function ProblemTab(button, content) {
             timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
             timeFilter.minDate = timeFilter.startDate;
             timeFilter.endDate = moment();
+            timeFilter.setDisable();
 
             timeFilter.makeActive(content.find(".js-datepicker-btn"));
             timeFilter.setMinDate();
