@@ -15,7 +15,7 @@ function TimeFilter(content, action) {
 
   this.$fromDatePicker = content.find(".js-from-datepicker")
     .datepicker({
-//      maxDate: moment().format(momentDateFormat),
+      maxDate: moment().format(momentDateFormat),
       dateFormat: pickerDateFormat,
       onSelect: function(dateStr) {
         filter.$toDatePicker.datepicker("option", "minDate", dateStr);
@@ -147,6 +147,7 @@ function TimeFilter(content, action) {
 
   this.setMinDate = function () {
       filter.$fromDatePicker.datepicker("option", "minDate", filter.minDate.format(momentDateFormat));
+      filter.$toDatePicker.datepicker("option", "minDate", filter.startDate.format(momentDateFormat));
   };
 
   this.getStartEndDates = function () {
