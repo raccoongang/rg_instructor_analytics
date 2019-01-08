@@ -93,22 +93,25 @@ function TimeFilter(content, action) {
 
   content.find(".js-select-1-week").click(function() {
     filter.makeActive(this);
-    filter.startDate = filter.getStartEndDates().LastWeekFrom;
-    filter.endDate = filter.getStartEndDates().LastWeekTo;
+    filter.startDate = filter.getStartEndDates().lastWeekFrom;
+    filter.endDate = filter.getStartEndDates().lastWeekTo;
+    filter.updateDates();
     action();
   });
 
   content.find(".js-select-2-week").click(function() {
     filter.makeActive(this);
-    filter.startDate = filter.getStartEndDates().Last2WeeksFrom;
-    filter.endDate = filter.getStartEndDates().Last2WeeksTo;
+    filter.startDate = filter.getStartEndDates().last2WeeksFrom;
+    filter.endDate = filter.getStartEndDates().last2WeeksTo;
+    filter.updateDates();
     action();
   });
 
   content.find(".js-select-4-week").click(function() {
     filter.makeActive(this);
-    filter.startDate = filter.getStartEndDates().Last4WeeksFrom;
-    filter.endDate = filter.getStartEndDates().Last4WeeksTo;
+    filter.startDate = filter.getStartEndDates().last4WeeksFrom;
+    filter.endDate = filter.getStartEndDates().last4WeeksTo;
+    filter.updateDates();
     action();
   });
 
@@ -116,6 +119,7 @@ function TimeFilter(content, action) {
     filter.makeActive(this);
     filter.startDate = filter.minDate;
     filter.endDate = moment();
+    filter.updateDates();
     action();
   });
 
@@ -126,13 +130,13 @@ function TimeFilter(content, action) {
   };
 
   this.setDisable = function () {
-    if ((this.getStartEndDates().LastWeekFrom - filter.startDate) < 0) {
+    if ((this.getStartEndDates().lastWeekFrom - filter.startDate) < 0) {
       content.find(".js-select-1-week").prop("disabled", true);
     }
-    if ((this.getStartEndDates().Last2WeeksFrom - filter.startDate) < 0) {
+    if ((this.getStartEndDates().last2WeeksFrom - filter.startDate) < 0) {
       content.find(".js-select-2-week").prop("disabled", true);
     }
-    if ((this.getStartEndDates().Last4WeeksFrom - filter.startDate) < 0) {
+    if ((this.getStartEndDates().last4WeeksFrom - filter.startDate) < 0) {
       content.find(".js-select-4-week").prop("disabled", true);
     }
   };
@@ -150,14 +154,19 @@ function TimeFilter(content, action) {
       filter.$toDatePicker.datepicker("option", "minDate", filter.startDate.format(momentDateFormat));
   };
 
+  this.updateDates = function () {
+    filter.$toDatePicker.datepicker("option", "minDate", filter.startDate.format(momentDateFormat));
+    filter.$fromDatePicker.datepicker("option", "maxDate", filter.endDate.format(momentDateFormat));
+  };
+
   this.getStartEndDates = function () {
     return {
-      LastWeekFrom: moment().subtract(1, 'weeks').startOf('isoWeek'),
-      LastWeekTo: moment().subtract(1, 'weeks').endOf('isoWeek'),
-      Last2WeeksFrom: moment().subtract(2, 'weeks').startOf('isoWeek'),
-      Last2WeeksTo: moment().subtract(1, 'weeks').endOf('isoWeek'),
-      Last4WeeksFrom: moment().subtract(1, 'months').startOf('month'),
-      Last4WeeksTo: moment().subtract(1, 'months').endOf('month'),
+      lastWeekFrom: moment().subtract(1, 'weeks').startOf('isoWeek'),
+      lastWeekTo: moment().subtract(1, 'weeks').endOf('isoWeek'),
+      last2WeeksFrom: moment().subtract(2, 'weeks').startOf('isoWeek'),
+      last2WeeksTo: moment().subtract(1, 'weeks').endOf('isoWeek'),
+      last4WeeksFrom: moment().subtract(1, 'months').startOf('month'),
+      last4WeeksTo: moment().subtract(1, 'months').endOf('month'),
     }
   };
 
