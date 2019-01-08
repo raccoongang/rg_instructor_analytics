@@ -148,6 +148,7 @@ function EnrollmentTab(button, content) {
       timeFilter.endDate = moment();
       timeFilter.makeActive(content.find(".js-datepicker-btn"));
       timeFilter.setMinDate();
+      timeFilter.setDisable();
 
     }
     catch (error) {

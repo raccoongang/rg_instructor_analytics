@@ -15,6 +15,7 @@ function TimeFilter(content, action) {
 
   this.$fromDatePicker = content.find(".js-from-datepicker")
     .datepicker({
+      maxDate: moment().format(momentDateFormat),
       dateFormat: pickerDateFormat,
       onSelect: function(dateStr) {
         filter.$toDatePicker.datepicker("option", "minDate", dateStr);
@@ -92,22 +93,25 @@ function TimeFilter(content, action) {
 
   content.find(".js-select-1-week").click(function() {
     filter.makeActive(this);
-    filter.startDate = moment().subtract(1, 'weeks').startOf('isoWeek');
-    filter.endDate = moment().subtract(1, 'weeks').endOf('isoWeek');
+    filter.startDate = filter.getStartEndDates().lastWeekFrom;
+    filter.endDate = filter.getStartEndDates().lastWeekTo;
+    filter.updateDates();
     action();
   });
 
   content.find(".js-select-2-week").click(function() {
     filter.makeActive(this);
-    filter.startDate = moment().subtract(2, 'weeks').startOf('isoWeek');
-    filter.endDate = moment().subtract(1, 'weeks').endOf('isoWeek');
+    filter.startDate = filter.getStartEndDates().last2WeeksFrom;
+    filter.endDate = filter.getStartEndDates().last2WeeksTo;
+    filter.updateDates();
     action();
   });
 
   content.find(".js-select-4-week").click(function() {
     filter.makeActive(this);
-    filter.startDate = moment().subtract(1, 'months').startOf('month');
-    filter.endDate = moment().subtract(1, 'months').endOf('month');
+    filter.startDate = filter.getStartEndDates().last4WeeksFrom;
+    filter.endDate = filter.getStartEndDates().last4WeeksTo;
+    filter.updateDates();
     action();
   });
 
@@ -115,6 +119,7 @@ function TimeFilter(content, action) {
     filter.makeActive(this);
     filter.startDate = filter.minDate;
     filter.endDate = moment();
+    filter.updateDates();
     action();
   });
 
@@ -122,6 +127,18 @@ function TimeFilter(content, action) {
     periodDiv.removeClass('show');
     content.find('.filter-btn').removeClass('active');
     $(target).addClass('active');
+  };
+
+  this.setDisable = function () {
+    if ((this.getStartEndDates().lastWeekFrom - filter.startDate) < 0) {
+      content.find(".js-select-1-week").prop("disabled", true);
+    }
+    if ((this.getStartEndDates().last2WeeksFrom - filter.startDate) < 0) {
+      content.find(".js-select-2-week").prop("disabled", true);
+    }
+    if ((this.getStartEndDates().last4WeeksFrom - filter.startDate) < 0) {
+      content.find(".js-select-4-week").prop("disabled", true);
+    }
   };
 
   this.setLoader = function () {
@@ -134,6 +151,23 @@ function TimeFilter(content, action) {
 
   this.setMinDate = function () {
       filter.$fromDatePicker.datepicker("option", "minDate", filter.minDate.format(momentDateFormat));
+      filter.$toDatePicker.datepicker("option", "minDate", filter.startDate.format(momentDateFormat));
+  };
+
+  this.updateDates = function () {
+    filter.$toDatePicker.datepicker("option", "minDate", filter.startDate.format(momentDateFormat));
+    filter.$fromDatePicker.datepicker("option", "maxDate", filter.endDate.format(momentDateFormat));
+  };
+
+  this.getStartEndDates = function () {
+    return {
+      lastWeekFrom: moment().subtract(1, 'weeks').startOf('isoWeek'),
+      lastWeekTo: moment().subtract(1, 'weeks').endOf('isoWeek'),
+      last2WeeksFrom: moment().subtract(2, 'weeks').startOf('isoWeek'),
+      last2WeeksTo: moment().subtract(1, 'weeks').endOf('isoWeek'),
+      last4WeeksFrom: moment().subtract(1, 'months').startOf('month'),
+      last4WeeksTo: moment().subtract(1, 'months').endOf('month'),
+    }
   };
 
 }
