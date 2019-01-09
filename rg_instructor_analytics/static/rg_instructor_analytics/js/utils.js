@@ -11,6 +11,8 @@ function TimeFilter(content, action) {
   var periodDiv = content.find(".js-datepicker-dropdown");
   var $loader = content.find(".js-loader");
   this.minDate = null;
+  this.firstEnrollDate = null;
+  this.courseStartDate = null;
 
 
   this.$fromDatePicker = content.find(".js-from-datepicker")
@@ -91,36 +93,30 @@ function TimeFilter(content, action) {
     action();
   });
 
-  content.find(".js-select-1-week").click(function() {
-    filter.makeActive(this);
-    filter.startDate = filter.getStartEndDates().lastWeekFrom;
-    filter.endDate = filter.getStartEndDates().lastWeekTo;
-    filter.updateDates();
-    action();
-  });
-
-  content.find(".js-select-2-week").click(function() {
-    filter.makeActive(this);
-    filter.startDate = filter.getStartEndDates().last2WeeksFrom;
-    filter.endDate = filter.getStartEndDates().last2WeeksTo;
-    filter.updateDates();
-    action();
-  });
-
-  content.find(".js-select-4-week").click(function() {
-    filter.makeActive(this);
-    filter.startDate = filter.getStartEndDates().last4WeeksFrom;
-    filter.endDate = filter.getStartEndDates().last4WeeksTo;
-    filter.updateDates();
-    action();
-  });
-
-  content.find(".js-select-all-week").click(function() {
-    filter.makeActive(this);
-    filter.startDate = filter.minDate;
-    filter.endDate = moment();
-    filter.updateDates();
-    action();
+  content.find(".js-select-time-interval").change(function() {
+    switch ($(this).val()) {
+      case "lastweek":
+        filter.startDate = filter.getStartEndDates().lastWeekFrom;
+        filter.endDate = filter.getStartEndDates().lastWeekTo;
+        break;
+      case "last2weeks":
+        filter.startDate = filter.getStartEndDates().last2WeeksFrom;
+        filter.endDate = filter.getStartEndDates().last2WeeksTo;
+        break;
+      case "lastmonth":
+        filter.startDate = filter.getStartEndDates().last4WeeksFrom;
+        filter.endDate = filter.getStartEndDates().last4WeeksTo;
+        break;
+      case "sincecoursestart":
+        filter.startDate = filter.courseStartDate;
+        filter.endDate = moment();
+        break;
+      case "allenrollments":
+        filter.startDate = filter.firstEnrollDate;
+        filter.endDate = moment();
+    }
+        filter.updateDates();
+        action();
   });
 
   this.makeActive = function (target) {
@@ -150,8 +146,8 @@ function TimeFilter(content, action) {
   };
 
   this.setMinDate = function () {
-      filter.$fromDatePicker.datepicker("option", "minDate", filter.minDate.format(momentDateFormat));
-      filter.$toDatePicker.datepicker("option", "minDate", filter.startDate.format(momentDateFormat));
+    filter.$fromDatePicker.datepicker("option", "minDate", filter.minDate.format(momentDateFormat));
+    filter.$toDatePicker.datepicker("option", "minDate", filter.startDate.format(momentDateFormat));
   };
 
   this.updateDates = function () {
