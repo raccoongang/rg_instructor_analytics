@@ -19,10 +19,20 @@ from django.utils.translation import ugettext as _
         </div>
     </div>
 
-    <button class="js-select-1-week filter-btn">${_("Last Week")}</button>
+    <!-- <button class="js-select-1-week filter-btn">${_("Last Week")}</button>
     <button class="js-select-2-week filter-btn">${_("Last 2 Weeks")}</button>
     <button class="js-select-4-week filter-btn">${_("Last Month")}</button>
-    <button class="js-select-all-week filter-btn">${_("Since Course Start")}</button>
+    <button class="js-select-all-week filter-btn">${_("Since Course Start")}</button> -->
+
+    <select>
+        <option class="js-select-1-week" value="lastweek">${_("Last Week")}</option>
+        <option class="js-select-2-week" value="last2weeks">${_("Last 2 Weeks")}</option>
+        <option class="js-select-4-week" value="lastmonth">${_("Last Month")}</option>
+        <option class="js-select-all-week" value="sincecoursestart" selected>${_("Since Course Start")}</option>
+        % if active_tab=="enrollment":
+        <option class="js-select-all-enroll" value="allenrollments" selected>${_("All Enrollments")}</option>
+        % endif
+    </select>
 </div>
 
 <div class="js-loader loader hidden">
