@@ -114,6 +114,7 @@ function TimeFilter(content, action) {
       case "allenrollments":
         filter.startDate = filter.firstEnrollDate;
         filter.endDate = moment();
+        break;
     }
         filter.updateDates();
         action();
