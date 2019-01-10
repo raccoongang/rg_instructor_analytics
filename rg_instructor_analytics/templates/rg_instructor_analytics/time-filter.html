@@ -5,7 +5,9 @@
 from django.utils.translation import ugettext as _
 %>
 <div class="enroll-buttons-holder">
-    <button class="js-datepicker-btn date-btn filter-btn active">${_("Select period")}</button>
+    <div class="filter-btn-holder">
+        <button class="js-datepicker-btn date-btn filter-btn active">${_("Select period")}</button>
+    </div>
     <div class="js-datepicker-dropdown dropdown-content">
         <div>
             <label for="${active_tab}-from">${_("From")}</label>
@@ -18,8 +20,8 @@ from django.utils.translation import ugettext as _
             <button class="js-date-apply-btn">${_("Apply")}</button>
         </div>
     </div>
-
-    <select class="js-select-time-interval">
+    <div class="custom-select">
+    <select class="js-select-time-interval filter-dropdown">
         <option class="js-select-1-week" value="lastweek">${_("Last Week")}</option>
         <option class="js-select-2-week" value="last2weeks">${_("Last 2 Weeks")}</option>
         <option class="js-select-4-week" value="lastmonth">${_("Last Month")}</option>
@@ -28,6 +30,7 @@ from django.utils.translation import ugettext as _
         <option class="js-select-all-enroll" value="allenrollments" selected>${_("All Enrollments")}</option>
         % endif
     </select>
+    </div>
 </div>
 
 <div class="js-loader loader hidden">
