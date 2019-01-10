@@ -93,6 +93,10 @@ function TimeFilter(content, action) {
     action();
   });
 
+  content.find(".js-date-cancel-btn").click(function() {
+    periodDiv.removeClass('show');
+  });
+
   content.find(".js-select-time-interval").change(function() {
     switch ($(this).val()) {
       case "lastweek":
