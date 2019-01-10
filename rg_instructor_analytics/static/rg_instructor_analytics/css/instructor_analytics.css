@@ -183,6 +183,31 @@
     box-shadow: none !important;
     text-shadow: none !important;
 }
+
+.filter-btn-holder {
+    float: left;
+    display:inline-block;
+    margin-right: 16px;
+}
+.custom-select {
+    float: left;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 7px;
+    padding-right: 7px;
+    display:inline-block;
+    border-radius: 0px;
+    background-color: #0075b4;
+}
+.filter-dropdown {
+    border:0px;
+    background-color: #0075b4;
+    color: #fff;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
 .date-btn {
     padding-right: 20px !important;
     position: relative;
@@ -198,11 +223,10 @@
 .instructor-dashboard-wrapper-2 .idash-section button {
     font-size: 14px;
     text-transform: uppercase;
-    padding: 7px 14px;
+    padding: 8px 14px;
 }
 .enroll-buttons-holder {
     display: flex;
-    justify-content: space-between;
     margin-top: 16px;
 }
 .analytics-legend-holder {

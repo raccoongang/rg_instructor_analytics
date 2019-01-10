@@ -12,7 +12,7 @@
 <span class="analytics-title-text">${_("You can choose the predefined periods of time to see the dynamics (Last Week, "
     "Last 2 Weeks, Last Month) or you can choose custom time period.")}</span>
 
-<div id="enrollment-data" data-enroll='${section_data}'></div>
+<div id="enrollment-data" data-enroll="${section_data['enroll_info']}"></div>
 
 <%include file="time-filter.html" args="active_tab='enrollment'"/>
 
@@ -24,3 +24,4 @@
 <div id="enrollment-stats-plot">
 
 </div>
+

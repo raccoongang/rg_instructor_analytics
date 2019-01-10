@@ -104,33 +104,34 @@
                 </ul>
 
                 <section id="section-enrollment-stats" class="idash-section">
-                    <%include file="enrollment_stats.html" args="section_data=enroll_info" />
+                    <%include file="enrollment_stats.html" args="section_data={'course':course, 'enroll_info':enroll_info}" />
                 </section>
 
                 <section id="section-activity" class="idash-section">
-                    <%include file="activity.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
+                    <%include file="activity.html" args="section_data={'course':course}" />
                 </section>
 
                 <section id="section-problem" class="idash-section">
-                    <%include file="problems.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
+                    <%include file="problems.html" args="section_data={'course':course}" />
                 </section>
 
                 <section id="section-gradebook" class="idash-section">
-                    <%include file="gradebook.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
+                    <%include file="gradebook.html" args="section_data={'course':course}" />
                 </section>
 
                 <section id="section-cohort" class="idash-section">
-                    <%include file="cohort.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
+                    <%include file="cohort.html" args="section_data={'course':course}" />
                 </section>
 
                 <section id="section-funnel" class="idash-section">
-                    <%include file="funnel.html" args="section_data={'course':course, 'course_dates_info':course_dates_info}" />
+                    <%include file="funnel.html" args="section_data={'course':course}" />
                 </section>
 
                 <section id="section-suggestion" class="idash-section">
                     <%include file="suggestion.html" args="section_data={'course':course}" />
                 </section>
             </section>
+            <div class="course-dates-data" data-course-dates='${course_dates_info}'></div>
         </main>
     </div>
 </div>
