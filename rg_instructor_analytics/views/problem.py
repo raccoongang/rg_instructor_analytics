@@ -112,7 +112,7 @@ class ProblemHomeWorkStatisticView(View):
                         problem_id = child.location.to_deprecated_string()
                         if problem_id in academic_performance:
                             current_performance = academic_performance[problem_id]
-                            stats['correct_answer'][-1] += current_performance['grade_avg']
+                            stats['correct_answer'][-1] += current_performance['grade_avg'] or 0
                             stats['attempts'][-1] += current_performance['attempts_avg']
                             problems_in_hw += 1
 
@@ -218,7 +218,7 @@ class ProblemsStatisticView(View):
             problems_stat[problems_ids.index(s['module_state_key'])] = s
 
         def record(stat_item):
-            if not stat_item or not stat_item['attempts']:
+            if not (stat_item and stat_item['attempts'] and stat_item['max_grades']):
                 return 0, 0
             correct = int(
                 (float(stat_item['grades']) / float(stat_item['max_grades'] * stat_item['attempts'])) * 100
