@@ -82,6 +82,16 @@ def get_items_for_grade_update():
             .values('student__id', 'course_id')
             .distinct()
         )
+        # Remove records for students who never enrolled
+        for item in items_for_update:
+            try:
+                course_key = CourseKey.from_string(item['course_id'])
+            except InvalidKeyError:
+                continue
+            enrolled_by_course = CourseEnrollment.objects.filter(course_id=course_key).values_list('user__id', flat=True)
+            if item['student__id'] not in enrolled_by_course:
+                items_for_update.remove(item)
+
     else:
         items_for_update = (
             CourseEnrollment.objects
