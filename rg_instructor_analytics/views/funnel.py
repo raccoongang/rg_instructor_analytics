@@ -96,11 +96,13 @@ class GradeFunnelView(View):
             modified__range=(from_date, to_date + timedelta(days=1))
         ) if from_date and to_date else Q()
 
+        enrolled_by_course = CourseEnrollment.objects.filter(course_id=course_key).values_list('user__id', flat=True)
         students_course_state_qs = StudentModule.objects.filter(
             date_range_filter,
             course_id=course_key,
             module_type=block_type,
-            modified__exact=modified_filter
+            modified__exact=modified_filter,
+            student_id__in=enrolled_by_course
         )
 
         if IGNORED_ENROLLMENT_MODES:
