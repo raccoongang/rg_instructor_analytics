@@ -74,6 +74,16 @@ def get_items_for_grade_update():
             .order_by('student__id', 'course_id')
             .distinct()
         )
+        # Remove records for students who never enrolled
+        for item in items_for_update:
+            try:
+                course_key = CourseKey.from_string(item['course_id'])
+            except InvalidKeyError:
+                continue
+            enrolled_by_course = CourseEnrollment.objects.filter(course_id=course_key).values_list('user__id', flat=True)
+            if item['student__id'] not in enrolled_by_course:
+                items_for_update.remove(item)
+
         items_for_update += list(
             CourseEnrollment.objects
             .filter(created__gt=last_update_info.last_update)
@@ -82,6 +92,7 @@ def get_items_for_grade_update():
             .values('student__id', 'course_id')
             .distinct()
         )
+
     else:
         items_for_update = (
             CourseEnrollment.objects
@@ -130,7 +141,6 @@ def grade_collector_stat():
     this_update_date = datetime.now()
     logging.info('Task grade_collector_stat started at {}'.format(this_update_date))
     users_by_course = get_items_for_grade_update()
-
     collected_stat = []
     for course_string_id, users in users_by_course.iteritems():
         try:
