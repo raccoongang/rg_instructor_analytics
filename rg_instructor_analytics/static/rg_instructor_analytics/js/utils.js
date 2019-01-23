@@ -131,15 +131,18 @@ function TimeFilter(content, action) {
   };
 
   this.setDisable = function () {
-    if ((this.getStartEndDates().lastWeekFrom - filter.startDate) < 0) {
-      content.find(".js-select-1-week").prop("disabled", true);
-    }
-    if ((this.getStartEndDates().last2WeeksFrom - filter.startDate) < 0) {
-      content.find(".js-select-2-week").prop("disabled", true);
-    }
-    if ((this.getStartEndDates().last4WeeksFrom - filter.startDate) < 0) {
-      content.find(".js-select-4-week").prop("disabled", true);
-    }
+    content.find(".js-select-1-week").prop(
+      "disabled",
+      ((this.getStartEndDates().lastWeekFrom - filter.startDate) < 0)
+    );
+    content.find(".js-select-2-week").prop(
+      "disabled",
+      ((this.getStartEndDates().last2WeeksFrom - filter.startDate) < 0)
+    );
+    content.find(".js-select-4-week").prop(
+      "disabled",
+      ((this.getStartEndDates().last4WeeksFrom - filter.startDate) < 0)
+    );
   };
 
   this.setLoader = function () {
