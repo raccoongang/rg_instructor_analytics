@@ -275,7 +275,7 @@ class StudentStepView(View):
                 units.append(target)
 
         steps = range(len(units))
-        x_default = [None] * (len(tickvals) - 1)
+        x_default = [None] * len(tickvals)
         return JsonResponse(
             data={
                 'ticktext': ticktext,
