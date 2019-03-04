@@ -6,7 +6,9 @@ function FunnelTab(button, content) {
     var $tabContent = content.find('.tab-content');
 
     //WYSIWYG init
-    content.find('#funnel-email-body').richText();
+    if (content.length) {
+        content.find('#funnel-email-body').richText();
+    }
 
     var $subject = content.find('#funnel-email-subject');
     var $richTextEditor = content.find('.richText-editor');

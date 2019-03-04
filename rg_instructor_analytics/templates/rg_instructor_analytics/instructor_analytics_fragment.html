@@ -27,67 +27,19 @@
 
         <main id="main" aria-label="Content" tabindex="-1">
             <section class="instructor-dashboard-content-2" id="instructor-analytics-dashboard-content">
+              % if tabs:
                 <ul class="instructor-nav">
+                  % for tab in tabs:
                     <li class="nav-item">
                         <button type="button"
-                                id="enrollment-stats-btn"
-                                class="btn-link"
-                                data-section="enrollment_stats">${_("Enrollment stats")}
+                                id="${tab['class']}-btn"
+                                class="btn-link ${tab['class']}"
+                                data-section="${tab['section']}">${tab['title']}
                         </button>
                     </li>
+                  % endfor
 
-                    <li class="nav-item">
-                        <button type="button"
-                                id="activity-btn"
-                                class="btn-link"
-                                data-section="activity">${_("Activities")}
-                        </button>
-                    </li>
-
-                    <li class="nav-item">
-                        <button type="button"
-                                id="problems-btn"
-                                class="btn-link problems"
-                                data-section="problems">${_("Problems")}
-                        </button>
-                    </li>
-
-                    <li class="nav-item">
-                        <button type="button"
-                                id="gradebook-btn"
-                                class="btn-link"
-                                data-section="gradebook">${_("Students' Info")}
-                        </button>
-                    </li>
-
-
-                    <li class="nav-item">
-                        <button type="button"
-                                id="cohort-btn"
-                                class="btn-link"
-                                data-section="cohort">${_("Clusters")}
-                        </button>
-                    </li>
-
-
-                    <li class="nav-item">
-                        <button type="button"
-                                id="funnel-btn"
-                                class="btn-link"
-                                data-section="cohort">${_("Progress Funnel")}
-                        </button>
-                    </li>
-
-
-                    <li class="nav-item">
-                        <button type="button"
-                                id="suggestion-btn"
-                                class="btn-link"
-                                data-section="cohort">${_("Suggestions")}
-                        </button>
-                    </li>
                     <li>
-
 
                         <select id="select_course">
 
@@ -103,33 +55,14 @@
                     </li>
                 </ul>
 
-                <section id="section-enrollment-stats" class="idash-section">
-                    <%include file="enrollment_stats.html" args="section_data={'course':course, 'enroll_info':enroll_info}" />
-                </section>
-
-                <section id="section-activity" class="idash-section">
-                    <%include file="activity.html" args="section_data={'course':course}" />
-                </section>
-
-                <section id="section-problem" class="idash-section">
-                    <%include file="problems.html" args="section_data={'course':course}" />
-                </section>
-
-                <section id="section-gradebook" class="idash-section">
-                    <%include file="gradebook.html" args="section_data={'course':course}" />
-                </section>
-
-                <section id="section-cohort" class="idash-section">
-                    <%include file="cohort.html" args="section_data={'course':course}" />
-                </section>
-
-                <section id="section-funnel" class="idash-section">
-                    <%include file="funnel.html" args="section_data={'course':course}" />
-                </section>
-
-                <section id="section-suggestion" class="idash-section">
-                    <%include file="suggestion.html" args="section_data={'course':course}" />
-                </section>
+                % for tab in tabs:
+                  <section id="section-${tab['class']}" class="idash-section">
+                    <%include file="${tab['template']}" args="section_data={'course':course, 'enroll_info':enroll_info}" />
+                  </section>
+                % endfor
+              % else:
+                ${_('Unfortunately, Analytics was disabled by admin.')}
+              % endif
             </section>
             <div class="course-dates-data" data-course-dates='${course_dates_info}'></div>
         </main>
