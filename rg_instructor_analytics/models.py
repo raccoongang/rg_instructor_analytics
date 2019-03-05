@@ -46,6 +46,10 @@ class LastGradeStatUpdate(models.Model):
 
 
 class InstructorTabsConfig(models.Model):
+    """
+    Model for configuring instructor analytics tabs.
+    """
+
     user = models.OneToOneField(User, verbose_name=_('Instructor'))
     enrollment_stats = models.BooleanField(default=True, verbose_name=_('Enrollment stats'))
     activities = models.BooleanField(default=True, verbose_name=_('Activities'))
@@ -57,10 +61,16 @@ class InstructorTabsConfig(models.Model):
 
     @classmethod
     def get_tabs_names(cls):
+        """
+        Return all tabs names.
+        """
         return [f.name for f in cls._meta.get_fields() if f.name not in ('user', 'id')]
 
     @classmethod
     def tabs_for_user(cls, user):
+        """
+        Return enabled tabs names.
+        """
         fields = cls.get_tabs_names()
         try:
             conf = cls.objects.get(user=user).__dict__
@@ -70,4 +80,7 @@ class InstructorTabsConfig(models.Model):
             return [k for k, v in conf.items() if k in fields and v]
 
     def __unicode__(self):
+        """
+        Return human readable object name.
+        """
         return "Tabs config for user: {}".format(self.user)

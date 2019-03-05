@@ -2,15 +2,18 @@
 Admin site bindings for rg_instructor_analytics app.
 """
 
-from eventtracking import tracker
-
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from eventtracking import tracker
 
 from rg_instructor_analytics import models
 
 
 class InstructorTabsConfigAdmin(admin.ModelAdmin):
+    """
+    Django admin class for instructor analytics tabs configuring model.
+    """
+
     list_display = ('user',) + tuple(models.InstructorTabsConfig.get_tabs_names())
     fieldsets = (
         (None, {'fields': ('user',)}),
@@ -25,6 +28,9 @@ class InstructorTabsConfigAdmin(admin.ModelAdmin):
     )
 
     def save_model(self, request, obj, form, change):
+        """
+        Save model and track event.
+        """
         super(InstructorTabsConfigAdmin, self).save_model(request, obj, form, change)
         track_info = {
             'instructor': unicode(obj.user),

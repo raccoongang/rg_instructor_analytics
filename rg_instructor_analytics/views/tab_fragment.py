@@ -17,10 +17,10 @@ from web_fragments.fragment import Fragment
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from rg_instructor_analytics.models import InstructorTabsConfig
 from rg_instructor_analytics.utils import resource_string
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseAccessRole
-from rg_instructor_analytics.models import InstructorTabsConfig
 
 try:
     from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
