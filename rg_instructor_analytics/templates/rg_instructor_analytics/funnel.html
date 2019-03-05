@@ -43,6 +43,15 @@ from django.utils.translation import ugettext as _
         </label>
         <textarea id="funnel-email-body"></textarea>
 
+        <script src="/static/rg_instructor_analytics/plugins/jquery.richtext.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="/static/rg_instructor_analytics/plugins/richtext.min.css"
+            type="text/css"
+            media="screen"
+            charset="utf-8"
+        >
+
         <button type="button" class="funnel-send-email-btn" id="funnel-send-email-btn">${_("SEND EMAIL(S)")}</button>
         <div class="send-email-message error-message hidden">${_("Email(s) sending failed")}</div>
         <div class="send-email-message success-message hidden">${_("Message sent")}</div>

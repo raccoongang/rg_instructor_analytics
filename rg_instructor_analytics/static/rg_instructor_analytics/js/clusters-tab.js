@@ -9,7 +9,9 @@ function CohortTab(button, content) {
     cohortTab.emailBody = cohortTab.content.find('#email-body');
 
     //WYSIWYG init
-    $('#email-body').richText();
+    if (content.length) {
+        $('#email-body').richText();
+    }
 
     content.find('#cohort-send-email-btn').click(function () {
         var $subject = content.find('#email-subject');

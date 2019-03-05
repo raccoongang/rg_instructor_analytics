@@ -17,6 +17,7 @@ from web_fragments.fragment import Fragment
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from rg_instructor_analytics.models import InstructorTabsConfig
 from rg_instructor_analytics.utils import resource_string
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseAccessRole
@@ -31,6 +32,59 @@ except ImportError:
 # which set flag PYTHONIOENCODING to utf8.
 reload(sys)
 sys.setdefaultencoding('utf8')
+
+
+TABS = (
+    {
+        'field': 'enrollment_stats',
+        'class': 'enrollment-stats',
+        'section': 'enrollment_stats',
+        'title': _('Enrollment stats'),
+        'template': 'enrollment_stats.html'
+    },
+    {
+        'field': 'activities',
+        'class': 'activity',
+        'section': 'activity',
+        'title': _('Activities'),
+        'template': 'activity.html'
+    },
+    {
+        'field': 'problems',
+        'class': 'problems',
+        'section': 'problems',
+        'title': _('Problems'),
+        'template': 'problems.html'
+    },
+    {
+        'field': 'students_info',
+        'class': 'gradebook',
+        'section': 'gradebook',
+        'title': _('Students\' Info'),
+        'template': 'gradebook.html'
+    },
+    {
+        'field': 'clusters',
+        'class': 'cohort',
+        'section': 'cohort',
+        'title': _('Clusters'),
+        'template': 'cohort.html'
+    },
+    {
+        'field': 'progress_funnel',
+        'class': 'funnel',
+        'section': 'cohort',
+        'title': _('Progress Funnel'),
+        'template': 'funnel.html'
+    },
+    {
+        'field': 'suggestions',
+        'class': 'suggestion',
+        'section': 'cohort',
+        'title': _('Suggestions'),
+        'template': 'suggestion.html'
+    },
+)
 
 
 class InstructorAnalyticsFragmentView(EdxFragmentView):
@@ -74,7 +128,11 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
             for course_item in self.get_available_courses(request.user)
         }
 
+        enabled_tabs = InstructorTabsConfig.tabs_for_user(request.user)
+        tabs = [t for t in TABS if t['field'] in enabled_tabs]
+
         context = {
+            'tabs': tabs,
             'course': course,
             'enroll_info': json.dumps(enroll_info),
             'available_courses': available_courses,
