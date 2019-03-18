@@ -165,25 +165,30 @@
     max-width: 100%;
 }
 .idash-section {
-    max-width: 830px;
-    margin: 0 auto;
+    /*max-width: 830px;*/
+    margin: 40px auto 0 !important;
     width: 100%;
 }
-#section-enrollment-stats .js-plotly-plot {
+#section-enrollment-stats h1 {
+    font-weight: 600;
+    font-size: 28px;
+    margin-bottom: 23px;
+}
+/*#section-enrollment-stats .js-plotly-plot {
     transform: translate(-7%, -12%);
-}
+}*/
 .js-plotly-plot {
-    transform: translate(-7%, 0);
-    width: 900px;
+    /*transform: translate(-7%, 0);
+    width: 900px;*/
+    width: 100%;
 }
-.filter-btn.active, .filter-btn.active:hover, .filter-btn.active:focus,
-.filter-btn.active:before {
-    color: #fff !important;
-    background: #0075b4 !important;
+.filter-btn, .filter-btn.active, .filter-btn.active:hover, .filter-btn.active:focus {
+    color: #568ecc !important;
+    background: none !important;
     box-shadow: none !important;
     text-shadow: none !important;
+    border: 2px solid #568ecc !important;
 }
-
 .filter-btn-holder {
     float: left;
     display:inline-block;
@@ -191,23 +196,30 @@
 }
 .custom-select {
     float: left;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    padding-left: 7px;
-    padding-right: 7px;
-    display:inline-block;
     border-radius: 0px;
-    background-color: #0075b4;
+    position: relative;
 }
-.filter-dropdown {
-    border:0px;
-    background-color: #0075b4;
-    color: #fff;
+.enroll-buttons-holder .custom-select .filter-dropdown {
+    height: 34px !important;
+    border: 2px solid #568ecc !important;
+    color: #568ecc !important;
     font-size: 14px;
+    font-weight: 600;
     text-transform: uppercase;
-    font-weight: bold;
+    background: none !important;
+    padding: 0 30px 0 15px !important;
+    width: auto !important
+    position: relative;
 }
-
+.enroll-buttons-holder .custom-select:before {
+    content: '\f0d7';
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translate(0,-50%);
+    color: #568ecc;
+}
 .date-btn {
     padding-right: 20px !important;
     position: relative;
@@ -216,26 +228,55 @@
     content: '\f0d7';
     font-family: 'FontAwesome';
     position: absolute;
-    right: 6px;
+    right: 12px;
     top: 50%;
     transform: translate(0,-50%);
+}
+.instructor-dashboard-wrapper-2 .idash-section .filter-btn {
+    padding: 5px 30px 5px 15px !important;
+    height: 34px;
+    font-weight: 600;
+    font-size: 14px;
+}
+.instructor-dashboard-wrapper-2 .idash-section .filter-btn:hover {
+    background: #568ecc !important;
+    color: #fff !important;
 }
 .instructor-dashboard-wrapper-2 .idash-section button {
     font-size: 14px;
     text-transform: uppercase;
     padding: 8px 14px;
+    margin: 0 !important;
 }
 .enroll-buttons-holder {
     display: flex;
     margin-top: 16px;
 }
+.enroll-buttons-holder .js-datepicker-dropdown label {
+    line-height: 35px;
+}
+.enroll-buttons-holder .js-datepicker-dropdown input {
+    margin-right: 20px;
+}
+.enroll-buttons-holder .js-datepicker-dropdown button {
+    border: 2px solid #568ecc !important;
+}
+.enroll-buttons-holder .js-datepicker-dropdown button:hover {
+    background: #568ecc !important;
+    color: #fff !important;
+}
 .analytics-legend-holder {
-    max-width: 768px;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     position: relative;
     z-index: 1;
     margin-top: 40px;
+}
+.analytics-legend-item {
+    font-weight: 600;
+    color: #070707;
+    font-size: 13px;
+    margin: 0 30px;
 }
 .analytics-legend-item,
 .activity-legend-item {
@@ -268,7 +309,8 @@
 .analytics-title,
 .hd.hd-3.problem-header {
     font-size: 18px;
-    color: #020202;
+    font-weight: 600;
+    color: #202020;
     margin-bottom: 16px;
 }
 .analytics-title-text,
@@ -872,6 +914,19 @@ body .disc-list {
 }
 .problem-action-buttons-wrapper {
     display: none;
+}
+.instructor-nav li button {
+    color: #568ecc;
+    font-size: 15px;
+    border-bottom: none !important;
+    padding: 10px 15px !important;
+}
+.instructor-nav li button:hover {
+    color: #000;
+}
+.instructor-nav li button.active-section {
+    background: #f1f1f1 !important;
+    border-bottom-color: #f1f1f1 !important;
 }
 .instructor-nav li:last-child {
     float: right;
