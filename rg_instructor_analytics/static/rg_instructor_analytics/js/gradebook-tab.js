@@ -102,7 +102,7 @@ function GradebookTab(button, content) {
             title: userName,
             showlegend: false,
             xaxis: {
-                tickangle: 90,
+                tickangle: -90,
             },
             yaxis: y_template,
         };
@@ -137,7 +137,7 @@ function GradebookTab(button, content) {
             title: userName,
             showlegend: false,
             xaxis: {
-                tickangle: 90,
+                tickangle: -90,
             },
             yaxis: y_template,
         };
