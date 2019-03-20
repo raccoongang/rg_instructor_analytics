@@ -85,47 +85,58 @@
     max-width: 880px;
     overflow: hidden;
     padding-top: 40px;
+    margin-bottom: 40px;
+}
+.gradebook-video-plot,
+.gradebook-discussion-plot,
+.gradebook-student-step-plot {
+    margin-bottom: 30px;
 }
 .gradebook-table-row {
     display: flex;
 }
-.gradebook-table-row.active .gradebook-table-cell {
-    background: rgb(49,204,245);
-    
+.gradebook-table-row.active .gradebook-table-cell,
+.gradebook-table-row.active .gradebook-table-cell a {
+    background: #30ccf4;
+    color: #fff;
 }
 .gradebook-table-cell {
     box-sizing: border-box;
-    padding: 7px 5px;
+    padding: 5px;
     flex: 1 0 48px;
     background: #f1f1f1;
     margin: 0 1px 1px;
     text-align: center;
     text-transform: capitalize;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.gradebook-table-cell:first-child {
+    justify-content: flex-start;
 }
 .gradebook-table-cell a {
     color: rgb(34,34,34);
     cursor: pointer;
     font-size: 12px;
-    padding: 7px 5px;
-    display: flex;
-    align-items: center;
-}
-.student-search {
-    padding: 7px 5px;
 }
 .gradebook-table-cell:first-child {
     flex: 0 0 250px;
     text-align: left;
-    padding: 0;
+    padding: 7px 15px;
     position: relative;
+    left: auto !important;
 }
 #gradebook_table_header .gradebook-table-cell {
     background: rgb(210,210,210);
 }
+#gradebook_table_header .gradebook-table-cell:first-child {
+    background: none !important;
+    padding: 0 5px 0 0 !important;
+}
 #gradebook_table_body {
     max-height: 200px;
-    overflow-y: auto;
-    padding-top: 40px;
+    overflow: auto;
 }
 .funnel-item.active > .content {
     display: block;
@@ -169,8 +180,7 @@
     margin: 40px auto 0 !important;
     width: 100%;
 }
-#section-enrollment-stats h1,
-#section-activity h1 {
+.idash-section > h1 {
     font-weight: 600;
     font-size: 28px;
     margin-bottom: 23px;
@@ -282,7 +292,11 @@
 .analytics-legend-item,
 .activity-legend-item {
     position: relative;
-    padding-left: 30px;
+    padding-left: 35px;
+}
+.analytics-legend-holder__square .analytics-legend-item,
+.analytics-legend-holder__square .activity-legend-item {
+    padding-left: 25px;
 }
 .analytics-legend-item:before {
     content: '';
@@ -661,7 +675,7 @@
 .plot-bar-vert .plot-click-me,
 .plot-bar-vertical .plot-click-me {
     display: none;
-    border: 1px #568ecc solid;
+    border: 2px #568ecc solid;
     padding: 3px 5px;
     color: #568ecc;
     position: absolute;
@@ -676,6 +690,8 @@
     transform: translate(-50%,0);
     align-items: center;
     justify-content: center;
+    font-weight: 600;
+
 }
 .plot-bar-vert .plot-click-me:hover,
 .plot-bar-vertical .plot-click-me:hover {
@@ -725,6 +741,10 @@
     display: flex;
     flex-direction: column-reverse;
     justify-content: space-between;
+}
+#problem-homeworks-stats-plot .y-axis-l li,
+#problem-homeworks-stats-plot .y-axis-r li {
+    font-size: 12px !important;
 }
 .y-axis-l li:before {
     content: '';
@@ -855,6 +875,25 @@
     position: absolute;
     width: 100%;
     z-index: 2;
+}
+#gradebook_table_header .student-search {
+    width: 100%;
+}
+#gradebook_table_header input[type="search"] {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #626262;
+    color: #7e7e7e;
+    padding: 3px 15px;
+}
+#gradebook_table_header .gradebook-table-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #3f3f3f;
+    font-weight: 600;
 }
 .x-axis li {
     display: flex;
@@ -1031,8 +1070,10 @@ body .disc-list {
 .last-student-visit-banner {
     font-size: 16px;
     padding: 15px;
-    background: #f1f1f1;
-    margin-bottom: 10px;
+    background: #30ccf4;
+    margin-bottom: 20px;
+    color: #fff;
+    font-weight: 600;
 }
 
 .emails-list-button {
