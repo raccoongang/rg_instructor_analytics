@@ -169,7 +169,8 @@
     margin: 40px auto 0 !important;
     width: 100%;
 }
-#section-enrollment-stats h1 {
+#section-enrollment-stats h1,
+#section-activity h1 {
     font-weight: 600;
     font-size: 28px;
     margin-bottom: 23px;
@@ -281,7 +282,7 @@
 .analytics-legend-item,
 .activity-legend-item {
     position: relative;
-    padding-left: 40px;
+    padding-left: 30px;
 }
 .analytics-legend-item:before {
     content: '';
@@ -537,7 +538,9 @@
 .analytics-legend-holder__square .analytics-legend-item,
 .activity-legend-holder__square .activity-legend-item {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 15px;
 }
 .analytics-legend-holder__square .analytics-legend-item:nth-child(1):before {
     background: #0075b4;
