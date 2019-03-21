@@ -74,6 +74,7 @@ function CohortTab(button, content) {
       $('.emails-list-button').on('click', function (ev) {
         ev.preventDefault();
         $(ev.currentTarget).parents('.block-emails-list').find('.cohort-emails-list').toggleClass('hidden');
+        $(ev.currentTarget).parents('.block-emails-list').next('.emails-list-holder').toggleClass('hidden');
       });
     }
 
@@ -110,13 +111,13 @@ function CohortTab(button, content) {
                                 '<%if (studentsEmails.length != 0) {%>' +
                                 '<div class="block-emails-list">' +
                                     '<span class="cohort-emails-list">' +
-                                      '<button class="emails-list-button">Show emails</button>' +
+                                      '<a class="emails-list-button">Show emails</a>' +
                                     '</span>' +
                                     '<span class="cohort-emails-list hidden">' +
-                                      '<button class="emails-list-button">Hide emails</button>' +
-                                      '<div class="emails-list-holder"><%= studentsEmails.join(", ") %></div>' +
+                                      '<a class="emails-list-button">Hide emails</a>' +
                                     '</span>' +
                                 '</div>' +
+                                '<div class="emails-list-holder hidden"><%= studentsEmails.join(", ") %></div>' +
                                 '<%}%>' +
                             '</div>' +
                         '</li>'
