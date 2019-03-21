@@ -181,9 +181,9 @@
     width: 100%;
 }
 .idash-section > h1 {
-    font-weight: 600;
-    font-size: 28px;
-    margin-bottom: 23px;
+    font-weight: 600 !important;
+    font-size: 28px !important;
+    margin-bottom: 23px !important;
 }
 /*#section-enrollment-stats .js-plotly-plot {
     transform: translate(-7%, -12%);
@@ -221,6 +221,12 @@
     padding: 0 30px 0 15px !important;
     width: auto !important
     position: relative;
+    border-radius: 0 !important;
+    -webkit-appearance: none !important;
+    -webkit-border-radius: 0px !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 .enroll-buttons-holder .custom-select:before {
     content: '\f0d7';
@@ -327,6 +333,7 @@
     font-weight: 600;
     color: #202020;
     margin-bottom: 16px;
+    text-transform: none !important;
 }
 .analytics-title-text,
 .problem p {
@@ -950,12 +957,11 @@ body .disc-list {
     width: 50%;
     margin-right: 15px;
 }
-#section-cohort .js-plotly-plot {
-    transform: translate(-7%, 0);
-
-}
 .problem-action-buttons-wrapper {
     display: none;
+}
+.instructor-nav {
+    border-top: none !important;
 }
 .instructor-nav li button {
     color: #568ecc;
@@ -965,6 +971,8 @@ body .disc-list {
 }
 .instructor-nav li button:hover {
     color: #000;
+    background: none !important;
+    text-decoration: none !important;
 }
 .instructor-nav li button.active-section {
     background: #f1f1f1 !important;
@@ -1068,12 +1076,12 @@ body .disc-list {
 }
 
 .last-student-visit-banner {
-    font-size: 16px;
-    padding: 15px;
+    font-size: 16px !important;
+    padding: 15px !important;
     background: #30ccf4;
     margin-bottom: 20px;
     color: #fff;
-    font-weight: 600;
+    font-weight: 600 !important;
 }
 
 .emails-list-button {
@@ -1139,9 +1147,13 @@ body .disc-list {
 #cohort-send-email-btn {
     margin: 15px 0 !important;
 }
-
-
-
+#cohort-check-list li {
+    margin-bottom: 10px;
+}
+#cohort-check-list li .block-emails-list {
+    display: inline-block;
+    vertical-align: top;
+}
 #cohort-check-list li input[type="checkbox"] {
     display: none;
 }
@@ -1151,7 +1163,6 @@ body .disc-list {
     padding-left: 33px;
     margin-left: 0 !important;
 }
-
 #cohort-check-list li input[type="checkbox"] + label:before {
     content: "";
     width: 20px;
