@@ -23,6 +23,16 @@ from rg_instructor_analytics.utils.decorators import instructor_access_required
 QUESTION_SELECT_TYPE = 'select'
 QUESTION_MULTI_SELECT_TYPE = 'multySelect'
 
+try:
+    from openedx.core.release import RELEASE_LINE
+except ImportError:
+    RELEASE_LINE = 'ficus'
+
+if RELEASE_LINE == 'hawthorn':
+    from rg_instructor_analytics.utils import hawthorn_specific as specific
+else:
+    from rg_instructor_analytics.utils import ginkgo_ficus_specific as specific
+
 
 class ProblemHomeWorkStatisticView(View):
     """
@@ -109,14 +119,18 @@ class ProblemHomeWorkStatisticView(View):
 
                 for child in chain.from_iterable(unit.get_children() for unit in subsection.get_children()):
                     if child.location.category == 'problem':
-                        problem_id = child.location.to_deprecated_string()
+                        problem_id = specific.get_problem_id(child)
+                        # problem_id = child.location # hawthorn
+                        # problem_id = child.location.to_deprecated_string() # ginkgo
                         if problem_id in academic_performance:
                             current_performance = academic_performance[problem_id]
                             stats['correct_answer'][-1] += current_performance['grade_avg'] or 0
                             stats['attempts'][-1] += current_performance['attempts_avg']
                             problems_in_hw += 1
 
-                        stats['problems'][-1].append(problem_id)
+                        stats['problems'][-1].append(specific.get_problem_str(problem_id))
+                        # stats['problems'][-1].append(problem_id.to_deprecated_string()) # hawthorn
+                        # stats['problems'][-1].append(problem_id) # ginkgo
 
                 if problems_in_hw > 0:
                     stats['correct_answer'][-1] /= problems_in_hw

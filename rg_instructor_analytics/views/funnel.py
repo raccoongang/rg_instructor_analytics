@@ -19,6 +19,16 @@ from rg_instructor_analytics import tasks
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseEnrollment
 
+try:
+    from openedx.core.release import RELEASE_LINE
+except ImportError:
+    RELEASE_LINE = 'ficus'
+
+if RELEASE_LINE == 'hawthorn':
+    from rg_instructor_analytics.utils import hawthorn_specific as specific
+else:
+    from rg_instructor_analytics.utils import ginkgo_ficus_specific as specific
+
 
 IGNORED_ENROLLMENT_MODES = []
 
@@ -93,7 +103,7 @@ class GradeFunnelView(View):
         modified_filter = RawSQL(
             "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
-            "AND t2.module_type = %s)", (course_key, block_type))
+            "AND t2.module_type = %s)", (unicode(course_key), block_type))
 
         date_range_filter = Q(modified__range=(
             from_date, to_date + timedelta(days=1))
@@ -138,11 +148,16 @@ class GradeFunnelView(View):
         result = {}
 
         for info in dict_info:
+            # if info['module_state_key'] not in result:  # ginkgo
+            # if info['module_state_key'].to_deprecated_string() not in result:  # hawthorn
+            if specific.get_problem_str(info['module_state_key']) not in result:
+                # result[info['module_state_key']] = []  # ginkgo
+                # result[info['module_state_key'].to_deprecated_string()] = []  # hawthorn
+                result[specific.get_problem_str(info['module_state_key'])] = []
 
-            if info['module_state_key'] not in result:
-                result[info['module_state_key']] = []
-
-            result[info['module_state_key']].append({
+            # result[info['module_state_key']].append({  # ginkgo
+            # result[info['module_state_key'].to_deprecated_string()].append({  # hawthorn
+            result[specific.get_problem_str(info['module_state_key'])].append({
                 'count': info['count'],
                 'offset': json.loads(info['state'])['position'],
                 'student_email': info['student__email']
