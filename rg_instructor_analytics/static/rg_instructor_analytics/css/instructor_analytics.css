@@ -334,6 +334,7 @@
     color: #202020;
     margin-bottom: 16px;
     text-transform: none !important;
+    letter-spacing: normal !important;
 }
 .analytics-title-text,
 .problem p {
@@ -1085,8 +1086,11 @@ body .disc-list {
 }
 
 .emails-list-button {
-    width: 132px;
-    padding: 8px 0 6px !important;
+    color: #568ecc !important;
+    cursor: pointer;
+    font-size: 14px !important;
+    margin: 0;
+    padding: 0;
 }
 
 .funnel-item .emails-list {
@@ -1138,14 +1142,21 @@ body .disc-list {
     overflow: auto;
     border: 1px solid #ccc;
     padding: 10px;
-}
-
-.emails-list-button {
-    margin: 15px 0 !important;
+    margin-top: 10px;
 }
 
 #cohort-send-email-btn {
     margin: 15px 0 !important;
+    border: 2px solid #568ecc;
+    color: #568ecc;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 8px 33px;
+}
+#cohort-send-email-btn:hover {
+    border: 2px solid #568ecc !important;
+    color: #fff;
 }
 #cohort-check-list li {
     margin-bottom: 10px;
@@ -1154,42 +1165,42 @@ body .disc-list {
     display: inline-block;
     vertical-align: top;
 }
+
 #cohort-check-list li input[type="checkbox"] {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
 }
 
 #cohort-check-list li input[type="checkbox"] + label {
     position: relative;
-    padding-left: 33px;
+    padding-left: 26px;
     margin-left: 0 !important;
+    font-size: 14px;
+    color: #3f3f3f;
 }
 #cohort-check-list li input[type="checkbox"] + label:before {
     content: "";
-    width: 20px;
-    height: 20px;
-    border: 1px solid #0075b4;
+    width: 19px;
+    height: 16px;
+    background: url(/static/rg_instructor_analytics/images/check_box.svg) no-repeat 50% 50%;
+    background-size: cover;
     position: absolute;
     left: 0;
     top: 50%;
-    margin-top: -10px;
+    transform: translateY(-50%);
+    margin-top: 1px;
 }
 
 #cohort-check-list li input[type="checkbox"]:disabled + label:before {
     opacity: 0.2;
 }
 
-#cohort-check-list li input[type="checkbox"]:checked + label:after {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background: #0075b4;
-    position: absolute;
-    left: 6px;
-    top: 9px;
-}
-
-.block-emails-list {
-    margin-left: 33px;
+#cohort-check-list li input[type="checkbox"]:checked + label:before {
+    background: url(/static/rg_instructor_analytics/images/check_box_full.svg) no-repeat 50% 50%;
+    background-size: cover;
 }
 
 #section-problem .block-emails-list {
