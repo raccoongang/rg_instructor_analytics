@@ -120,8 +120,6 @@ class ProblemHomeWorkStatisticView(View):
                 for child in chain.from_iterable(unit.get_children() for unit in subsection.get_children()):
                     if child.location.category == 'problem':
                         problem_id = specific.get_problem_id(child)
-                        # problem_id = child.location # hawthorn
-                        # problem_id = child.location.to_deprecated_string() # ginkgo
                         if problem_id in academic_performance:
                             current_performance = academic_performance[problem_id]
                             stats['correct_answer'][-1] += current_performance['grade_avg'] or 0
@@ -129,8 +127,6 @@ class ProblemHomeWorkStatisticView(View):
                             problems_in_hw += 1
 
                         stats['problems'][-1].append(specific.get_problem_str(problem_id))
-                        # stats['problems'][-1].append(problem_id.to_deprecated_string()) # hawthorn
-                        # stats['problems'][-1].append(problem_id) # ginkgo
 
                 if problems_in_hw > 0:
                     stats['correct_answer'][-1] /= problems_in_hw

@@ -148,15 +148,9 @@ class GradeFunnelView(View):
         result = {}
 
         for info in dict_info:
-            # if info['module_state_key'] not in result:  # ginkgo
-            # if info['module_state_key'].to_deprecated_string() not in result:  # hawthorn
             if specific.get_problem_str(info['module_state_key']) not in result:
-                # result[info['module_state_key']] = []  # ginkgo
-                # result[info['module_state_key'].to_deprecated_string()] = []  # hawthorn
                 result[specific.get_problem_str(info['module_state_key'])] = []
 
-            # result[info['module_state_key']].append({  # ginkgo
-            # result[info['module_state_key'].to_deprecated_string()].append({  # hawthorn
             result[specific.get_problem_str(info['module_state_key'])].append({
                 'count': info['count'],
                 'offset': json.loads(info['state'])['position'],

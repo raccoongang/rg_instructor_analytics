@@ -95,10 +95,6 @@ def get_items_for_grade_update():
         )
         # Remove records for students who never enrolled
         for item in items_for_update:
-            # try:
-            #     course_key = CourseKey.from_string(item['course_id'])
-            # except InvalidKeyError:
-            #     continue
             try:
                 course_key = specific.get_course_key(item['course_id'])
             except InvalidKeyError:
