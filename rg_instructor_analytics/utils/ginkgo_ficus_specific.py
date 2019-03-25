@@ -1,5 +1,6 @@
 """
 Helper file for inter-version compatibility.
+
 This file and its sibling hawthorn_specific.py
 serve for compatibility of rg_instructor_analytics app with both
 ginkgo and hawthorn releases.
@@ -18,6 +19,7 @@ from opaque_keys.edx.keys import CourseKey
 def get_problem_id(xblock):
     """
     Convert xblock's location to string.
+
     :param xblock: problem
     :return: problem Locator object
     """
@@ -27,6 +29,7 @@ def get_problem_id(xblock):
 def get_problem_str(problem_id):
     """
     Return problem location string unchanged.
+
     :param problem_id: problem location string
     :return: problem location string
     """
@@ -36,6 +39,7 @@ def get_problem_str(problem_id):
 def get_course_key(course_id):
     """
     Convert string to CourseKey object.
+
     :param course_id: string
     :return: CourseKey object
     """

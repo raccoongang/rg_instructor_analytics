@@ -1,5 +1,6 @@
 """
 Helper file for inter-version compatibility.
+
 This file and its sibling ginkgo_ficus_specific.py
 serve for compatibility of rg_instructor_analytics app with both
 ginkgo and hawthorn releases.
@@ -16,6 +17,7 @@ The major changes between ginkgo and hawthorn releases, which affect the app are
 def get_problem_id(xblock):
     """
     Get Locator object for xblock.
+
     :param xblock: problem
     :return: Locator
     """
@@ -25,6 +27,7 @@ def get_problem_id(xblock):
 def get_problem_str(problem_id):
     """
     Get string form problem's Location.
+
     :param problem_id: Locator
     :return: string
     """
@@ -34,6 +37,7 @@ def get_problem_str(problem_id):
 def get_course_key(course_id):
     """
     Return CourseKey object without changes.
+
     :param course_id: CourseKey object
     :return: CourseKey object
     """
