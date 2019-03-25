@@ -225,7 +225,7 @@ class ProblemsStatisticView(View):
 
         problems_stat = [None] * len(problems_ids)
         for s in stats:
-            problems_stat[problems_ids.index(s['module_state_key'])] = s
+            problems_stat[problems_ids.index(specific.get_problem_str(s['module_state_key']))] = s
 
         def record(stat_item):
             if not (stat_item and stat_item['attempts'] and stat_item['max_grades']):
