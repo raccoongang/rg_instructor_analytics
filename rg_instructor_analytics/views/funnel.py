@@ -101,7 +101,7 @@ class GradeFunnelView(View):
         modified_filter = RawSQL(
             "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
-            "AND t2.module_type = %s)", (unicode(course_key), block_type))
+            "AND t2.module_type = %s)", (course_key, block_type))
 
         date_range_filter = Q(
             modified__range=(from_date, to_date + timedelta(days=1))
