@@ -20,6 +20,16 @@ from courseware.models import StudentModule
 from courseware.module_render import xblock_view
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 
+try:
+    from openedx.core.release import RELEASE_LINE
+except ImportError:
+    RELEASE_LINE = 'ficus'
+
+if RELEASE_LINE == 'hawthorn':
+    from rg_instructor_analytics.utils import hawthorn_specific as specific
+else:
+    from rg_instructor_analytics.utils import ginkgo_ficus_specific as specific
+
 QUESTION_SELECT_TYPE = 'select'
 QUESTION_MULTI_SELECT_TYPE = 'multySelect'
 
@@ -109,14 +119,14 @@ class ProblemHomeWorkStatisticView(View):
 
                 for child in chain.from_iterable(unit.get_children() for unit in subsection.get_children()):
                     if child.location.category == 'problem':
-                        problem_id = child.location.to_deprecated_string()
+                        problem_id = specific.get_problem_id(child)
                         if problem_id in academic_performance:
                             current_performance = academic_performance[problem_id]
                             stats['correct_answer'][-1] += current_performance['grade_avg'] or 0
                             stats['attempts'][-1] += current_performance['attempts_avg']
                             problems_in_hw += 1
 
-                        stats['problems'][-1].append(problem_id)
+                        stats['problems'][-1].append(specific.get_problem_str(problem_id))
 
                 if problems_in_hw > 0:
                     stats['correct_answer'][-1] /= problems_in_hw
@@ -208,7 +218,7 @@ class ProblemsStatisticView(View):
 
         problems_stat = [None] * len(problems_ids)
         for s in stats:
-            problems_stat[problems_ids.index(s['module_state_key'])] = s
+            problems_stat[problems_ids.index(specific.get_problem_str(s['module_state_key']))] = s
 
         def record(stat_item):
             if not (stat_item and stat_item['attempts'] and stat_item['max_grades']):
