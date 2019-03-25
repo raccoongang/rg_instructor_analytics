@@ -40,6 +40,17 @@ except ImportError:
         from lms.djangoapps.grades.course_grade_factory import CourseGradeFactory
         HAWTHORN = True
 
+try:
+    from openedx.core.release import RELEASE_LINE
+except ImportError:
+    RELEASE_LINE = 'ficus'
+
+if RELEASE_LINE == 'hawthorn':
+    from rg_instructor_analytics.utils import hawthorn_specific as specific
+else:
+    from rg_instructor_analytics.utils import ginkgo_ficus_specific as specific
+
+
 log = logging.getLogger(__name__)
 DEFAULT_DATE_TIME = datetime(2000, 1, 1, 0, 0)
 
@@ -77,7 +88,7 @@ def get_items_for_grade_update():
         # Remove records for students who never enrolled
         for item in items_for_update:
             try:
-                course_key = CourseKey.from_string(item['course_id'])
+                course_key = specific.get_course_key(item['course_id'])
             except InvalidKeyError:
                 continue
             enrolled_by_course = CourseEnrollment.objects.filter(
