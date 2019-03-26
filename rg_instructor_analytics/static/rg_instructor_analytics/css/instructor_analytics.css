@@ -85,47 +85,59 @@
     max-width: 880px;
     overflow: hidden;
     padding-top: 40px;
+    margin-bottom: 40px;
+}
+.gradebook-video-plot,
+.gradebook-discussion-plot,
+.gradebook-student-step-plot {
+    margin-bottom: 30px;
 }
 .gradebook-table-row {
     display: flex;
 }
-.gradebook-table-row.active .gradebook-table-cell {
-    background: rgb(49,204,245);
-    
+.gradebook-table-row.active .gradebook-table-cell,
+.gradebook-table-row.active .gradebook-table-cell a {
+    background: #30ccf4;
+    color: #fff;
 }
 .gradebook-table-cell {
     box-sizing: border-box;
-    padding: 7px 5px;
+    padding: 5px;
     flex: 1 0 48px;
     background: #f1f1f1;
     margin: 0 1px 1px;
     text-align: center;
     text-transform: capitalize;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.gradebook-table-cell:first-child {
+    justify-content: flex-start;
 }
 .gradebook-table-cell a {
     color: rgb(34,34,34);
     cursor: pointer;
     font-size: 12px;
-    padding: 7px 5px;
-    display: flex;
-    align-items: center;
-}
-.student-search {
-    padding: 7px 5px;
 }
 .gradebook-table-cell:first-child {
     flex: 0 0 250px;
     text-align: left;
-    padding: 0;
+    padding: 7px 15px;
     position: relative;
+    left: auto !important;
 }
 #gradebook_table_header .gradebook-table-cell {
     background: rgb(210,210,210);
 }
+#gradebook_table_header .gradebook-table-cell:first-child {
+    background: none !important;
+    padding: 0 5px 0 0 !important;
+}
 #gradebook_table_body {
     max-height: 200px;
-    overflow-y: auto;
-    padding-top: 40px;
+    overflow: auto;
+    padding-top: 28px;
 }
 .funnel-item.active > .content {
     display: block;
@@ -138,19 +150,19 @@
     padding: 0;
 }
 .idash-section button:not(.btn-link) {
-        background: none;
-        border: 1px solid #0075b4;
-        color: #0075b4;
-        padding: 5px 10px;
-        transition: 0.2s;
-        box-shadow: none;
-        text-shadow: none;
-        border-radius: 0; 
+    background: none;
+    border: 2px solid #0075b4;
+    color: #0075b4;
+    padding: 5px 10px;
+    transition: 0.2s;
+    box-shadow: none;
+    text-shadow: none;
+    border-radius: 0;
 }
 .idash-section button:hover,
 .idash-section button:focus {
     background: #0075b4 !important;
-    color: #fff;
+    color: #fff !important;
     transition: 0.2s;
     box-shadow: none !important;
     text-shadow: none !important;
@@ -165,25 +177,30 @@
     max-width: 100%;
 }
 .idash-section {
-    max-width: 830px;
-    margin: 0 auto;
+    /*max-width: 830px;*/
+    margin: 40px auto 0 !important;
     width: 100%;
 }
-#section-enrollment-stats .js-plotly-plot {
+.idash-section > h1 {
+    font-weight: 600 !important;
+    font-size: 28px !important;
+    margin-bottom: 23px !important;
+}
+/*#section-enrollment-stats .js-plotly-plot {
     transform: translate(-7%, -12%);
-}
+}*/
 .js-plotly-plot {
-    transform: translate(-7%, 0);
-    width: 900px;
+    /*transform: translate(-7%, 0);
+    width: 900px;*/
+    width: 100%;
 }
-.filter-btn.active, .filter-btn.active:hover, .filter-btn.active:focus,
-.filter-btn.active:before {
-    color: #fff !important;
-    background: #0075b4 !important;
+.filter-btn, .filter-btn.active, .filter-btn.active:hover, .filter-btn.active:focus {
+    color: #568ecc !important;
+    background: none !important;
     box-shadow: none !important;
     text-shadow: none !important;
+    border: 2px solid #568ecc !important;
 }
-
 .filter-btn-holder {
     float: left;
     display:inline-block;
@@ -191,23 +208,36 @@
 }
 .custom-select {
     float: left;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    padding-left: 7px;
-    padding-right: 7px;
-    display:inline-block;
     border-radius: 0px;
-    background-color: #0075b4;
+    position: relative;
 }
-.filter-dropdown {
-    border:0px;
-    background-color: #0075b4;
-    color: #fff;
+.enroll-buttons-holder .custom-select .filter-dropdown {
+    height: 34px !important;
+    border: 2px solid #568ecc !important;
+    color: #568ecc !important;
     font-size: 14px;
+    font-weight: 600;
     text-transform: uppercase;
-    font-weight: bold;
+    background: none !important;
+    padding: 0 30px 0 15px !important;
+    width: auto !important
+    position: relative;
+    border-radius: 0 !important;
+    -webkit-appearance: none !important;
+    -webkit-border-radius: 0px !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
-
+.enroll-buttons-holder .custom-select:before {
+    content: '\f0d7';
+    font-family: 'FontAwesome';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translate(0,-50%);
+    color: #568ecc;
+}
 .date-btn {
     padding-right: 20px !important;
     position: relative;
@@ -216,31 +246,64 @@
     content: '\f0d7';
     font-family: 'FontAwesome';
     position: absolute;
-    right: 6px;
+    right: 12px;
     top: 50%;
     transform: translate(0,-50%);
+}
+.instructor-dashboard-wrapper-2 .idash-section .filter-btn {
+    padding: 5px 30px 5px 15px !important;
+    height: 34px;
+    font-weight: 600;
+    font-size: 14px;
+}
+.instructor-dashboard-wrapper-2 .idash-section .filter-btn:hover {
+    background: #568ecc !important;
+    color: #fff !important;
 }
 .instructor-dashboard-wrapper-2 .idash-section button {
     font-size: 14px;
     text-transform: uppercase;
     padding: 8px 14px;
+    margin: 0 !important;
 }
 .enroll-buttons-holder {
     display: flex;
     margin-top: 16px;
 }
+.enroll-buttons-holder .js-datepicker-dropdown label {
+    line-height: 35px;
+}
+.enroll-buttons-holder .js-datepicker-dropdown input {
+    margin-right: 20px;
+}
+.enroll-buttons-holder .js-datepicker-dropdown button {
+    border: 2px solid #568ecc !important;
+}
+.enroll-buttons-holder .js-datepicker-dropdown button:hover {
+    background: #568ecc !important;
+    color: #fff !important;
+}
 .analytics-legend-holder {
-    max-width: 768px;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     position: relative;
     z-index: 1;
     margin-top: 40px;
 }
+.analytics-legend-item {
+    font-weight: 600;
+    color: #070707;
+    font-size: 13px;
+    margin: 0 30px;
+}
 .analytics-legend-item,
 .activity-legend-item {
     position: relative;
-    padding-left: 40px;
+    padding-left: 35px;
+}
+.analytics-legend-holder__square .analytics-legend-item,
+.analytics-legend-holder__square .activity-legend-item {
+    padding-left: 25px;
 }
 .analytics-legend-item:before {
     content: '';
@@ -268,8 +331,11 @@
 .analytics-title,
 .hd.hd-3.problem-header {
     font-size: 18px;
-    color: #020202;
+    font-weight: 600;
+    color: #202020;
     margin-bottom: 16px;
+    text-transform: none !important;
+    letter-spacing: normal !important;
 }
 .analytics-title-text,
 .problem p {
@@ -495,7 +561,9 @@
 .analytics-legend-holder__square .analytics-legend-item,
 .activity-legend-holder__square .activity-legend-item {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 0 15px;
 }
 .analytics-legend-holder__square .analytics-legend-item:nth-child(1):before {
     background: #0075b4;
@@ -616,7 +684,7 @@
 .plot-bar-vert .plot-click-me,
 .plot-bar-vertical .plot-click-me {
     display: none;
-    border: 1px #568ecc solid;
+    border: 2px #568ecc solid;
     padding: 3px 5px;
     color: #568ecc;
     position: absolute;
@@ -631,6 +699,8 @@
     transform: translate(-50%,0);
     align-items: center;
     justify-content: center;
+    font-weight: 600;
+
 }
 .plot-bar-vert .plot-click-me:hover,
 .plot-bar-vertical .plot-click-me:hover {
@@ -680,6 +750,10 @@
     display: flex;
     flex-direction: column-reverse;
     justify-content: space-between;
+}
+#problem-homeworks-stats-plot .y-axis-l li,
+#problem-homeworks-stats-plot .y-axis-r li {
+    font-size: 12px !important;
 }
 .y-axis-l li:before {
     content: '';
@@ -811,6 +885,25 @@
     width: 100%;
     z-index: 2;
 }
+#gradebook_table_header .student-search {
+    width: 100%;
+}
+#gradebook_table_header input[type="search"] {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #626262;
+    color: #7e7e7e;
+    padding: 3px 15px;
+}
+#gradebook_table_header .gradebook-table-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #3f3f3f;
+    font-weight: 600;
+}
 .x-axis li {
     display: flex;
     justify-content: center;
@@ -866,12 +959,26 @@ body .disc-list {
     width: 50%;
     margin-right: 15px;
 }
-#section-cohort .js-plotly-plot {
-    transform: translate(-7%, 0);
-
-}
 .problem-action-buttons-wrapper {
     display: none;
+}
+.instructor-nav {
+    border-top: none !important;
+}
+.instructor-nav li button {
+    color: #568ecc;
+    font-size: 15px;
+    border-bottom: none !important;
+    padding: 10px 15px !important;
+}
+.instructor-nav li button:hover {
+    color: #000;
+    background: none !important;
+    text-decoration: none !important;
+}
+.instructor-nav li button.active-section {
+    background: #f1f1f1 !important;
+    border-bottom-color: #f1f1f1 !important;
 }
 .instructor-nav li:last-child {
     float: right;
@@ -971,15 +1078,20 @@ body .disc-list {
 }
 
 .last-student-visit-banner {
-    font-size: 16px;
-    padding: 15px;
-    background: #f1f1f1;
-    margin-bottom: 10px;
+    font-size: 16px !important;
+    padding: 15px !important;
+    background: #30ccf4;
+    margin-bottom: 20px;
+    color: #fff;
+    font-weight: 600 !important;
 }
 
 .emails-list-button {
-    width: 132px;
-    padding: 8px 0 6px !important;
+    color: #568ecc !important;
+    cursor: pointer;
+    font-size: 14px !important;
+    margin: 0;
+    padding: 0;
 }
 
 .funnel-item .emails-list {
@@ -1031,55 +1143,69 @@ body .disc-list {
     overflow: auto;
     border: 1px solid #ccc;
     padding: 10px;
-}
-
-.emails-list-button {
-    margin: 15px 0 !important;
+    margin-top: 10px;
 }
 
 #cohort-send-email-btn {
     margin: 15px 0 !important;
+    border: 2px solid #568ecc;
+    color: #568ecc;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 8px 33px;
+}
+#cohort-send-email-btn:hover {
+    border: 2px solid #568ecc !important;
+    color: #fff;
+}
+#cohort-check-list li {
+    margin-bottom: 10px;
+}
+#cohort-check-list li .block-emails-list {
+    display: inline-block;
+    vertical-align: top;
 }
 
-
-
 #cohort-check-list li input[type="checkbox"] {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
 }
 
 #cohort-check-list li input[type="checkbox"] + label {
     position: relative;
-    padding-left: 33px;
+    padding-left: 26px;
     margin-left: 0 !important;
+    font-size: 14px;
+    color: #3f3f3f;
+    line-height: 18px;
+    display: inline-block;
+    vertical-align: top;
 }
 
 #cohort-check-list li input[type="checkbox"] + label:before {
     content: "";
-    width: 20px;
-    height: 20px;
-    border: 1px solid #0075b4;
+    width: 19px;
+    height: 16px;
+    background: url(/static/rg_instructor_analytics/images/check_box.svg) no-repeat 50% 50%;
+    background-size: cover;
     position: absolute;
     left: 0;
     top: 50%;
-    margin-top: -10px;
+    transform: translateY(-50%);
+    margin-top: 1px;
 }
 
 #cohort-check-list li input[type="checkbox"]:disabled + label:before {
     opacity: 0.2;
 }
 
-#cohort-check-list li input[type="checkbox"]:checked + label:after {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background: #0075b4;
-    position: absolute;
-    left: 6px;
-    top: 9px;
-}
-
-.block-emails-list {
-    margin-left: 33px;
+#cohort-check-list li input[type="checkbox"]:checked + label:before {
+    background: url(/static/rg_instructor_analytics/images/check_box_full.svg) no-repeat 50% 50%;
+    background-size: cover;
 }
 
 #section-problem .block-emails-list {
@@ -1110,4 +1236,30 @@ body .disc-list {
 
 .content-wrapper {
     padding-bottom: 0;
+}
+
+#funnel-form-email .richText {
+    margin-bottom: 20px;
+}
+
+.instructor-dashboard-wrapper-2 #instructor-analytics-dashboard-content .instructor-nav li select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    box-shadow: none;
+    border: 1px #c6c6c6 solid !important;
+    height: 32px;
+    font-size: 15px;
+    box-sizing: border-box;
+    padding: 0 30px 0 10px;
+    color: #222;
+    background: #fff url(../images/select-arrow.png) no-repeat 100% 50%;
+    background-size: 27px 7px;
+}
+
+@supports (-ms-ime-align:auto) {
+    .instructor-nav li select {
+        background: #fff url(../images/down-up-arrow.svg) no-repeat 98% 50%;
+        background-size: 10px 7px;
+    }
 }

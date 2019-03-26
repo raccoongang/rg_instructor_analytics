@@ -40,8 +40,8 @@ function EnrollmentTab(button, content) {
         side: 'right',
         overlaying: 'y2',
         title: django.gettext('Total'),
-        titlefont: {color: '#70A3FF'},
-        tickfont: {color: '#70A3FF'},
+        titlefont: {color: '#568ecc'},
+        tickfont: {color: '#568ecc'},
       };
       if (response.customize_y1ticks) {
         y1_template["nticks"] = response.nticks_y1+1
@@ -61,7 +61,7 @@ function EnrollmentTab(button, content) {
         mode: 'lines',
         name: django.gettext('Total'),
         line: {
-          color: '#70A3FF',
+          color: '#568ecc',
           width: 4,
           shape: 'hv',
         },
