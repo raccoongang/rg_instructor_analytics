@@ -19,6 +19,16 @@ from rg_instructor_analytics import tasks
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseEnrollment
 
+try:
+    from openedx.core.release import RELEASE_LINE
+except ImportError:
+    RELEASE_LINE = 'ficus'
+
+if RELEASE_LINE == 'hawthorn':
+    from rg_instructor_analytics.utils import hawthorn_specific as specific
+else:
+    from rg_instructor_analytics.utils import ginkgo_ficus_specific as specific
+
 
 IGNORED_ENROLLMENT_MODES = []
 
@@ -138,11 +148,10 @@ class GradeFunnelView(View):
         result = {}
 
         for info in dict_info:
+            if specific.get_problem_str(info['module_state_key']) not in result:
+                result[specific.get_problem_str(info['module_state_key'])] = []
 
-            if info['module_state_key'] not in result:
-                result[info['module_state_key']] = []
-
-            result[info['module_state_key']].append({
+            result[specific.get_problem_str(info['module_state_key'])].append({
                 'count': info['count'],
                 'offset': json.loads(info['state'])['position'],
                 'student_email': info['student__email']

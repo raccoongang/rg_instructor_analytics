@@ -52,6 +52,10 @@ class ActivityView(View):
             video_dates.insert(0, from_date)
             video_activities.insert(0, 0)
 
+        if to_date - timedelta(1) not in video_dates:
+            video_dates.append(to_date - timedelta(1))
+            video_activities.append(0)
+
         if to_date not in video_dates:
             video_dates.append(to_date)
             video_activities.append(0)
