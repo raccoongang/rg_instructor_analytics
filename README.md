@@ -58,17 +58,6 @@ url(
         'month_of_year': '*',
     }
     ```
-    * for json config:
-
-    ```json
-    "RG_ANALYTICS_GRADE_STAT_UPDATE": {
-        "minute": "0",
-        "hour": "*/6",
-        "day_of_week": "*",
-        "day_of_month": "*",
-        "month_of_year": "*"
-    }
-    ```
     * or provide settings in `FEATURES`
     ```json
     "FEATURES": {
