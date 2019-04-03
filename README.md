@@ -69,6 +69,18 @@ url(
         "month_of_year": "*"
     }
     ```
+    * or provide settings in `FEATURES`
+    ```json
+    "FEATURES": {
+        ...
+        "RG_ANALYTICS_GRADE_CRON_MINUTE": "0",
+        "RG_ANALYTICS_GRADE_CRON_HOUR": "*/6",
+        "RG_ANALYTICS_GRADE_CRON_DOM": "*",
+        "RG_ANALYTICS_GRADE_CRON_DOW": "*",
+        "RG_ANALYTICS_GRADE_CRON_MONTH": "*",
+        ...
+    }
+    ```
 * Run in the console:
 ```bash
 sudo -sHu edxapp
