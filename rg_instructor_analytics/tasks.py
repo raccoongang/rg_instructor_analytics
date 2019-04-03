@@ -139,8 +139,11 @@ def get_grade_summary(user_id, course):
 cron_grade_settings = getattr(
     settings, 'RG_ANALYTICS_GRADE_STAT_UPDATE',
     {
-        'minute': '0',
-        'hour': '*/6',
+        'minute': str(settings.FEATURES.get('RG_ANALYTICS_GRADE_CRON_MINUTE', '0')),
+        'hour': str(settings.FEATURES.get('RG_ANALYTICS_GRADE_CRON_HOUR', '*/6')),
+        'day_of_month': str(settings.FEATURES.get('RG_ANALYTICS_GRADE_CRON_DOM', '*')),
+        'day_of_week': str(settings.FEATURES.get('RG_ANALYTICS_GRADE_CRON_DOW', '*')),
+        'month_of_year': str(settings.FEATURES.get('RG_ANALYTICS_GRADE_CRON_MONTH', '*')),
     }
 )
 
