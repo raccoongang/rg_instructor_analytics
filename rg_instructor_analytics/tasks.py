@@ -3,6 +3,7 @@ Module for celery tasks.
 """
 import json
 import logging
+from builtins import AttributeError
 from collections import OrderedDict
 from datetime import datetime
 
@@ -164,7 +165,10 @@ def grade_collector_stat():
 
         with modulestore().bulk_operations(course_key):
             for user in users:
-                grades = get_grade_summary(user, course)
+                try:
+                    grades = get_grade_summary(user, course)
+                except AttributeError:
+                    grades = None
                 if not grades:
                     continue
                 exam_info = OrderedDict()
