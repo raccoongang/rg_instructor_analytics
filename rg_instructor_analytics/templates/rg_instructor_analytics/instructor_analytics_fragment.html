@@ -1,6 +1,9 @@
 ## mako
 <%! from django.utils.translation import ugettext as _ %>
 <%namespace name='static' file='/static_content.html'/>
+<%page expression_filter="h"/>
+
+
 <%inherit file="/main.html" />
 <%block name="bodyclass">view-instructor_analytics is-in-course course</%block>
 <%block name="pagetitle">${_("Instructor Analytics")}</%block>
@@ -10,7 +13,8 @@
     ## TODO: pin vendor libs!
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="${static.url('rg_instructor_analytics/css/instructor_analytics.css')}">
 
     <!-- froala. -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
@@ -20,7 +24,6 @@
 </%block>
 
 <%include file="/courseware/course_navigation.html" args="active_page='instructor_analytics'" />
-
 
 <div class="container">
     <div class="instructor-dashboard-wrapper-2">
@@ -121,3 +124,16 @@
         </main>
     </div>
 </div>
+
+<%block name="js_extra">
+<script src="${static.url('rg_instructor_analytics/js/utils.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/tab-holder.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/enrollment-tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/problem-tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/funnel-tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/gradebook-tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/clusters-tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/suggestions-tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/base.js')}"></script>
+</%block>

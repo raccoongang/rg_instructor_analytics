@@ -7,10 +7,12 @@ from django.utils.translation import ugettext_noop
 
 from courseware.access import has_access
 from courseware.tabs import CourseTab
+from courseware.tabs import EnrolledTab
+from xmodule.tabs import TabFragmentViewMixin
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 
-class InstructorAnalyticsDashboardTab(CourseTab):
+class InstructorAnalyticsDashboardTab(TabFragmentViewMixin, CourseTab):
     """
     Provides information for tab.
     """
@@ -42,6 +44,7 @@ class InstructorAnalyticsDashboardTab(CourseTab):
         Counstruct tab.
         """
         super(InstructorAnalyticsDashboardTab, self).__init__(tab_dict)
+
         self._fragment_view = None
 
     @property
