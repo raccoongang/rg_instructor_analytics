@@ -21,6 +21,10 @@ from rg_instructor_analytics.utils import resource_string
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseAccessRole
 
+from courseware.views.views import CourseTabView
+# from courseware.tabs import CourseTab
+from xmodule.tabs import CourseTab
+
 try:
     from openedx.core.djangoapps.plugin_api.views import EdxFragmentView
 except ImportError:
@@ -81,8 +85,31 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
             'course_dates_info': json.dumps(course_dates_info),
         }
 
+        tab_view = CourseTabView()
+        context.update(tab_view.create_page_context(request, course=course,
+                                                    tab=CourseTab.load('instructor_analytics'), **kwargs))
+
         html = render_to_string('rg_instructor_analytics/instructor_analytics_fragment.html', context)
         fragment = Fragment(html)
+
+        fragment.add_resource_url("https://cdn.plot.ly/plotly-latest.min.js", "application/javascript", "head")
+        fragment.add_resource_url("https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css",
+                                  "text/css", "head"
+                                  )
+        fragment.add_resource_url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css",
+                                  "text/css", "head"
+                                  )
+        fragment.add_resource_url("https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css",
+                                  "text/css", "head"
+                                  )
+        fragment.add_resource_url(
+            "https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.3/css/froala_editor.pkgd.min.css",
+            "text/css", "head"
+        )
+        fragment.add_resource_url("https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.7.3/css/froala_style.min.css",
+                                  "text/css", "head"
+                                  )
+
         fragment.add_css(resource_string("css/instructor_analytics.css"))
 
         fragment.add_javascript(resource_string("js/utils.js"))
