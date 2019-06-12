@@ -7,12 +7,10 @@ from django.utils.translation import ugettext_noop
 
 from courseware.access import has_access
 from courseware.tabs import CourseTab
-from courseware.tabs import EnrolledTab
-from xmodule.tabs import TabFragmentViewMixin
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 
-class InstructorAnalyticsDashboardTab(TabFragmentViewMixin, CourseTab):
+class InstructorAnalyticsDashboardTab(CourseTab):
     """
     Provides information for tab.
     """
@@ -22,7 +20,7 @@ class InstructorAnalyticsDashboardTab(TabFragmentViewMixin, CourseTab):
     title = ugettext_noop("Instructor analytics")
     body_class = "instructor-analytics-tab"
     is_dynamic = True
-    fragment_view_name = 'rg_instructor_analytics.views.InstructorAnalyticsFragmentView'
+    fragment_view_name = 'rg_instructor_analytics.views.instructor_analytics_dashboard'
     view_name = 'instructor_analytics_dashboard'
 
     @classmethod
@@ -44,7 +42,6 @@ class InstructorAnalyticsDashboardTab(TabFragmentViewMixin, CourseTab):
         Counstruct tab.
         """
         super(InstructorAnalyticsDashboardTab, self).__init__(tab_dict)
-
         self._fragment_view = None
 
     @property
