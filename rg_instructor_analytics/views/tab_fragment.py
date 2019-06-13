@@ -5,18 +5,16 @@ import json
 import sys
 from time import mktime
 
-from django.contrib.auth.decorators import login_required
-from django.http import Http404, HttpResponseBadRequest
+from django.http import Http404
 from django.shortcuts import render_to_response
 from django.utils import timezone
-from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from rg_instructor_analytics_log_collector.models import EnrollmentByDay
-
 from courseware.courses import get_course_by_id
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from courseware.access import has_access
 from student.models import CourseAccessRole
+from instructor.views.api import require_level
+from util.views import ensure_valid_course_key
 
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -80,22 +78,14 @@ def get_course_dates_info(course):
 
 @ensure_csrf_cookie
 @cache_control(no_cache=True, no_store=True, must_revalidate=True)
-@login_required
+@ensure_valid_course_key
+@require_level('staff')
 def instructor_analytics_dashboard(request, course_id):
     """
     Display the instructor dashboard for a course.
     """
-    try:
-        course_key = CourseKey.from_string(course_id)
-    except InvalidKeyError:
-        return HttpResponseBadRequest()
-
+    course_key = CourseKey.from_string(course_id)
     course = get_course_by_id(course_key, depth=0)
-
-    if not any([request.user.is_staff,
-                has_access(request.user, 'instructor', course),
-                has_access(request.user, 'staff', course)]):
-        raise Http404()
 
     enroll_info = {
         str(course_item.id): get_enroll_info(course_item)
