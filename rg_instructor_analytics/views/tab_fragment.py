@@ -8,16 +8,16 @@ from time import mktime
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.utils import timezone
+from django.views.decorators.cache import cache_control
+from django.views.decorators.csrf import ensure_csrf_cookie
+from instructor.views.api import require_level
 from opaque_keys.edx.keys import CourseKey
 from rg_instructor_analytics_log_collector.models import EnrollmentByDay
+from util.views import ensure_valid_course_key
+
 from courseware.courses import get_course_by_id
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from student.models import CourseAccessRole
-from instructor.views.api import require_level
-from util.views import ensure_valid_course_key
-
-from django.views.decorators.cache import cache_control
-from django.views.decorators.csrf import ensure_csrf_cookie
 
 # NOTE(flying-pi) reload(sys) is used for restore method `setdefaultencoding`,
 # which set flag PYTHONIOENCODING to utf8.
