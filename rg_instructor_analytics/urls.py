@@ -14,7 +14,7 @@ from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView, ProblemStudentDataView
 )
 from rg_instructor_analytics.views.suggestion import SuggestionView
-from rg_instructor_analytics.views.tab_fragment import InstructorAnalyticsFragmentView
+from rg_instructor_analytics.views.tab_fragment import instructor_analytics_dashboard
 
 urlpatterns = [
     # Enrollment stats tab:
@@ -67,5 +67,5 @@ urlpatterns = [
     # Suggestions tab:
     url(r'^api/suggestion/$', SuggestionView.as_view(), name='suggestion'),
 
-    url(r'^', InstructorAnalyticsFragmentView.as_view(), name='instructor_analytics_dashboard'),
+    url(r'^$', instructor_analytics_dashboard, name='instructor_analytics_dashboard'),
 ]
