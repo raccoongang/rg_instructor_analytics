@@ -20,7 +20,7 @@ class InstructorAnalyticsDashboardTab(CourseTab):
     title = ugettext_noop("Instructor analytics")
     body_class = "instructor-analytics-tab"
     is_dynamic = True
-    fragment_view_name = 'rg_instructor_analytics.views.InstructorAnalyticsFragmentView'
+    fragment_view_name = 'rg_instructor_analytics.views.instructor_analytics_dashboard'
     view_name = 'instructor_analytics_dashboard'
 
     @classmethod
