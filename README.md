@@ -101,3 +101,4 @@ All tests could be run only in local.
 * cd rg_instructor_analytics
 * sh ./test_tool/run_test.sh
 
+DevOps: https://raccoongang.atlassian.net/wiki/spaces/tech/pages/1237057564/RG+Analytics+2.0+installation+manual
