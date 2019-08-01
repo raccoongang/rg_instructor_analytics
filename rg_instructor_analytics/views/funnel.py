@@ -74,6 +74,7 @@ class GradeFunnelView(View):
             from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
             to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
 
+            cohort_id = request.POST.get('cohort_id')
             stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)
 
@@ -82,10 +83,10 @@ class GradeFunnelView(View):
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
-        return JsonResponse(data={'courses_structure': self.get_funnel_info(course_key, from_date, to_date)})
+        return JsonResponse(data={'courses_structure': self.get_funnel_info(course_key, cohort_id, from_date, to_date)})
 
     @staticmethod
-    def get_query_for_course_item_stat(course_key, block_type, from_date=None, to_date=None):
+    def get_query_for_course_item_stat(course_key, block_type, cohort_id, from_date=None, to_date=None):
         """
         Build DB queryset for course block type and given course.
         """
@@ -103,6 +104,7 @@ class GradeFunnelView(View):
         students_course_state_qs = StudentModule.objects.filter(
             date_range_filter,
             course_id=course_key,
+            student__course_groups__cohort__id=cohort_id,
             module_type=block_type,
             modified__exact=modified_filter,
             student_id__in=enrolled_by_course
@@ -121,11 +123,11 @@ class GradeFunnelView(View):
 
         return students_course_state_qs
 
-    def get_progress_info_for_subsection(self, course_key, from_date=None, to_date=None):
+    def get_progress_info_for_subsection(self, course_key, cohort_id, from_date=None, to_date=None):
         """
         Return activity for each of the section.
         """
-        query_info = self.get_query_for_course_item_stat(course_key, 'sequential', from_date, to_date)
+        query_info = self.get_query_for_course_item_stat(course_key, 'sequential', cohort_id, from_date, to_date)
         dict_info = query_info.values(
             'module_state_key', 'state', 'student__email'
         ).order_by(
@@ -196,13 +198,13 @@ class GradeFunnelView(View):
             accomulate += i['student_count']
             i['student_count_in'] = accomulate
 
-    def get_funnel_info(self, course_key, from_date=None, to_date=None):
+    def get_funnel_info(self, course_key, cohort_id, from_date=None, to_date=None):
         """
         Return course info in the tree-like structure.
 
         Structure of the node described inside function course_element_info.
         """
-        subsection_activity = self.get_progress_info_for_subsection(course_key, from_date, to_date)
+        subsection_activity = self.get_progress_info_for_subsection(course_key, cohort_id, from_date, to_date)
         courses_structure = self.get_course_info(course_key, subsection_activity)
         self.append_inout_info(courses_structure)
         return courses_structure

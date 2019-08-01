@@ -29,7 +29,7 @@ class ActivityView(View):
         """
         return super(ActivityView, self).dispatch(*args, **kwargs)
 
-    def get_daily_activity_for_course(self, from_date, to_date, course_key):
+    def get_daily_activity_for_course(self, from_date, to_date, course_key, cohort_id):
         """
         Get statistic of video and discussion activities by days.
         """
@@ -38,6 +38,7 @@ class ActivityView(View):
 
         video_activities_data = list(VideoViewsByDay.objects.filter(
             course=course_key,
+            cohort_id=cohort_id,
             day__range=(from_date, to_date)
         ).order_by('day').values_list('day', 'total'))
 
@@ -58,6 +59,7 @@ class ActivityView(View):
 
         discussion_activities_set = DiscussionActivityByDay.objects.filter(
             course=course_key,
+            cohort_id=cohort_id,
             day__range=(from_date, to_date),
         ).order_by('day')
 
@@ -66,6 +68,7 @@ class ActivityView(View):
 
         course_visits_set = CourseVisitsByDay.objects.filter(
             course=course_key,
+            cohort_id=cohort_id,
             day__range=(from_date, to_date),
         ).order_by('day')
 
@@ -87,7 +90,7 @@ class ActivityView(View):
             'nticks_y': nticks_y,
         }
 
-    def get_unit_visits(self, from_date, to_date, course_key):
+    def get_unit_visits(self, from_date, to_date, course_key, cohort_id):
         """
         Get statistic of visiting units.
         """
@@ -105,6 +108,7 @@ class ActivityView(View):
                     if len_units == index:
                         count_visits.append(
                             StudentStepCourse.objects.filter(
+                                cohort_id=cohort_id,
                                 current_unit=unit.location.block_id,
                                 log_time__range=(from_date, to_date + timedelta(days=1)),
                             ).count()
@@ -112,6 +116,7 @@ class ActivityView(View):
                     else:
                         count_visits.append(
                             StudentStepCourse.objects.filter(
+                                cohort_id=cohort_id,
                                 target_unit=unit.location.block_id,
                                 log_time__range=(from_date, to_date + timedelta(days=1)),
                             ).count()
@@ -132,7 +137,9 @@ class ActivityView(View):
         try:
             from_timestamp = int(request.POST.get('from'))
             to_timestamp = int(request.POST.get('to'))
-            course_key = CourseKey.from_string(request.POST.get('course_id'))
+            cohort_id = request.POST.get('cohort_id')
+            course_id = request.POST.get('course_id')
+            course_key = CourseKey.from_string(course_id)
 
         except (TypeError, ValueError):
             return HttpResponseBadRequest(_("Invalid date range."))
@@ -142,8 +149,8 @@ class ActivityView(View):
         from_date = datetime.fromtimestamp(from_timestamp).date()
         to_date = datetime.fromtimestamp(to_timestamp).date()
 
-        unit_visits = self.get_unit_visits(from_date, to_date, course_key)
-        daily_activities = self.get_daily_activity_for_course(from_date, to_date, course_key)
+        unit_visits = self.get_unit_visits(from_date, to_date, course_key, cohort_id)
+        daily_activities = self.get_daily_activity_for_course(from_date, to_date, course_key, cohort_id)
 
         return JsonResponse(data={
             'daily_activities': daily_activities,

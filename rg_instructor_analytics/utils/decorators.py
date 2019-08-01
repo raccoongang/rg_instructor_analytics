@@ -27,7 +27,9 @@ def instructor_access_required(view_func):
 
     @wraps(view_func, assigned=available_attrs(view_func))
     def _wrapped_view(request, *args, **kwargs):
+        cohort_id = request.POST.get('cohort_id')
         course_id = request.POST.get('course_id') or kwargs.get('course_id')
+
         try:
             course_key = CourseKey.from_string(course_id)
             course = get_course(course_key)

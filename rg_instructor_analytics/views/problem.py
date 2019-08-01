@@ -51,6 +51,7 @@ class ProblemHomeWorkStatisticView(View):
         :param course_id: (str) context course ID (from urlconf)
         """
         post_data = request.POST
+        cohort_id = post_data.get('cohort_id')
         stats_course_id = post_data.get('course_id')
 
         try:
@@ -64,10 +65,10 @@ class ProblemHomeWorkStatisticView(View):
             return HttpResponseBadRequest(_("Invalid course ID."))
 
         return JsonResponse(
-            data=self.get_homework_stat(course_key, from_date, to_date)
+            data=self.get_homework_stat(course_key, cohort_id, from_date, to_date)
         )
 
-    def get_homework_stat(self, course_key, from_date=None, to_date=None):
+    def get_homework_stat(self, course_key, cohort_id, from_date=None, to_date=None):
         """
         Aggregate students' attemps/grade info for given course.
 
@@ -78,8 +79,8 @@ class ProblemHomeWorkStatisticView(View):
         Each item of given list represent one unit.
         """
         academic_performance = {
-            i['module_state_key']: {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
-            for i in self.academic_performance_request(course_key, from_date, to_date)
+            i['module_state_key'].to_deprecated_string(): {'grade_avg': i['grade_avg'], 'attempts_avg': i['attempts_avg']}
+            for i in self.academic_performance_request(course_key, cohort_id, from_date, to_date)
         }
 
         def process_stats():
@@ -125,7 +126,7 @@ class ProblemHomeWorkStatisticView(View):
 
         return process_stats()
 
-    def academic_performance_request(self, course_key, from_date, to_date):
+    def academic_performance_request(self, course_key, cohort_id, from_date, to_date):
         """
         Academic performance DB request.
 
@@ -143,6 +144,7 @@ class ProblemHomeWorkStatisticView(View):
             .filter(
                 date_range_filter,
                 course_id__exact=course_key,
+                student__course_groups__cohort__id=cohort_id,
                 grade__isnull=False,
                 module_type__exact="problem",
             )
@@ -174,6 +176,7 @@ class ProblemsStatisticView(View):
         :param course_id: (str) context course ID (from urlconf)
         """
         post_data = request.POST
+        cohort_id = post_data.get('cohort_id')
         stats_course_id = post_data.get('course_id')
 
         try:
@@ -197,6 +200,7 @@ class ProblemsStatisticView(View):
             StudentModule.objects
             .filter(
                 date_range_filter,
+                student__course_groups__cohort__id=cohort_id,
                 module_state_key__in=problems,
                 grade__isnull=False
             )
@@ -209,6 +213,7 @@ class ProblemsStatisticView(View):
 
         students_emails = list(StudentModule.objects.filter(
             date_range_filter,
+            student__course_groups__cohort__id=cohort_id,
             module_state_key__in=problems,
             grade__isnull=False
         ).values_list('student__email', flat=True).distinct())

@@ -19,13 +19,14 @@ class GradeStatistic(models.Model):
     exam_info = models.TextField()
     # Represent total grade in range from 0 to 1; [0; 1]
     total = models.FloatField()
+    cohort_id = models.IntegerField(default=0)
 
     class Meta:
         """
         Meta class.
         """
 
-        unique_together = ('course_id', 'student',)
+        unique_together = ('course_id', 'student', 'cohort_id')
 
     @property
     def is_enrolled(self):

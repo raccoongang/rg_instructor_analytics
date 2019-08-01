@@ -880,7 +880,7 @@ body .disc-list {
     align-items: center;
 }
 #select_course {
-    width: 200px;
+    width: 300px;
 }
 .xmodule_display.xmodule_CapaModule div.problem .choicegroup legend,
 .xmodule_display.xmodule_CapaModule div.problem .choicegroup legend+.question-description {

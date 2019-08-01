@@ -60,7 +60,7 @@ class BaseSuggestion(object):
             'location': self.suggestion_source(item_id),
         })
 
-    def get_suggestion_list(self, course_key):
+    def get_suggestion_list(self, course_key, cohort_id):
         """
         Return suggestion list.
 
@@ -68,11 +68,11 @@ class BaseSuggestion(object):
         Also, new list will stored inside suggestion field of the current instance.
         """
         self.suggestion = []
-        self.generate_suggestion(course_key)
+        self.generate_suggestion(course_key, cohort_id)
         return self.suggestion
 
     @abstractmethod
-    def generate_suggestion(self, course_key):
+    def generate_suggestion(self, course_key, cohort_id):
         """
         Use for generate suggestion for the course.
 
@@ -110,13 +110,13 @@ class FunnelSuggestion(BaseSuggestion):
                 result += self.filter_funnel(item['children'])
         return result
 
-    def generate_suggestion(self, course_key):
+    def generate_suggestion(self, course_key, cohort_id):
         """
         Generate suggestion, based on the funnels tab information.
         """
         funnel = GradeFunnelView()
         funnel.user_enrollments_ignored_types = [CourseMode.AUDIT]
-        units = list(self.filter_funnel(funnel.get_funnel_info(course_key)))
+        units = list(self.filter_funnel(funnel.get_funnel_info(course_key, cohort_id)))
 
         def get_percent(total, put):
             return .0 if not (total and put) else float(put) / float(total)
@@ -157,11 +157,11 @@ class ProblemSuggestion(BaseSuggestion):
 
         }
 
-    def generate_suggestion(self, course_key):
+    def generate_suggestion(self, course_key, cohort_id):
         """
         Generate suggestion, based on the funnels tab information.
         """
-        problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(course_key)
+        problem_stat = ProblemHomeWorkStatisticView().get_homework_stat(course_key, cohort_id)
         problem_stat['success'] = map(
             lambda (grade, attempts): attempts and grade / attempts,
             izip(problem_stat['correct_answer'], problem_stat['attempts'])
@@ -206,11 +206,12 @@ class SuggestionView(View):
         :param course_id: (str) context course ID (from urlconf)
         """
         try:
+            cohort_id = request.POST.get('cohort_id')
             stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)
 
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
-        result = sum([s.get_suggestion_list(course_key) for s in self.suggestion_providers], [])
+        result = sum([s.get_suggestion_list(course_key, cohort_id) for s in self.suggestion_providers], [])
         return JsonResponse(data={'suggestion': result})

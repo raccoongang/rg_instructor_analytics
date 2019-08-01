@@ -70,16 +70,17 @@ def get_items_for_grade_update():
         items_for_update = list(
             StudentModule.objects
             .filter(module_type__exact='problem', modified__gt=last_update_info.last_update)
-            .values('student__id', 'course_id')
+            .values('student__id', 'student__course_groups__cohort__id', 'course_id')
+            .annotate(user__course_groups__cohort__id=F('student__course_groups__cohort__id'))
             .order_by('student__id', 'course_id')
             .distinct()
         )
         items_for_update += list(
             CourseEnrollment.objects
             .filter(created__gt=last_update_info.last_update)
-            .values('user__id', 'course_id')
+            .values('user__id', 'user__course_groups__cohort__id', 'course_id')
             .annotate(student__id=F('user__id'))
-            .values('student__id', 'course_id')
+            .values('student__id', 'user__course_groups__cohort__id', 'course_id')
             .distinct()
         )
         # Remove records for students who never enrolled
@@ -99,7 +100,7 @@ def get_items_for_grade_update():
             CourseEnrollment.objects
             .values('user__id', 'course_id')
             .annotate(student__id=F('user__id'))
-            .values('student__id', 'course_id')
+            .values('student__id', 'user__course_groups__cohort__id', 'course_id')
             .distinct()
         )
 
@@ -107,7 +108,10 @@ def get_items_for_grade_update():
     for item in items_for_update:
         if item['course_id'] not in users_by_course:
             users_by_course[item['course_id']] = []
-        users_by_course[item['course_id']].append(item['student__id'])
+        users_by_course[item['course_id']].append({
+            'user_id': item['student__id'],
+            'cohort_id': item['user__course_groups__cohort__id'] if item['user__course_groups__cohort__id'] is not None else 0,
+        })
     return users_by_course
 
 
@@ -153,7 +157,7 @@ def grade_collector_stat():
 
         with modulestore().bulk_operations(course_key):
             for user in users:
-                grades = get_grade_summary(user, course)
+                grades = get_grade_summary(user['user_id'], course)
                 if not grades:
                     continue
                 exam_info = OrderedDict()
@@ -163,7 +167,7 @@ def grade_collector_stat():
 
                 collected_stat.append(
                     (
-                        {'course_id': course_key, 'student_id': user},
+                        {'course_id': course_key, 'student_id': user['user_id'], 'cohort_id': user['cohort_id']},
                         {'exam_info': json.dumps(exam_info), 'total': grades['percent']}
                     )
                 )

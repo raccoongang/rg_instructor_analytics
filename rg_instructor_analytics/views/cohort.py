@@ -33,16 +33,16 @@ class CohortView(View):
 
         :param course_id: (str) context course ID (from urlconf)
         """
-        stats_course_id = request.POST.get('course_id')
-
         try:
+            cohort_id = request.POST.get('cohort_id')
+            stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
         grade_stats = (
             GradeStatistic.objects
-            .filter(course_id=course_key)
+            .filter(course_id=course_key, cohort_id=cohort_id)
             .values('student__email', 'total')
         )
 

@@ -44,13 +44,13 @@ class GradebookView(View):
         """
         try:
             filter_string = request.POST.get('filter')
+            cohort_id = request.POST.get('cohort_id')
             stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)
-
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
-        course_students = GradeStatistic.objects.filter(course_id=course_key)
+        course_students = GradeStatistic.objects.filter(course_id=course_key, cohort_id=cohort_id)
         if filter_string:
             course_students = course_students.filter(
                 Q(student__username__icontains=filter_string) |
@@ -62,6 +62,7 @@ class GradebookView(View):
         course_students = course_students.order_by('student__username')
 
         students_last_visit_dict = dict(LastCourseVisitByUser.objects.filter(
+            cohort_id=cohort_id,
             course=course_key
         ).values_list('user_id', 'log_time'))
 
@@ -112,13 +113,17 @@ class VideoView(View):
         except (InvalidKeyError, User.DoesNotExist):
             return HttpResponseBadRequest(_("Invalid username."))
 
+        cohort_id = request.POST.get('cohort_id', 0)
+
         try:
             course_key = CourseKey.from_string(request.POST.get('course_id'))
             course = get_course_by_id(course_key, depth=4)
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
-        video_views_by_user = VideoViewsByUser.objects.filter(course=course_key, user_id=user.id)
+        video_views_by_user = VideoViewsByUser.objects.filter(
+            course=course_key, cohort_id=cohort_id, user_id=user.id
+        )
 
         videos_names = []
         videos_time = []
@@ -179,6 +184,8 @@ class DiscussionActivityView(View):
         except (InvalidKeyError, User.DoesNotExist):
             return HttpResponseBadRequest(_("Invalid username."))
 
+        cohort_id = request.POST.get('cohort_id', 0)
+
         try:
             course_key = CourseKey.from_string(request.POST.get('course_id'))
             course = get_course_by_id(course_key)
@@ -192,6 +199,7 @@ class DiscussionActivityView(View):
 
         discussion_activities = DiscussionActivity.objects.filter(
             user_id=user.id,
+            cohort_id=cohort_id,
             course=course_key
         )
 
@@ -241,6 +249,8 @@ class StudentStepView(View):
         except (InvalidKeyError, User.DoesNotExist):
             return HttpResponseBadRequest(_("Invalid username."))
 
+        cohort_id = request.POST.get('cohort_id', 0)
+
         try:
             course_key = CourseKey.from_string(request.POST.get('course_id'))
             course = get_course_by_id(course_key, depth=3)
@@ -259,6 +269,7 @@ class StudentStepView(View):
 
         student_steps = StudentStepCourse.objects.filter(
             user_id=user.id,
+            cohort_id=cohort_id,
             course=course_key
         ).order_by(
             'log_time'

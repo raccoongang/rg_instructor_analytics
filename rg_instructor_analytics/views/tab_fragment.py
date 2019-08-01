@@ -17,6 +17,7 @@ from web_fragments.fragment import Fragment
 from courseware.courses import get_course_by_id
 from edxmako.shortcuts import render_to_string
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from openedx.core.djangoapps.course_groups.models import CourseUserGroup
 from rg_instructor_analytics.utils import resource_string
 from rg_instructor_analytics.utils.decorators import instructor_access_required
 from student.models import CourseAccessRole
@@ -50,7 +51,9 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
         Render tab fragment.
         """
         try:
-            course_key = CourseKey.from_string(kwargs.get('course_id'))
+            cohort_id = kwargs.get('cohort_id')
+            course_id = kwargs.get('course_id')
+            course_key = CourseKey.from_string(course_id)
             course = get_course_by_id(course_key)
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
@@ -59,10 +62,26 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
             {
                 'course_id': str(user_course.id),
                 'course_name': str(user_course.display_name),
-                'is_current': course == user_course,
+                'course_key': user_course.id,
             }
             for user_course in self.get_available_courses(request.user)
         ]
+        available_courses_with_cohorts = []
+
+        for available_course in available_courses:
+            course_cohorts = self.get_course_cohorts(available_course['course_key'])
+
+            for course_cohort in course_cohorts:
+                coupled_id = '{}###{}'.format(available_course['course_id'], course_cohort['id'])
+                course_with_cohort_name = '{} - {}'.format(
+                    available_course['course_name'],
+                    course_cohort['name'],
+                )
+                available_courses_with_cohorts.append({
+                    'course_id': coupled_id,
+                    'course_name': course_with_cohort_name,
+                    'is_current': coupled_id == kwargs.get('course_id'),
+                })
 
         enroll_info = {
             str(course_item.id): self.get_enroll_info(course_item)
@@ -77,7 +96,7 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
         context = {
             'course': course,
             'enroll_info': json.dumps(enroll_info),
-            'available_courses': available_courses,
+            'available_courses': available_courses_with_cohorts,
             'course_dates_info': json.dumps(course_dates_info),
         }
 
@@ -137,6 +156,21 @@ class InstructorAnalyticsFragmentView(EdxFragmentView):
                         exist_courses_id.append(course_id)
                 except Http404:
                     continue
+        return result
+
+    @staticmethod
+    def get_course_cohorts(course_key):
+        """
+        Return cohorts of the course, available for the given user.
+        """
+        result = [{'id': 0, 'name': 'No cohort'}]  # First item is always the "No cohort"
+
+        for course_user_group in CourseUserGroup.objects.filter(course_id=course_key).order_by('name'):
+            result.append({
+                'id': course_user_group.cohort.id,
+                'name': course_user_group.name
+            })
+
         return result
 
     @staticmethod

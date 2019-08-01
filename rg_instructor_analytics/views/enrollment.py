@@ -55,7 +55,7 @@ class EnrollmentStatisticView(View):
         return last_state or {'unenrolled': 0, 'enrolled': 0, 'total': 0}
 
     @staticmethod
-    def get_state_for_period(course_key, from_date, to_date):
+    def get_state_for_period(course_key, cohort_id, from_date, to_date):
         """
         Get Enrollments stats for the date range.
 
@@ -66,13 +66,13 @@ class EnrollmentStatisticView(View):
         """
         return (
             EnrollmentByDay.objects
-            .filter(course=course_key, day__range=(from_date, to_date))
+            .filter(course=course_key, cohort_id=cohort_id, day__range=(from_date, to_date))
             .values('unenrolled', 'enrolled', 'total', 'day')
             .order_by('day')
         )
 
     @staticmethod
-    def get_daily_stats_for_course(from_timestamp, to_timestamp, course_key):  # get_day_course_stats
+    def get_daily_stats_for_course(from_timestamp, to_timestamp, course_key, cohort_id):  # get_day_course_stats
         """
         Provide statistic, which contains: dates in unix-time, count of enrolled users, unenrolled and total.
 
@@ -114,7 +114,7 @@ class EnrollmentStatisticView(View):
                 counts_list.append(0)
                 dates_list.append(tomorrow)
 
-        for data in EnrollmentStatisticView.get_state_for_period(course_key, from_date, to_date):
+        for data in EnrollmentStatisticView.get_state_for_period(course_key, cohort_id, from_date, to_date):
             dates_total.append(data['day'])
             counts_total.append(data['total'])
 
@@ -154,7 +154,8 @@ class EnrollmentStatisticView(View):
             from_timestamp = int(request.POST['from'])
             to_timestamp = int(request.POST['to'])
 
-            stats_course_id = request.POST['course_id']
+            cohort_id = request.POST.get('cohort_id')
+            stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)
 
         except MultiValueDictKeyError:
@@ -165,5 +166,5 @@ class EnrollmentStatisticView(View):
             return HttpResponseBadRequest(_("Invalid course ID."))
 
         return JsonResponse(
-            data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, course_key)
+            data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, course_key, cohort_id)
         )

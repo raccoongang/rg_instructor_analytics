@@ -137,6 +137,10 @@ function CohortTab(button, content) {
         $.ajax({
             type: "POST",
             url: "api/cohort/",
+            data: {
+                course_id: cohortTab.tabHolder.course,
+                cohort_id: cohortTab.tabHolder.cohort
+            },
             dataType: "json",
             traditional: true,
             success: onSuccess,
