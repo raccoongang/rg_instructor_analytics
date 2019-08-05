@@ -28,7 +28,9 @@
 .show {
     display: block;
 }
+
 /* The Modal (background) */
+
 .modal-for-plot {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
@@ -40,7 +42,9 @@
     background-color: rgb(176, 194, 202); /* Fallback color */
     background-color: rgba(176, 194, 202, 0.4); /* Black w/ opacity */
 }
+
 /* Modal Content/Box */
+
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
@@ -48,7 +52,9 @@
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
 }
+
 /* The Close Button */
+
 .close {
     color: #ee4900;
     float: right;
@@ -177,7 +183,6 @@
     max-width: 100%;
 }
 .idash-section {
-    /*max-width: 830px;*/
     margin: 40px auto 0 !important;
     width: 100%;
 }
@@ -186,12 +191,7 @@
     font-size: 28px !important;
     margin-bottom: 23px !important;
 }
-/*#section-enrollment-stats .js-plotly-plot {
-    transform: translate(-7%, -12%);
-}*/
 .js-plotly-plot {
-    /*transform: translate(-7%, 0);
-    width: 900px;*/
     width: 100%;
 }
 .filter-btn, .filter-btn.active, .filter-btn.active:hover, .filter-btn.active:focus {
@@ -208,7 +208,7 @@
 }
 .custom-select {
     float: left;
-    border-radius: 0px;
+    border-radius: 0;
     position: relative;
 }
 .enroll-buttons-holder .custom-select .filter-dropdown {
@@ -220,14 +220,22 @@
     text-transform: uppercase;
     background: none !important;
     padding: 0 30px 0 15px !important;
-    width: auto !important
+    width: auto !important;
     position: relative;
     border-radius: 0 !important;
     -webkit-appearance: none !important;
-    -webkit-border-radius: 0px !important;
+    -webkit-border-radius: 0 !important;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+}
+@-moz-document url-prefix() {
+    .enroll-buttons-holder .custom-select .filter-dropdown {
+        padding: 3px 30px 0 15px !important;
+    }
+}
+.enroll-buttons-holder .custom-select .filter-dropdown option {
+    padding: 5px 5px 2px;
 }
 .enroll-buttons-holder .custom-select:before {
     content: '\f0d7';
@@ -251,10 +259,15 @@
     transform: translate(0,-50%);
 }
 .instructor-dashboard-wrapper-2 .idash-section .filter-btn {
-    padding: 5px 30px 5px 15px !important;
+    padding: 0 30px 0 15px !important;
     height: 34px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
+}
+@-moz-document url-prefix() {
+    .instructor-dashboard-wrapper-2 .idash-section .filter-btn {
+        line-height: 34px;
+    }
 }
 .instructor-dashboard-wrapper-2 .idash-section .filter-btn:hover {
     background: #568ecc !important;
@@ -263,8 +276,9 @@
 .instructor-dashboard-wrapper-2 .idash-section button {
     font-size: 14px;
     text-transform: uppercase;
-    padding: 8px 14px;
-    margin: 0 !important;
+    padding: 8px 14px 6px 14px;
+    margin: 0 0 0 5px !important;
+    cursor: pointer;
 }
 .enroll-buttons-holder {
     display: flex;
@@ -347,7 +361,6 @@
 .dropdown-content.show {
     z-index: 5;
 }
-
 .hidden {
     display: none !important;
 }
@@ -624,7 +637,6 @@
     flex: 0 0 50px;
     text-align: center;
 }
-
 #problem-homeworks-stats-plot {
     height: 400px;
     position: relative;
@@ -661,7 +673,6 @@
     z-index: 10;
     cursor: pointer;
 }
-
 .plot-bar-vert:hover:before {
     content: '';
     position: absolute;
@@ -700,7 +711,6 @@
     align-items: center;
     justify-content: center;
     font-weight: 600;
-
 }
 .plot-bar-vert .plot-click-me:hover,
 .plot-bar-vertical .plot-click-me:hover {
@@ -730,7 +740,7 @@
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 1.3;
 }
 .y-axis-l {
@@ -818,11 +828,9 @@
         #eee 99.6%, #eee 100%
     );
 }
-
 #problems-stats-plot li>div {
     flex: 0 0 100%;
 }
-
 #problems-stats-plot .plot-bar-vertical {
     position: relative;
     height: 100%;
@@ -835,7 +843,6 @@
 #problems-stats-plot .plot-bar-vertical {
     cursor: pointer
 }
-
 #problems-stats-plot .plot-bar-vertical:hover:before {
     content: '';
     position: absolute;
@@ -859,7 +866,6 @@
 .xtick {
     margin-top: 20px;
 }
-
 #problems-stats-plot .y-axis-l {
     flex-direction: column;
 }
@@ -879,7 +885,6 @@
 #problems-stats-plot .plot-bar-vertical:hover span {
     display: block;
 }
-
 #gradebook_table_header {
     position: absolute;
     width: 100%;
@@ -943,7 +948,6 @@
     transform-origin: initial;
     white-space: pre-wrap;
 }
-
 body .xmodule_display.xmodule_CapaModule div.problem ul {
     margin: 16px 0;
 }
@@ -1005,23 +1009,19 @@ body .disc-list {
     margin-bottom: 20px;
     border-bottom: 1px solid #eee;
 }
-
 .desctiption {
     margin-bottom: 20px;
 }
 .suggestion-item {
     margin-bottom: 40px;
 }
-
 .suggestion-button {
-    margin: 8px 0px 8px auto;
+    margin: 8px 0 8px auto;
     display: block;
 }
-
 .suggestion-message {
     text-align: justify;
 }
-
 .send-email-message {
     padding: 10px 0;
     color: #3c3c3c;
@@ -1032,11 +1032,9 @@ body .disc-list {
 .success-message {
     color: green;
 }
-
 .funnel-send-email-btn {
     margin-top: 5px;
 }
-
 .funnel-item-outgoing.input-checkbox {
     right: -73px;
     margin: 0;
@@ -1046,37 +1044,30 @@ body .disc-list {
     justify-content: space-between;
     background: none !important;
 }
-
 .funnel-item-outgoing.input-checkbox input[type="checkbox"]{
     display: none;
 }
-
 .funnel-item-outgoing.input-checkbox input[type="checkbox"] + label {
     position: relative;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #0075b4;
+    width: 19px;
+    height: 16px;
+    background: url(/static/rg_instructor_analytics/images/check_box.svg) no-repeat 50% 50%;
+    background-size: cover;
     display: block;
-    position: relative;
     margin: 3px 5px 0 0;
 }
-
-.funnel-item-outgoing.input-checkbox input[type="checkbox"]:checked + label:before {
-    content: "";
-    width: 10px;
-    height: 10px;
-    background: #0075b4;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin: -5px 0 0 -5px;
+.funnel-item-outgoing.input-checkbox input[type="checkbox"]:checked + label {
+    width: 19px;
+    height: 16px;
+    background: url(/static/rg_instructor_analytics/images/check_box_full.svg) no-repeat 50% 50%;
+    background-size: cover;
+    display: block;
+    margin: 3px 5px 0 0;
 }
-
 .funnel-item-outgoing.input-checkbox input[type="checkbox"]:disabled + label,
 .funnel-item-outgoing.input-checkbox input[type="checkbox"]:disabled + label:before {
     opacity: 0.2;
 }
-
 .last-student-visit-banner {
     font-size: 16px !important;
     padding: 15px !important;
@@ -1085,7 +1076,6 @@ body .disc-list {
     color: #fff;
     font-weight: 600 !important;
 }
-
 .emails-list-button {
     color: #568ecc !important;
     cursor: pointer;
@@ -1093,7 +1083,6 @@ body .disc-list {
     margin: 0;
     padding: 0;
 }
-
 .funnel-item .emails-list {
     width: 100%;
     text-align: center;
@@ -1107,22 +1096,18 @@ body .disc-list {
     max-height: 400px;
     overflow: auto;
 }
-
 .funnel-item .emails-list span strong {
     font-weight: normal;
     display: block;
 }
-
 .funnel-item-0 > .emails-list span {
     border: 1px solid #5f76b8;
     max-width: 555px;
 }
-
 .funnel-item-1 > .emails-list span {
     border: 1px solid #4cba69;
     max-width: 420px;
 }
-
 .funnel-item-2 > .emails-list span {
     border: 1px solid #36cec5;
     max-width: 360px;
@@ -1133,19 +1118,16 @@ body .disc-list {
 #cohort-check-list {
     margin-bottom: 0 !important;
 }
-
 .cohort-emails-list {
     display: block;
 }
-
 .emails-list-holder {
     max-height: 200px;
     overflow: auto;
     border: 1px solid #ccc;
     padding: 10px;
-    margin-top: 10px;
+    margin: 10px 0;
 }
-
 #cohort-send-email-btn {
     margin: 15px 0 !important;
     border: 2px solid #568ecc;
@@ -1153,7 +1135,9 @@ body .disc-list {
     font-size: 14px;
     font-weight: 600;
     text-transform: uppercase;
-    padding: 8px 33px;
+    padding: 0 33px;
+    height: 40px;
+    line-height: 38px;
 }
 #cohort-send-email-btn:hover {
     border: 2px solid #568ecc !important;
@@ -1165,8 +1149,8 @@ body .disc-list {
 #cohort-check-list li .block-emails-list {
     display: inline-block;
     vertical-align: top;
+    line-height: 16px;
 }
-
 #cohort-check-list li input[type="checkbox"] {
     position: absolute;
     width: 1px;
@@ -1174,7 +1158,6 @@ body .disc-list {
     overflow: hidden;
     clip: rect(0 0 0 0);
 }
-
 #cohort-check-list li input[type="checkbox"] + label {
     position: relative;
     padding-left: 26px;
@@ -1185,7 +1168,6 @@ body .disc-list {
     display: inline-block;
     vertical-align: top;
 }
-
 #cohort-check-list li input[type="checkbox"] + label:before {
     content: "";
     width: 19px;
@@ -1198,50 +1180,39 @@ body .disc-list {
     transform: translateY(-50%);
     margin-top: 1px;
 }
-
 #cohort-check-list li input[type="checkbox"]:disabled + label:before {
     opacity: 0.2;
 }
-
 #cohort-check-list li input[type="checkbox"]:checked + label:before {
     background: url(/static/rg_instructor_analytics/images/check_box_full.svg) no-repeat 50% 50%;
     background-size: cover;
 }
-
 #section-problem .block-emails-list {
     margin-left: 0;
 }
-
 #section-problem .subsection-emails-span,
 #section-problem .problem-emails-span {
     margin-left: 15px;
 }
-
 #section-problem .subsection-emails-list,
 #section-problem .block-emails-list {
     margin-bottom: 20px;
 }
-
 #section-problem .problem-header {
     margin-bottom: 0;
 }
-
 #section-problem .problem {
     padding-top: 0;
 }
-
 #section-problem .question-description {
     margin: 0 0 25px 0;
 }
-
 .content-wrapper {
     padding-bottom: 0;
 }
-
 #funnel-form-email .richText {
     margin-bottom: 20px;
 }
-
 .instructor-dashboard-wrapper-2 #instructor-analytics-dashboard-content .instructor-nav li select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -1256,10 +1227,12 @@ body .disc-list {
     background: #fff url(../images/select-arrow.png) no-repeat 100% 50%;
     background-size: 27px 7px;
 }
-
 @supports (-ms-ime-align:auto) {
     .instructor-nav li select {
         background: #fff url(../images/down-up-arrow.svg) no-repeat 98% 50%;
         background-size: 10px 7px;
     }
+}
+#problems-stats-plot .y-axis-l li > div {
+    font-size: 12px;
 }
