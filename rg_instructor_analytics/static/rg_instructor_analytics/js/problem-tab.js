@@ -367,7 +367,7 @@ function ProblemTab(button, content) {
             $tabBanner.prop('hidden', true);
             $tabContent.prop('hidden', false);
             $problemDetailSection.prop('hidden', true);
-            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
+            timeFilter.startDate = moment().subtract(1, 'months').startOf('month');
             timeFilter.endDate = moment();
             timeFilter.minDate = timeFilter.startDate;
             timeFilter.setDisable();

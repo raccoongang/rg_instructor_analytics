@@ -70,13 +70,6 @@ TABS = (
         'title': _('Progress Funnel'),
         'template': 'funnel.html'
     },
-    {
-        'field': 'suggestions',
-        'class': 'suggestion',
-        'section': 'cohort',
-        'title': _('Suggestions'),
-        'template': 'suggestion.html'
-    },
 )
 
 

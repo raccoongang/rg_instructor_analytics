@@ -151,7 +151,7 @@ function EnrollmentTab(button, content) {
       timeFilter.minDate = moment(Math.min(firstEnrollDate, courseStartDate));
       timeFilter.firstEnrollDate = firstEnrollDate;
       timeFilter.courseStartDate = courseStartDate;
-      timeFilter.startDate = firstEnrollDate;
+      timeFilter.startDate = moment().subtract(1, 'months').startOf('month');
       timeFilter.endDate = moment();
       timeFilter.makeActive(content.find(".js-datepicker-btn"));
       timeFilter.setMinDate();

@@ -213,7 +213,7 @@ function FunnelTab(button, content) {
         if (courseDatesInfo.course_is_started) {
             $tabBanner.prop('hidden', true);
             $tabContent.prop('hidden', false);
-            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
+            timeFilter.startDate = moment().subtract(1, 'months').startOf('month');
             timeFilter.endDate = moment();
             timeFilter.minDate = timeFilter.startDate;
             timeFilter.setDisable();
