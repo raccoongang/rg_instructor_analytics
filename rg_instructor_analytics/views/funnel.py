@@ -97,23 +97,27 @@ class GradeFunnelView(View):
         """
         Build DB queryset for course block type and given course.
         """
-        # TODO use preaggregation
-        modified_filter = RawSQL(
-            "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
-            "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
-            "AND t2.module_type = %s)", (course_key, block_type))
-
         date_range_filter = Q(modified__range=(
             from_date, to_date + timedelta(days=1))
         ) if from_date and to_date else Q()
 
         enrolled_by_course = CourseEnrollment.objects.filter(course_id=course_key).values_list('user__id', flat=True)
+
         for enrollee_id in enrolled_by_course:
+
+            # TODO try catch; test by enrolling a new user who doesn't make any submission
+            # TODO consider using aggregation
+            latest_sub = StudentModule.objects.filter(
+                module_type=block_type,
+                student_id=enrollee_id,
+                course_id=course_key
+            ).latest("modified")
+
             students_course_state_qs = StudentModule.objects.filter(
                 date_range_filter,
                 course_id=course_key,
                 module_type=block_type,
-                modified__exact=modified_filter,
+                modified__exact=latest_sub.modified,
                 student_id=enrollee_id
             ).values(
                 'module_state_key', 'state', 'student__email'
@@ -124,9 +128,10 @@ class GradeFunnelView(View):
             ).values(
                 'module_state_key', 'state', 'count', 'student__email'
             )
+
             yield students_course_state_qs
 
-        # Defaults to False; comment out for now
+        # Defaults to []; comment out for now
         # if IGNORED_ENROLLMENT_MODES:
         #     users = (
         #         CourseEnrollment.objects
