@@ -63,8 +63,6 @@ class GradeFunnelView(View):
     Data source: StudentModule DB model.
     """
 
-    # NOTE(wowkalucky): needs optimization - request takes above 30 sec!
-
     @method_decorator(instructor_access_required)
     def dispatch(self, *args, **kwargs):
         """
@@ -95,7 +93,7 @@ class GradeFunnelView(View):
         return JsonResponse(data={'courses_structure': self.get_funnel_info(course_key, from_date, to_date)})
 
     @staticmethod
-    def get_query_for_course_item_stat(course_key, block_type, from_date=None, to_date=None):
+    def get_queries_for_course_item_stat(course_key, block_type, from_date=None, to_date=None):
         """
         Build DB queryset for course block type and given course.
         """
@@ -110,52 +108,59 @@ class GradeFunnelView(View):
         ) if from_date and to_date else Q()
 
         enrolled_by_course = CourseEnrollment.objects.filter(course_id=course_key).values_list('user__id', flat=True)
-        students_course_state_qs = StudentModule.objects.filter(
-            date_range_filter,
-            course_id=course_key,
-            module_type=block_type,
-            modified__exact=modified_filter,
-            student_id__in=enrolled_by_course
-        )
-
-        if IGNORED_ENROLLMENT_MODES:
-            users = (
-                CourseEnrollment.objects
-                .filter(
-                    course_id=course_key,
-                    mode__in=IGNORED_ENROLLMENT_MODES
-                )
-                .values_list('user', flat=True)
+        for enrollee_id in enrolled_by_course:
+            students_course_state_qs = StudentModule.objects.filter(
+                date_range_filter,
+                course_id=course_key,
+                module_type=block_type,
+                modified__exact=modified_filter,
+                student_id=enrollee_id
             )
-            students_course_state_qs = students_course_state_qs.exclude(student__in=users)
+            yield students_course_state_qs
 
-        return students_course_state_qs
+        # Defaults to False; comment out for now
+        # if IGNORED_ENROLLMENT_MODES:
+        #     users = (
+        #         CourseEnrollment.objects
+        #         .filter(
+        #             course_id=course_key,
+        #             mode__in=IGNORED_ENROLLMENT_MODES
+        #         )
+        #         .values_list('user', flat=True)
+        #     )
+        #     students_course_state_qs = students_course_state_qs.exclude(student__in=users)
 
     def get_progress_info_for_subsection(self, course_key, from_date=None, to_date=None):
         """
         Return activity for each of the section.
         """
-        query_info = self.get_query_for_course_item_stat(course_key, 'sequential', from_date, to_date)
-        dict_info = query_info.values(
-            'module_state_key', 'state', 'student__email'
-        ).order_by(
-            'module_state_key', 'state'
-        ).annotate(
-            count=Count('module_state_key')
-        ).values(
-            'module_state_key', 'state', 'count', 'student__email'
-        )
+        queries = self.get_queries_for_course_item_stat(course_key, 'sequential', from_date, to_date)
+        dict_infos = []
+
+        for query in queries:
+            dict_info = query.values(
+                'module_state_key', 'state', 'student__email'
+            ).order_by(
+                'module_state_key', 'state'
+            ).annotate(
+                count=Count('module_state_key')
+            ).values(
+                'module_state_key', 'state', 'count', 'student__email'
+            )
+            dict_infos.append(dict_info)
+
         result = {}
 
-        for info in dict_info:
-            if specific.get_problem_str(info['module_state_key']) not in result:
-                result[specific.get_problem_str(info['module_state_key'])] = []
+        for dict_info in dict_infos:
+            for info in dict_info:
+                if specific.get_problem_str(info['module_state_key']) not in result:
+                    result[specific.get_problem_str(info['module_state_key'])] = []
 
-            result[specific.get_problem_str(info['module_state_key'])].append({
-                'count': info['count'],
-                'offset': json.loads(info['state'])['position'],
-                'student_email': info['student__email']
-            })
+                result[specific.get_problem_str(info['module_state_key'])].append({
+                    'count': info['count'],
+                    'offset': json.loads(info['state'])['position'],
+                    'student_email': info['student__email']
+                })
         return result
 
     @staticmethod
