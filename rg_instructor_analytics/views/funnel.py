@@ -115,6 +115,14 @@ class GradeFunnelView(View):
                 module_type=block_type,
                 modified__exact=modified_filter,
                 student_id=enrollee_id
+            ).values(
+                'module_state_key', 'state', 'student__email'
+            ).order_by(
+                'module_state_key', 'state'
+            ).annotate(
+                count=Count('module_state_key')
+            ).values(
+                'module_state_key', 'state', 'count', 'student__email'
             )
             yield students_course_state_qs
 
@@ -135,24 +143,11 @@ class GradeFunnelView(View):
         Return activity for each of the section.
         """
         queries = self.get_queries_for_course_item_stat(course_key, 'sequential', from_date, to_date)
-        dict_infos = []
-
-        for query in queries:
-            dict_info = query.values(
-                'module_state_key', 'state', 'student__email'
-            ).order_by(
-                'module_state_key', 'state'
-            ).annotate(
-                count=Count('module_state_key')
-            ).values(
-                'module_state_key', 'state', 'count', 'student__email'
-            )
-            dict_infos.append(dict_info)
 
         result = {}
 
-        for dict_info in dict_infos:
-            for info in dict_info:
+        for query in queries:  # Per student
+            for info in query.iterator():
                 if specific.get_problem_str(info['module_state_key']) not in result:
                     result[specific.get_problem_str(info['module_state_key'])] = []
 
