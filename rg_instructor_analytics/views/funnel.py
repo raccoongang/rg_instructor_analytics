@@ -24,10 +24,10 @@ try:
 except ImportError:
     RELEASE_LINE = 'ficus'
 
-if RELEASE_LINE == 'hawthorn':
-    from rg_instructor_analytics.utils import hawthorn_specific as specific
-else:
+if RELEASE_LINE == 'ficus' or RELEASE_LINE == 'ginkgo':
     from rg_instructor_analytics.utils import ginkgo_ficus_specific as specific
+else:
+    from rg_instructor_analytics.utils import hawthorn_specific as specific
 
 
 IGNORED_ENROLLMENT_MODES = []
