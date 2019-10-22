@@ -2,8 +2,10 @@
 Clusters sub-tab module.
 """
 import math
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.http.response import HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -14,6 +16,8 @@ from opaque_keys.edx.keys import CourseKey
 from rg_instructor_analytics import tasks
 from rg_instructor_analytics.models import GradeStatistic
 from rg_instructor_analytics.utils.decorators import instructor_access_required
+
+from student.models import CourseEnrollment
 
 
 class CohortView(View):
@@ -41,9 +45,21 @@ class CohortView(View):
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
+        new_student_ids = list(CourseEnrollment.objects.filter(
+            course_id=course_key,
+            created__gt=datetime.now() - timedelta(
+                days=settings.FEATURES.get(
+                    'RG_ANALYTICS_NEW_STUDENT_DAYS', 14
+                )
+            )
+        ).values_list(
+            'user_id', flat=True
+        ))
+
         grade_stats = (
             GradeStatistic.objects
             .filter(course_id=course_key)
+            .exclude(student_id__in=new_student_ids)
             .values('student_id', 'student__username', 'total')
         )
 

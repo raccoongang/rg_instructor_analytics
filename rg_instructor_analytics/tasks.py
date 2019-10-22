@@ -4,7 +4,7 @@ Module for celery tasks.
 import json
 import logging
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from celery.schedules import crontab
 from celery.task import periodic_task, task
@@ -168,16 +168,7 @@ def grade_collector_stat():
         with modulestore().bulk_operations(course_key):
             for user in users:
                 grades = get_grade_summary(user, course)
-                is_new_student = CourseEnrollment.objects.filter(
-                    user_id=user,
-                    course_id=course_key,
-                    created__gt=datetime.now() - timedelta(
-                        days=settings.FEATURES.get(
-                            'RG_ANALYTICS_NEW_STUDENT_DAYS', 14
-                        )
-                    )
-                ).exists()
-                if not grades or is_new_student:
+                if not grades:
                     continue
                 exam_info = OrderedDict()
                 for grade in grades['section_breakdown']:
