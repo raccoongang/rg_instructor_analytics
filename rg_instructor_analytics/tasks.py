@@ -17,7 +17,6 @@ from django.db.models import F
 from django.http.response import Http404
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from lms import CELERY_APP
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
@@ -55,7 +54,7 @@ log = logging.getLogger(__name__)
 DEFAULT_DATE_TIME = datetime(2000, 1, 1, 0, 0)
 
 
-@CELERY_APP.task
+@task
 def send_email_to_cohort(subject, message, students):
     """
     Send email task.
