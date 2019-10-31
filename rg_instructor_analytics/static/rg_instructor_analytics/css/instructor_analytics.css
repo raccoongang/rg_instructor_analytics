@@ -125,7 +125,7 @@
 #gradebook_table_body {
     max-height: 200px;
     overflow-y: auto;
-    padding-top: 40px;
+    padding-top: 64px;
 }
 .funnel-item.active > .content {
     display: block;
