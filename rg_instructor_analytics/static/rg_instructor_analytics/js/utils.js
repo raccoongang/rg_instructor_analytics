@@ -112,7 +112,7 @@ function TimeFilter(content, action) {
         filter.endDate = filter.getStartEndDates().last4WeeksTo;
         break;
       case "sincecoursestart":
-        filter.startDate = filter.courseStartDate;
+        filter.startDate = filter.minDate;
         filter.endDate = moment();
         break;
       case "allenrollments":
@@ -133,15 +133,15 @@ function TimeFilter(content, action) {
   this.setDisable = function () {
     content.find(".js-select-1-week").prop(
       "disabled",
-      ((this.getStartEndDates().lastWeekFrom - filter.startDate) < 0)
+      this.getStartEndDates().lastWeekFrom < filter.minDate
     );
     content.find(".js-select-2-week").prop(
       "disabled",
-      ((this.getStartEndDates().last2WeeksFrom - filter.startDate) < 0)
+      this.getStartEndDates().last2WeeksFrom < filter.minDate
     );
     content.find(".js-select-4-week").prop(
       "disabled",
-      ((this.getStartEndDates().last4WeeksFrom - filter.startDate) < 0)
+      this.getStartEndDates().last4WeeksFrom < filter.minDate
     );
   };
 
@@ -172,6 +172,35 @@ function TimeFilter(content, action) {
       last4WeeksFrom: moment().subtract(1, 'months').startOf('month'),
       last4WeeksTo: moment().subtract(1, 'months').endOf('month'),
     }
+  };
+
+  this.init = function (minDate, firstEnrollDate){
+    filter.minDate = minDate;
+    filter.firstEnrollDate = firstEnrollDate;
+    filter.setDisable();
+
+    // Select 'Last Week' time interval if possible, otherwise
+    // select 'All Enrollments' for enrollments tab or 'Since Course Start' for other tabs
+    $lastWeekSelector = content.find(".js-select-1-week");
+
+    if (! $lastWeekSelector.prop('disabled')){
+      $lastWeekSelector.prop('selected', true);
+      filter.startDate = filter.getStartEndDates().lastWeekFrom;
+      filter.endDate = filter.getStartEndDates().lastWeekTo;
+    }
+    else {
+      if (firstEnrollDate) {
+        content.find(".js-select-all-enroll").prop('selected', true);
+        filter.startDate = firstEnrollDate;
+      }
+      else {
+        content.find(".js-select-all-week").prop('selected', true);
+        filter.startDate = minDate;
+      }
+      filter.endDate = moment();
+    }
+    filter.setMinDate();
+    filter.makeActive(content.find(".js-datepicker-btn"));
   };
 
 }
