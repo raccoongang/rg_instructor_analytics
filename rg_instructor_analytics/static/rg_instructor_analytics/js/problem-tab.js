@@ -367,13 +367,7 @@ function ProblemTab(button, content) {
             $tabBanner.prop('hidden', true);
             $tabContent.prop('hidden', false);
             $problemDetailSection.prop('hidden', true);
-            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
-            timeFilter.endDate = moment();
-            timeFilter.minDate = timeFilter.startDate;
-            timeFilter.setDisable();
-
-            timeFilter.makeActive(content.find(".js-datepicker-btn"));
-            timeFilter.setMinDate();
+            timeFilter.init(moment(courseDatesInfo.course_start * 1000));
             updateHomeWork();
         } else {
             $tabBanner.prop('hidden', false);

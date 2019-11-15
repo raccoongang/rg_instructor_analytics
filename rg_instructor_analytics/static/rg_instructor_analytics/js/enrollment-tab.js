@@ -138,7 +138,7 @@ function EnrollmentTab(button, content) {
     try {
       var enrollInfo = $('#enrollment-data').data('enroll')[enrollTab.tabHolder.course];
       var courseDatesInfo = $('.course-dates-data').data('course-dates')[enrollTab.tabHolder.course];
-      var firstEnrollDate = moment();
+      var firstEnrollDate = null;
       var courseStartDate = moment();
 
       if (enrollInfo.enroll_start !== "null") {
@@ -148,14 +148,10 @@ function EnrollmentTab(button, content) {
         courseStartDate = moment(courseDatesInfo.course_start * 1000)  // Date of course start
       }
 
-      timeFilter.minDate = moment(Math.min(firstEnrollDate, courseStartDate));
-      timeFilter.firstEnrollDate = firstEnrollDate;
-      timeFilter.courseStartDate = courseStartDate;
-      timeFilter.startDate = firstEnrollDate;
-      timeFilter.endDate = moment();
-      timeFilter.makeActive(content.find(".js-datepicker-btn"));
-      timeFilter.setMinDate();
-      timeFilter.setDisable();
+      timeFilter.init(
+          moment(Math.min(firstEnrollDate, courseStartDate)),
+          firstEnrollDate
+      );
 
     }
     catch (error) {

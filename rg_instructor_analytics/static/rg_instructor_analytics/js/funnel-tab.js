@@ -213,13 +213,7 @@ function FunnelTab(button, content) {
         if (courseDatesInfo.course_is_started) {
             $tabBanner.prop('hidden', true);
             $tabContent.prop('hidden', false);
-            timeFilter.startDate = moment(courseDatesInfo.course_start * 1000);
-            timeFilter.endDate = moment();
-            timeFilter.minDate = timeFilter.startDate;
-            timeFilter.setDisable();
-
-            timeFilter.makeActive(content.find(".js-datepicker-btn"));
-            timeFilter.setMinDate();
+            timeFilter.init(moment(courseDatesInfo.course_start * 1000));
             updateFunnel();
         } else {
             $tabBanner.prop('hidden', false);
