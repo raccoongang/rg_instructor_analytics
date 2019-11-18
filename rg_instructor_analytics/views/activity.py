@@ -60,21 +60,27 @@ class ActivityView(View):
             video_dates.append(to_date)
             video_activities.append(0)
 
-        discussion_activities_set = DiscussionActivityByDay.objects.filter(
+        discussion_data = DiscussionActivityByDay.objects.filter(
             course=course_key,
             day__range=(from_date, to_date),
-        ).order_by('day')
+        ).order_by('day').values('day', 'total')
 
-        discussion_dates = list(discussion_activities_set.values_list('day', flat=True))
-        discussion_activities = list(discussion_activities_set.values_list('total', flat=True))
+        discussion_dates = []
+        discussion_activities = []
+        for d in discussion_data:
+            discussion_dates.append(d['day'])
+            discussion_activities.append(d['total'])
 
-        course_visits_set = CourseVisitsByDay.objects.filter(
+        course_visits_data = CourseVisitsByDay.objects.filter(
             course=course_key,
             day__range=(from_date, to_date),
-        ).order_by('day')
+        ).order_by('day').values('day', 'total')
 
-        course_dates = list(course_visits_set.values_list('day', flat=True))
-        course_activities = list(course_visits_set.values_list('total', flat=True))
+        course_dates = []
+        course_activities = []
+        for d in course_visits_data:
+            course_dates.append(d['day'])
+            course_activities.append(d['total'])
 
         activities = video_activities + discussion_activities + course_activities
         nticks_y = max(activities) if activities else 0
