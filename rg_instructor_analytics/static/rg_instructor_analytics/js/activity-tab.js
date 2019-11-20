@@ -9,8 +9,14 @@ function ActivityTab(button, content) {
   var $tabBanner = content.find('.tab-banner');
   var $tabContent = content.find('.tab-content');
   var $tabContentItems = content.find('.item-content');
+  var $loaderDailyActivities = content.find('.js-loader__activity_stats');
+  var $tabContentDailyActivities = content.find('.js-item-content__activity_stats');
+  var $loaderUnitVisits = content.find('.js-loader__unit-visits-stats');
+  var $tabContentUnitVisits = content.find('.item-content__unit-visits-stats');
 
   function renderDailyActivities(dailyActivities) {
+      $loaderDailyActivities.addClass('hidden');
+      $tabContentDailyActivities.removeClass('hidden');
 
       function dataFixFunction(x) {
         var result = new Date(x);
@@ -73,6 +79,8 @@ function ActivityTab(button, content) {
   }
 
   function renderUnitVisits(unitVisits) {
+      $loaderUnitVisits.addClass('hidden');
+      $tabContentUnitVisits.removeClass('hidden');
       var heightLayout = unitVisits.tickvals.length * 20;
 
       var stat = {
@@ -109,27 +117,37 @@ function ActivityTab(button, content) {
 
   function updateActivity() {
       $tabContentItems.addClass('hidden');
+      $loaderDailyActivities.removeClass('hidden');
+      $loaderUnitVisits.removeClass('hidden');
 
       function onError() {
+          $loaderDailyActivities.addClass('hidden');
+          $loaderUnitVisits.addClass('hidden');
           alert("Can't load data for selected period!");
-      }
-
-      function onSuccess(data) {
-          $tabContentItems.removeClass('hidden');
-          renderDailyActivities(data.daily_activities);
-          renderUnitVisits(data.unit_visits);
       }
 
       $.ajax({
           type: "POST",
-          url: "api/activity/",
+          url: "api/activity/daily/",
           data: timeFilter.timestampRange,
           dataType: "json",
           traditional: true,
-          success: onSuccess,
+          success: function (data) {
+              renderDailyActivities(data.activity);
+          },
           error: onError,
-          beforeSend: timeFilter.setLoader,
-          complete: timeFilter.removeLoader,
+      });
+
+      $.ajax({
+          type: "POST",
+          url: "api/activity/unit_visits/",
+          data: timeFilter.timestampRange,
+          dataType: "json",
+          traditional: true,
+          success: function (data) {
+            renderUnitVisits(data.activity);
+          },
+          error: onError,
       });
   }
 

@@ -10,22 +10,37 @@
 
 <div class="tab-content">
     <%include file="time-filter.html" args="active_tab='activity'"/>
-    <div class="item-content hidden">
-        <div class="analytics-legend-holder activity-legend-holder__square">
-            <div class="activity-legend-item">${_("Video views count")}</div>
-            <div class="activity-legend-item">${_("Discussion activities count")}</div>
-            <div class="activity-legend-item">${_("Intensity of visits the course count")}</div>
+
+    <div>
+        <div class="loader js-loader__activity_stats">
+            ${_("Loading")}
+            <img src="/static/rg_instructor_analytics/images/ajax-loader.gif" alt="loader">
         </div>
-        <div id="activity-stats-plot"></div>
+        <div class="item-content js-item-content__activity_stats hidden">
+            <div class="analytics-legend-holder activity-legend-holder__square">
+                <div class="activity-legend-item">${_("Video views count")}</div>
+                <div class="activity-legend-item">${_("Discussion activities count")}</div>
+                <div class="activity-legend-item">${_("Intensity of visits the course count")}</div>
+            </div>
+            <div id="activity-stats-plot"></div>
+        </div>
     </div>
-    <div class="item-content hidden">
-        <h2 class="analytics-title js-analytics-subtitle">${_("Transition Pattern through Units")}</h2>
-        <span class="analytics-title-text js-analytics-subtitle-text">
-            ${_("This graph indicates the amount of visits of each Unit and bring you the whole perspective "
-            "of what part of Course was the most difficult or interesting for your Students.")}
-        </span>
-        <div id="activity-unit-visits-stats-plot"></div>
+
+    <div>
+        <div class="loader js-loader__unit-visits-stats">
+            ${_("Loading")}
+            <img src="/static/rg_instructor_analytics/images/ajax-loader.gif" alt="loader">
+        </div>
+        <div class="item-content item-content__unit-visits-stats hidden">
+            <h2 class="analytics-title js-analytics-subtitle">${_("Transition Pattern through Units")}</h2>
+            <span class="analytics-title-text js-analytics-subtitle-text">
+                ${_("This graph indicates the amount of visits of each Unit and bring you the whole perspective "
+                "of what part of Course was the most difficult or interesting for your Students.")}
+            </span>
+            <div id="activity-unit-visits-stats-plot"></div>
+        </div>
     </div>
+
 </div>
 
 

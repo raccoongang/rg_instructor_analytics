@@ -133,7 +133,7 @@ class ActivityView(View):
             'count_visits': count_visits
         }
 
-    def post(self, request, course_id):
+    def post(self, request, course_id, slug):
         """
         POST request handler.
 
@@ -152,11 +152,14 @@ class ActivityView(View):
         from_date = datetime.fromtimestamp(from_timestamp).date()
         to_date = datetime.fromtimestamp(to_timestamp).date()
 
-        unit_visits = self.get_unit_visits(from_date, to_date, course_key)
-        daily_activities = self.get_daily_activity_for_course(from_date, to_date, course_key)
+        if slug == 'daily':
+            activity = self.get_daily_activity_for_course(from_date, to_date, course_key)
+        elif slug == 'unit_visits':
+            activity = self.get_unit_visits(from_date, to_date, course_key)
+        else:
+            activity = {}
 
         return JsonResponse(data={
-            'daily_activities': daily_activities,
-            'unit_visits': unit_visits
+            'activity': activity
 
         })
