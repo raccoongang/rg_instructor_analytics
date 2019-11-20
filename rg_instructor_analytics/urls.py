@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^api/enroll_statics/$', EnrollmentStatisticView.as_view(), name='enrollment_statistic_view'),
 
     # Activity tab:
-    url(r'^api/activity/$', ActivityView.as_view(), name='activity_view'),
+    url(r'^api/activity/(?P<slug>daily|unit_visits)/$', ActivityView.as_view(), name='activity_view'),
 
     # Problems tab:
     url(
