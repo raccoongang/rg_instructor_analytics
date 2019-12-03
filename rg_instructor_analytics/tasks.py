@@ -21,6 +21,7 @@ from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from rg_instructor_analytics.models import GradeStatistic, LastGradeStatUpdate
+from rg_instructor_analytics.utils import get_course_instructors_ids
 from xmodule.modulestore.django import modulestore
 
 from courseware.courses import get_course_by_id
@@ -157,12 +158,16 @@ def grade_collector_stat():
     logging.info('Task grade_collector_stat started at {}'.format(this_update_date))
     users_by_course = get_items_for_grade_update()
     collected_stat = []
+
     for course_string_id, users in users_by_course.iteritems():
         try:
             course_key = CourseKey.from_string(str(course_string_id))
             course = get_course_by_id(course_key, depth=0)
         except (InvalidKeyError, Http404):
             continue
+
+        instructor_user_ids = get_course_instructors_ids(course_key)
+        users = list(set(users) - set(instructor_user_ids))
 
         with modulestore().bulk_operations(course_key):
             for user in users:
@@ -180,6 +185,7 @@ def grade_collector_stat():
                         {'exam_info': json.dumps(exam_info), 'total': grades['percent']}
                     )
                 )
+        GradeStatistic.objects.filter(course_id=course_key, student_id__in=instructor_user_ids).delete()
 
     with transaction.atomic():
         for key_values, additional_info in collected_stat:

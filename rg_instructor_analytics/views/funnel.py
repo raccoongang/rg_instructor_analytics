@@ -16,6 +16,7 @@ from opaque_keys.edx.keys import CourseKey
 from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
 from rg_instructor_analytics.utils.decorators import instructor_access_required
+from rg_instructor_analytics.utils import get_course_instructors_ids
 from student.models import CourseEnrollment
 
 try:
@@ -97,17 +98,28 @@ class GradeFunnelView(View):
         """
         Build DB queryset for course block type and given course.
         """
+        instructors = get_course_instructors_ids(course_key)
         # TODO use preaggregation
         modified_filter = RawSQL(
             "(SELECT MAX(t2.modified) FROM courseware_studentmodule t2 " +
             "WHERE (t2.student_id = courseware_studentmodule.student_id) AND t2.course_id = %s "
-            "AND t2.module_type = %s)", (course_key, block_type))
+            "AND t2.module_type = %s AND NOT t2.student_id IN(%s))",
+            (course_key, block_type, ','.join(map(str, instructors)))
+        )
 
         date_range_filter = Q(
             modified__range=(from_date, to_date + timedelta(days=1))
         ) if from_date and to_date else Q()
 
-        enrolled_by_course = CourseEnrollment.objects.filter(course_id=course_key).values_list('user__id', flat=True)
+        enrolled_by_course = list(
+            CourseEnrollment.objects.filter(
+                course_id=course_key
+            ).exclude(
+                user_id__in=instructors
+            ).values_list(
+                'user_id', flat=True
+            )
+        )
         students_course_state_qs = StudentModule.objects.filter(
             date_range_filter,
             course_id=course_key,
@@ -117,15 +129,15 @@ class GradeFunnelView(View):
         )
 
         if IGNORED_ENROLLMENT_MODES:
-            users = (
+            users = list(
                 CourseEnrollment.objects
                 .filter(
                     course_id=course_key,
                     mode__in=IGNORED_ENROLLMENT_MODES
                 )
-                .values_list('user', flat=True)
+                .values_list('user_id', flat=True)
             )
-            students_course_state_qs = students_course_state_qs.exclude(student__in=users)
+            students_course_state_qs = students_course_state_qs.exclude(student_id__in=users)
 
         return students_course_state_qs
 

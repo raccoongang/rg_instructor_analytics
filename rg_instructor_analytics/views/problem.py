@@ -19,6 +19,7 @@ from courseware.courses import get_course_by_id
 from courseware.models import StudentModule
 from courseware.module_render import xblock_view
 from rg_instructor_analytics.utils.decorators import instructor_access_required
+from rg_instructor_analytics.utils import get_course_instructors_ids
 
 try:
     from openedx.core.release import RELEASE_LINE
@@ -155,6 +156,7 @@ class ProblemHomeWorkStatisticView(View):
                 grade__isnull=False,
                 module_type__exact="problem",
             )
+            .exclude(student_id__in=get_course_instructors_ids(course_key))
             .values('module_state_key')
             .annotate(attempts_avg=Avg(self.ATTEMPTS_REQUEST))
             .annotate(grade_avg=Sum('grade') / Sum('max_grade'))
@@ -209,6 +211,7 @@ class ProblemsStatisticView(View):
                 module_state_key__in=problems,
                 grade__isnull=False
             )
+            .exclude(student_id__in=get_course_instructors_ids(course_key))
             .values('module_state_key')
             .annotate(grades=Sum('grade'))
             .annotate(max_grades=Sum('max_grade'))
@@ -292,8 +295,13 @@ class ProblemQuestionParser():
         """
         Provide statistic for given question.
         """
-        problems = StudentModule.objects.filter(module_state_key=self.problemID, grade__isnull=False,
-                                                module_type__exact="problem").values_list('state', flat=True)
+        problems = StudentModule.objects.filter(
+            module_state_key=self.problemID,
+            grade__isnull=False,
+            module_type__exact="problem"
+        ).exclude(
+            student_id__in=get_course_instructors_ids(self.problemID.course_key)
+        ).values_list('state', flat=True)
         result = self.init_statistic_object()
         for p in problems:
             self.process_statistic_item(result, json.loads(p))
