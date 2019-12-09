@@ -7,6 +7,7 @@ import os
 from django.conf import settings
 from path import Path
 
+
 log = logging.getLogger(__name__)
 
 APP_ROOT = Path(__file__).dirname()

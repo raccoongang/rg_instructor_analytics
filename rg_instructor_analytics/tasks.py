@@ -13,7 +13,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.http.response import Http404
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -78,9 +78,14 @@ def get_items_for_grade_update():
     # For first update we what get statistic for all enrollments,
     # otherwise - generate diff, based on the student activity.
     if last_update_info:
+        force_update_students = list(last_update_info.force_update_students.all().values_list('id', flat=True))
         items_for_update = list(
             StudentModule.objects
-            .filter(module_type__exact='problem', modified__gt=last_update_info.last_update)
+            .filter(
+                Q(module_type__exact='problem')
+                & Q(modified__gt=last_update_info.last_update)
+                | Q(student_id__in=force_update_students)
+            )
             .values('student__id', 'course_id')
             .order_by('student__id', 'course_id')
             .distinct()
@@ -115,11 +120,11 @@ def get_items_for_grade_update():
             .distinct()
         )
 
-    users_by_course = {}
-    for item in items_for_update:
-        if item['course_id'] not in users_by_course:
-            users_by_course[item['course_id']] = []
-        users_by_course[item['course_id']].append(item['student__id'])
+    users_by_course = dict(
+        (c, list())
+        for c in CourseEnrollment.objects.all().values_list('course_id', flat=True).distinct()
+    )
+    [users_by_course[i['course_id']].append(i['student__id']) for i in items_for_update]
     return users_by_course
 
 
@@ -192,7 +197,11 @@ def grade_collector_stat():
             key_values['defaults'] = additional_info
             GradeStatistic.objects.update_or_create(**key_values)
 
-        LastGradeStatUpdate(last_update=this_update_date).save()
+        lgsu = LastGradeStatUpdate(last_update=this_update_date)
+        lgsu.save()
+        # Leave 3 last records
+        if lgsu.id > 3:
+            LastGradeStatUpdate.objects.filter(id__lt=lgsu.id - 3).delete()
 
 
 @task
