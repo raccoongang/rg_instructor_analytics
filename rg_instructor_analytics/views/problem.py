@@ -1,6 +1,7 @@
 """
 Problems sub-tab module.
 """
+import csv
 from abc import ABCMeta, abstractmethod
 from datetime import date, timedelta
 from itertools import chain
@@ -8,7 +9,7 @@ import json
 
 from django.db.models import Avg, IntegerField, Q, Sum
 from django.db.models.expressions import RawSQL
-from django.http.response import HttpResponseBadRequest, JsonResponse
+from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
@@ -65,6 +66,7 @@ class ProblemHomeWorkStatisticView(View):
         stats_course_id = post_data.get('course_id')
 
         try:
+            _format = request.POST.get('format', 'json')
             from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
             to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
 
@@ -74,9 +76,68 @@ class ProblemHomeWorkStatisticView(View):
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
+        if _format == 'csv':
+            return self.response_csv_stats_for_course(course_key, from_date, to_date)
+
         return JsonResponse(
             data=self.get_homework_stat(course_key, from_date, to_date)
         )
+
+    def response_csv_stats_for_course(self, course_key, from_date, to_date):
+        """
+        Return CSV.
+        """
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="problems_{}--{}.csv"'.format(from_date, to_date)
+
+        writer = csv.writer(response)
+        writer.writerow([
+            _('Subsection'),
+            _('Average Attempts Count'),
+            _('Average Success Level, %'),
+            _('Correct Answers, %'),
+            _('Incorrect Answers, %')
+        ])
+        data = self.get_homework_stat(course_key, from_date, to_date)
+
+        stats = (
+            StudentModule.objects
+            .filter(
+                (from_date and to_date and Q(modified__range=(from_date, to_date + timedelta(days=1)))) or Q(),
+                grade__isnull=False,
+                course_id=course_key
+            )
+            .exclude(student_id__in=get_course_instructors_ids(course_key))
+            .values('module_state_key')
+            .annotate(grades=Sum('grade'))
+            .annotate(max_grades=Sum('max_grade'))
+            .annotate(attempts=Avg(ProblemHomeWorkStatisticView.ATTEMPTS_REQUEST))
+            .values('module_state_key', 'grades', 'max_grades', 'attempts')
+        )
+        stats = dict((str(sm['module_state_key']), sm) for sm in stats)
+
+        for index, name in enumerate(data['names']):
+            correct_answer = round(data['correct_answer'][index] * 100, 1)
+            attempts = round(data['attempts'][index], 1)
+            writer.writerow([name, attempts, correct_answer, '', ''])
+
+            for problem_index, problem in enumerate(data['problems'][index]):
+                correct, incorrect = 0, 0
+                stat = stats.get(problem, {'attempts': 0})
+                if stat['attempts'] and stat['max_grades']:
+                    correct = int(
+                        (float(stat['grades']) / float(stat['max_grades'] * stat['attempts'])) * 100
+                    )
+                    incorrect = 100 - correct
+                writer.writerow([
+                    data['problems_names'][index][problem_index],
+                    '',
+                    '',
+                    correct,
+                    incorrect,
+                ])
+
+        return response
 
     def get_homework_stat(self, course_key, from_date=None, to_date=None):
         """
@@ -100,7 +161,8 @@ class ProblemHomeWorkStatisticView(View):
             NOTE(wowkalucky): optimize - currently 'process_stats' takes about 11 sec!
             """
             stats = {
-                'correct_answer': [], 'attempts': [], 'problems': [], 'names': [], 'subsection_id': []
+                'correct_answer': [], 'attempts': [], 'problems': [],
+                'names': [], 'subsection_id': [], 'problems_names': []
             }
             hw_number = 0
 
@@ -113,6 +175,7 @@ class ProblemHomeWorkStatisticView(View):
                 stats['correct_answer'].append(0)
                 stats['attempts'].append(0)
                 stats['problems'].append([])
+                stats['problems_names'].append([])
                 stats['names'].append(subsection.display_name)
                 stats['subsection_id'].append(subsection.location.to_deprecated_string())
 
@@ -128,6 +191,7 @@ class ProblemHomeWorkStatisticView(View):
                             problems_in_hw += 1
 
                         stats['problems'][-1].append(specific.get_problem_str(problem_id))
+                        stats['problems_names'][-1].append(child.display_name)
 
                 if problems_in_hw > 0:
                     stats['correct_answer'][-1] /= problems_in_hw

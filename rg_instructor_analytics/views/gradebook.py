@@ -1,11 +1,12 @@
 """
 Gradebook sub-tab module.
 """
+import csv
 import json
 from collections import OrderedDict
 
 from django.db.models import Q
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
@@ -37,6 +38,7 @@ class GradebookView(View):
         :param course_id: (str) context course ID (from urlconf)
         """
         try:
+            _format = request.POST.get('format', 'json')
             filter_string = request.POST.get('filter')
             stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)
@@ -61,6 +63,18 @@ class GradebookView(View):
             students_names.append([student.student.username, student.is_enrolled])
 
         exam_names = list(student_info[0].keys()) if len(student_info) > 0 else []
+
+        if _format == 'csv':
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="gradebook.csv"'
+
+            writer = csv.writer(response)
+            writer.writerow([_('Student')] + exam_names)
+            get_grades = lambda n: [student_info[n][e] for e in exam_names]  # noqa: E731
+            [writer.writerow([d[0]] + get_grades(i)) for i, d in enumerate(students_names)]
+
+            return response
+
         return JsonResponse(
             data={
                 'student_info': student_info,

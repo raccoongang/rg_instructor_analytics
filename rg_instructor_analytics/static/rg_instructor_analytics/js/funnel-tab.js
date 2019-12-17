@@ -7,6 +7,10 @@ function FunnelTab(button, content) {
 
     funnelTab.courseStructureView = $tabContent;
 
+    $('.export-funnel-to-csv').click(function(e) {
+        exportToCSV('api/funnel/', funnelTab.tabHolder.course, timeFilter.timestampRange);
+    });
+
     function openLocation() {
         var items = [funnelTab.viewContent.find(
             '*[data-edxid="' + funnelTab.locationToOpen.value + '"]'

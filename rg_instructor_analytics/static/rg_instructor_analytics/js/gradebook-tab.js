@@ -17,6 +17,10 @@ function GradebookTab(button, content) {
     
     greadebookTab.filterString = '';
 
+    $('.export-gradebook-to-csv').click(function(e) {
+        exportToCSV('api/gradebook/', greadebookTab.tabHolder.course, {filter: greadebookTab.filterString});
+    });
+
     function loadTabData() {
         var courseDatesInfo = $('.course-dates-data').data('course-dates')[greadebookTab.tabHolder.course];
         if (courseDatesInfo.course_is_started) {
@@ -37,7 +41,7 @@ function GradebookTab(button, content) {
     }
     
     function updateData(filter) {
-        var filterString = filter || '';
+        greadebookTab.filterString = filter || '';
         greadebookTab.gradebookTableHeader.empty();
         greadebookTab.gradebookTableBody.empty();
         $statsPlot.addClass('hidden');
@@ -46,7 +50,7 @@ function GradebookTab(button, content) {
             greadebookTab.studentInfo = response.student_info;
             greadebookTab.examNames = response.exam_names;
             greadebookTab.studentsNames = response.students_names;
-            updateTables(filterString);
+            updateTables(greadebookTab.filterString);
         }
         
         function onError() {
@@ -56,7 +60,7 @@ function GradebookTab(button, content) {
         $.ajax({
             type: "POST",
             url: "api/gradebook/",
-            data: {filter: filterString},
+            data: {filter: greadebookTab.filterString},
             dataType: "json",
             traditional: true,
             success: onSuccess,

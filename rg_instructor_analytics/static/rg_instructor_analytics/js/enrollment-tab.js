@@ -6,6 +6,9 @@
 function EnrollmentTab(button, content) {
   var enrollTab = new Tab(button, content);
   var timeFilter = new TimeFilter(content, updateEnrolls);
+  $('.export-enrollments-to-csv').click(function(e) {
+      exportToCSV('api/enroll_statics/', enrollTab.tabHolder.course, timeFilter.timestampRange);
+  });
 
   /**
    * Send ajax to server side according selected date range and redraw plot

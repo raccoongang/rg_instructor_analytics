@@ -10,6 +10,10 @@ function ProblemTab(button, content) {
     var $tabBanner = content.find('.tab-banner');
     var $tabContent = content.find('.tab-content');
 
+    $('.export-problems-to-csv').click(function(e) {
+        exportToCSV('api/problem_statics/homework/', problemTab.tabHolder.course, timeFilter.timestampRange);
+    });
+
     function openLocation(){
         problemTab.content.find(`*[data-edxid="${problemTab.locationToOpen.value}"]`).click();
         problemTab.locationToOpen = undefined;
