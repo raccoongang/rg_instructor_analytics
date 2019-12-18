@@ -172,3 +172,24 @@ function TimeFilter(content, action) {
     }
   };
 }
+
+function exportToCSV(action, course, data) {
+    var i, form, key;
+
+    form = document.createElement('form');
+    form.hidden = true;
+    form.method = 'POST';
+    form.action = action;
+    data.format = 'csv';
+    data.csrfmiddlewaretoken = $.cookie('csrftoken');
+    data.course_id = course;
+    for (key in data) {
+        i = document.createElement('input');
+        i.name = key;
+        i.value = data[key];
+        form.appendChild(i);
+    }
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+}

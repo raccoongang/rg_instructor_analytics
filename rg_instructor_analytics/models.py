@@ -3,13 +3,13 @@ Models of the rg analytics.
 """
 
 from django.dispatch import receiver
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import post_save, pre_save
 from django.contrib.auth.models import User
 from django.db import models
 
 from openedx.core.djangoapps.xmodule_django.models import CourseKeyField
 
-from student.models import CourseEnrollment, CourseAccessRole
+from student.models import CourseAccessRole, CourseEnrollment
 
 
 class GradeStatistic(models.Model):
@@ -57,13 +57,13 @@ def set_force_update_students(sender, instance, **kwargs):
     lgsu = LastGradeStatUpdate.objects.last()
     do_add = (
         lgsu
-        and (
+        and (  # noqa: W503
             sender is User
-            and instance.id
-            and sender.objects.get(id=instance.id).is_staff
-            and not instance.is_staff
+            and instance.id  # noqa: W503
+            and sender.objects.get(id=instance.id).is_staff  # noqa: W503
+            and not instance.is_staff  # noqa: W503
         )
-        or sender is CourseAccessRole
+        or sender is CourseAccessRole  # noqa: W503
     )
     if do_add:
         lgsu.force_update_students.add(sender is User and instance or instance.user)

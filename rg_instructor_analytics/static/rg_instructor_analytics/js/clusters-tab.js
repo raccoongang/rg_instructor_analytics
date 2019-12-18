@@ -10,6 +10,10 @@ function CohortTab(button, content) {
     //WYSIWYG init
     $('#email-body').richText();
 
+    $('.export-cohort-to-csv').click(function(e) {
+        exportToCSV('api/cohort/', cohortTab.tabHolder.course, {});
+    });
+
     content.find('#cohort-send-email-btn').click(function () {
         var $subject = content.find('#email-subject');
         var $richTextEditor = content.find('.richText-editor');

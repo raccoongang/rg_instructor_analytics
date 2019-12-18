@@ -83,8 +83,8 @@ def get_items_for_grade_update():
             StudentModule.objects
             .filter(
                 Q(module_type__exact='problem')
-                & Q(modified__gt=last_update_info.last_update)
-                | Q(student_id__in=force_update_students)
+                & Q(modified__gt=last_update_info.last_update)  # noqa: W503
+                | Q(student_id__in=force_update_students)  # noqa: W503
             )
             .values('student__id', 'course_id')
             .order_by('student__id', 'course_id')

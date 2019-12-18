@@ -1,12 +1,13 @@
 """
 Progress Funnel sub-tab module.
 """
+import csv
 from datetime import date, timedelta
 import json
 
 from django.db.models import Count, Q
 from django.db.models.expressions import RawSQL
-from django.http.response import HttpResponseBadRequest, JsonResponse
+from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
@@ -80,6 +81,7 @@ class GradeFunnelView(View):
         post_data = request.POST
 
         try:
+            _format = request.POST.get('format', 'json')
             from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
             to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
 
@@ -91,7 +93,30 @@ class GradeFunnelView(View):
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
 
-        return JsonResponse(data={'courses_structure': self.get_funnel_info(course_key, from_date, to_date)})
+        data = self.get_funnel_info(course_key, from_date, to_date)
+        if _format == 'csv':
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="funnel_{}--{}.csv"'.format(from_date, to_date)
+
+            writer = csv.writer(response)
+            writer.writerow([_('Section'), _('Entered'), _('Passed'), _('Stuck')])
+
+            def writerows(rows, offset=0):
+                for row in rows:
+                    writer.writerow([
+                        '{}{}'.format('  ' * offset, row['name']),
+                        row['student_count_in'],
+                        row['student_count_out'],
+                        row['student_count'],
+                    ])
+                    children = row.get('children')
+                    if children:
+                        writerows(children, offset=offset + 1)
+
+            writerows(data)
+            return response
+
+        return JsonResponse(data={'courses_structure': data})
 
     @staticmethod
     def get_query_for_course_item_stat(course_key, block_type, from_date=None, to_date=None):

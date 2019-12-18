@@ -1,10 +1,11 @@
 """
 Enrollment stats sub-tab module.
 """
+import csv
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.http import HttpResponseBadRequest, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
@@ -142,6 +143,23 @@ class EnrollmentStatisticView(View):
             'nticks_y1': nticks_y1, 'nticks_y2': nticks_y2,
         }
 
+    @staticmethod
+    def response_csv_stats_for_course(from_timestamp, to_timestamp, course_key):
+        """
+        Return CSV.
+        """
+        from_date = datetime.fromtimestamp(from_timestamp).date()
+        to_date = datetime.fromtimestamp(to_timestamp).date()
+        data = EnrollmentStatisticView.get_state_for_period(course_key, from_date, to_date)
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="enrollments_{}--{}.csv"'.format(from_date, to_date)
+
+        writer = csv.writer(response)
+        writer.writerow([_('Date'), _('Enrollments'), _('Unenrollments'), _('Total')])
+        [writer.writerow([d['day'], d['enrolled'], d['unenrolled'], d['total']]) for d in data]
+
+        return response
+
     def post(self, request, course_id):
         """
         POST request handler.
@@ -149,6 +167,7 @@ class EnrollmentStatisticView(View):
         :param course_id: (str) context course ID (from urlconf)
         """
         try:
+            _format = request.POST.get('format', 'json')
             from_timestamp = int(request.POST['from'])
             to_timestamp = int(request.POST['to'])
 
@@ -161,6 +180,9 @@ class EnrollmentStatisticView(View):
             return HttpResponseBadRequest(_("Invalid date range."))
         except InvalidKeyError:
             return HttpResponseBadRequest(_("Invalid course ID."))
+
+        if _format == 'csv':
+            return self.response_csv_stats_for_course(from_timestamp, to_timestamp, course_key)
 
         return JsonResponse(
             data=self.get_daily_stats_for_course(from_timestamp, to_timestamp, course_key)
