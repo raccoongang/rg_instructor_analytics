@@ -20,8 +20,8 @@ class InstructorAnalyticsDashboardTab(CourseTab):
     title = ugettext_noop("Instructor analytics")
     body_class = "instructor-analytics-tab"
     is_dynamic = True
-    fragment_view_name = 'rg_instructor_analytics.views.instructor_analytics_dashboard'
-    view_name = 'instructor_analytics_dashboard'
+    fragment_view_name = 'rg_instructor_analytics.views.tab_fragment.instructor_analytics_dashboard'
+    view_name = 'rg_instructor_analytics:instructor_analytics_dashboard'
 
     @classmethod
     def is_enabled(cls, course, user=None):
@@ -49,7 +49,7 @@ class InstructorAnalyticsDashboardTab(CourseTab):
         """
         Return the slug to be included in this tab's URL.
         """
-        return "tab/{}".format(self.type)
+        return "customtab/{}".format(self.type)
 
     @property
     def fragment_view(self):

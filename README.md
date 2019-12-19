@@ -26,25 +26,11 @@ It adds extra navigation `Instructor analytics` tab for instructors (next to `In
 `Instructor Analytics` must be installed together with the [Util for the tracking log parsing](https://github.com/raccoongang/rg_instructor_analytics_log_collector/tree/release-0.1.0).
  Install this utility from branch `release-0.1.0` before installing `Instructor Analytics`.
 
-* Add `rg_instructor_analytics` to the `ADDL_INSTALLED_APPS` in `lms.env.json`
-> Note: If you install `Instructor Analytics` with Open edX Ficus Release you also have to add to the `web_fragments` in `ADDL_INSTALLED_APPS`
 * Add in to the settings file `lms.env.json`
 ```
 FEATURES['ENABLE_XBLOCK_VIEW_ENDPOINT'] = True
 FEATURES['ENABLE_RG_INSTRUCTOR_ANALYTICS'] = True
 ```
-* Add to `edx-platform/lms/urls.py`:
-```python
-url(
-        r'^courses/{}/tab/instructor_analytics/'.format(
-            settings.COURSE_ID_PATTERN,
-        ),
-        include('rg_instructor_analytics.urls'),
-        name='instructor_analytics_endpoint',
-    ),
-```
-> Note: url definition must be set *before* url with the name `course_tab_view`
-
 * Apply migration
 * Ensure that celerybeat is running
 * Set setting for grade cache update, for example:

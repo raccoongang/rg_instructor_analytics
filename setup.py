@@ -24,5 +24,10 @@ setup(
         "openedx.course_tab": [
             "instructor_analytics = rg_instructor_analytics.plugins:InstructorAnalyticsDashboardTab"
         ],
+        "lms.djangoapp": [
+            "rg_instructor_analytics = rg_instructor_analytics.apps:InstructorAnalyticsConfig",
+        ],
+        "cms.djangoapp": [
+        ],
     }
 )

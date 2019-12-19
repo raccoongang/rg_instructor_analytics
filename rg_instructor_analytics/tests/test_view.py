@@ -47,7 +47,7 @@ class TestEnrollmentStatisticView(TestCase):
         self.factory = RequestFactory()
 
         self.request = self.factory.post(
-            '/courses/{}/tab/instructor_analytics/api/enroll_statics/'.format(self.MOCK_COURSE_ID)
+            '/courses/{}/customtab/instructor_analytics/api/enroll_statics/'.format(self.MOCK_COURSE_ID)
         )
         self.request.user = self.MOCK_ALLOWED_USER
         self.request.POST = self.MOCK_REQUEST_PARAMS

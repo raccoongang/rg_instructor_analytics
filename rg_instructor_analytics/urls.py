@@ -13,44 +13,78 @@ from rg_instructor_analytics.views.problem import (
 from rg_instructor_analytics.views.suggestion import SuggestionView
 from rg_instructor_analytics.views.tab_fragment import instructor_analytics_dashboard
 
-urlpatterns = [
+
+urlpatterns = (
+
     # Enrollment stats tab:
-    url(r'^api/enroll_statics/$', EnrollmentStatisticView.as_view(), name='enrollment_statistic_view'),
+    url(
+        r'api/enroll_statics/$',
+        EnrollmentStatisticView.as_view(),
+        name='enrollment_statistic_view'
+    ),
 
     # Problems tab:
     url(
-        r'^api/problem_statics/homework/$',
+        r'api/problem_statics/homework/$',
         ProblemHomeWorkStatisticView.as_view(),
         name='problem_homework_statistic_view'
     ),
+
     url(
-        r'^api/problem_statics/homeworksproblems/$',
+        r'api/problem_statics/homeworksproblems/$',
         ProblemsStatisticView.as_view(),
         name='problems_statistic_view'
     ),
+
     url(
-        r'^api/problem_statics/problem_detail/$',
+        r'api/problem_statics/problem_detail/$',
         ProblemDetailView.as_view(),
         name='problem_detail_view'
     ),
+
     url(
-        r'^api/problem_statics/problem_question_stat/$',
+        r'api/problem_statics/problem_question_stat/$',
         ProblemQuestionView.as_view(),
         name='problem_question_view'
     ),
 
     # Gradebook tab:
-    url(r'^api/gradebook/$', GradebookView.as_view(), name='gradebook_view'),
+    url(
+        r'api/gradebook/$',
+        GradebookView.as_view(),
+        name='gradebook_view'
+    ),
 
     # Clusters tab:
-    url(r'^api/cohort/$', CohortView.as_view(), name='cohort_view'),
-    url(r'^api/cohort/send_email/$', CohortSendMessage.as_view(), name='send_email_to_cohort'),
+    url(
+        r'api/cohort/$',
+        CohortView.as_view(),
+        name='cohort_view'
+    ),
+
+    url(
+        r'api/cohort/send_email/$',
+        CohortSendMessage.as_view(),
+        name='send_email_to_cohort'
+    ),
 
     # Progress Funnel tab:
-    url(r'^api/funnel/$', GradeFunnelView.as_view(), name='funnel'),
+    url(
+        r'api/funnel/$',
+        GradeFunnelView.as_view(),
+        name='funnel'
+    ),
 
     # Suggestions tab:
-    url(r'^api/suggestion/$', SuggestionView.as_view(), name='suggestion'),
+    url(
+        r'api/suggestion/$',
+        SuggestionView.as_view(),
+        name='suggestion'
+    ),
 
-    url(r'^$', instructor_analytics_dashboard, name='instructor_analytics_dashboard'),
-]
+    url(
+        r'$',
+        instructor_analytics_dashboard,
+        name='instructor_analytics_dashboard'
+    ),
+)
