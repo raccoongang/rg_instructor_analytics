@@ -2,7 +2,7 @@
 Progress Funnel sub-tab module.
 """
 import csv
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import json
 
 from django.db.models import Count, Q
@@ -10,6 +10,7 @@ from django.db.models.expressions import RawSQL
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
+from django.utils.timezone import make_aware
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
@@ -82,8 +83,8 @@ class GradeFunnelView(View):
 
         try:
             _format = request.POST.get('format', 'json')
-            from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
-            to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
+            from_date = make_aware(datetime.strptime(post_data['from'], "%d.%m.%Y")).date()
+            to_date = make_aware(datetime.strptime(post_data['to'], "%d.%m.%Y")).date()
 
             stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)

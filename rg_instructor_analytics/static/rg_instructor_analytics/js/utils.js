@@ -72,8 +72,8 @@ function TimeFilter(content, action) {
     timestampRange: {
       get: function() {
         return {
-          from: this.startDate.unix(),
-          to: this.endDate.unix(),
+          from: new Date(this.startDate).toLocaleString().split(',')[0],
+          to: new Date(this.endDate).toLocaleString().split(',')[0],
         }
       }
     }
