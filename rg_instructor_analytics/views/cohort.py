@@ -89,7 +89,7 @@ class CohortView(View):
 
         if _format == 'csv':
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="clusters.csv"'
+            response['Content-Disposition'] = 'attachment; filename="{}_clusters.csv"'.format(course_key)
 
             writer = csv.writer(response)
             writer.writerow(labels)

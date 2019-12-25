@@ -97,7 +97,8 @@ class GradeFunnelView(View):
         data = self.get_funnel_info(course_key, from_date, to_date)
         if _format == 'csv':
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="funnel_{}--{}.csv"'.format(from_date, to_date)
+            response['Content-Disposition'] = 'attachment; filename="{}_funnel_{}--{}.csv"'.format(course_key,
+                                                                                                   from_date, to_date)
 
             writer = csv.writer(response)
             writer.writerow([_('Section'), _('Entered'), _('Passed'), _('Stuck')])
