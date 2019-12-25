@@ -2,7 +2,7 @@
 Progress Funnel sub-tab module.
 """
 import csv
-from datetime import date, timedelta, datetime
+from datetime import datetime, timedelta
 import json
 
 from django.db.models import Count, Q

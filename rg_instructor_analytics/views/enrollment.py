@@ -82,7 +82,6 @@ class EnrollmentStatisticView(View):
         for given day (enrolled users - unenrolled),  enrol - store list of enrolled user for given day,
         unenroll - store list of unenrolled user for given day.
         """
-
         from_date = make_aware(datetime.strptime(from_timestamp, "%Y-%m-%d")).date()
         to_date = make_aware(datetime.strptime(to_timestamp, "%Y-%m-%d")).date()
 
