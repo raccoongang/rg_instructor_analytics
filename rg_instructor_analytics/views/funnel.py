@@ -83,8 +83,8 @@ class GradeFunnelView(View):
 
         try:
             _format = request.POST.get('format', 'json')
-            from_date = make_aware(datetime.strptime(post_data['from'], "%d.%m.%Y")).date()
-            to_date = make_aware(datetime.strptime(post_data['to'], "%d.%m.%Y")).date()
+            from_date = make_aware(datetime.strptime(post_data['from'], "%Y-%m-%d")).date()
+            to_date = make_aware(datetime.strptime(post_data['to'], "%Y-%m-%d")).date()
 
             stats_course_id = request.POST.get('course_id')
             course_key = CourseKey.from_string(stats_course_id)

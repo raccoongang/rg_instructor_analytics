@@ -71,9 +71,10 @@ function TimeFilter(content, action) {
     },
     timestampRange: {
       get: function() {
+        var tzoffset = (new Date()).getTimezoneOffset() * 60000;
         return {
-          from: new Date(this.startDate).toLocaleString().split(',')[0],
-          to: new Date(this.endDate).toLocaleString().split(',')[0],
+          from: new Date(this.startDate - tzoffset).toISOString().split('T')[0],
+          to: new Date(this.endDate - tzoffset).toISOString().split('T')[0],
         }
       }
     }

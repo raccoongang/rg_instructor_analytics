@@ -83,8 +83,8 @@ class EnrollmentStatisticView(View):
         unenroll - store list of unenrolled user for given day.
         """
 
-        from_date = make_aware(datetime.strptime(from_timestamp, "%d.%m.%Y")).date()
-        to_date = make_aware(datetime.strptime(to_timestamp, "%d.%m.%Y")).date()
+        from_date = make_aware(datetime.strptime(from_timestamp, "%Y-%m-%d")).date()
+        to_date = make_aware(datetime.strptime(to_timestamp, "%Y-%m-%d")).date()
 
         previous_info = EnrollmentStatisticView.get_last_state(course_key, from_date)
 
@@ -150,8 +150,8 @@ class EnrollmentStatisticView(View):
         """
         Return CSV.
         """
-        from_date = make_aware(datetime.strptime(from_timestamp, "%d.%m.%Y")).date()
-        to_date = make_aware(datetime.strptime(to_timestamp, "%d.%m.%Y")).date()
+        from_date = make_aware(datetime.strptime(from_timestamp, "%Y-%m-%d")).date()
+        to_date = make_aware(datetime.strptime(to_timestamp, "%Y-%m-%d")).date()
         data = EnrollmentStatisticView.get_state_for_period(course_key, from_date, to_date)
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="enrollments_{}--{}.csv"'.format(from_date, to_date)
