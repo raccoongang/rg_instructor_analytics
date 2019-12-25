@@ -10,6 +10,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.generic import View
+from django.utils.timezone import make_aware
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
 from rg_instructor_analytics_log_collector.models import EnrollmentByDay
@@ -81,8 +82,8 @@ class EnrollmentStatisticView(View):
         for given day (enrolled users - unenrolled),  enrol - store list of enrolled user for given day,
         unenroll - store list of unenrolled user for given day.
         """
-        from_date = datetime.fromtimestamp(from_timestamp).date()
-        to_date = datetime.fromtimestamp(to_timestamp).date()
+        from_date = make_aware(datetime.strptime(from_timestamp, "%Y-%m-%d")).date()
+        to_date = make_aware(datetime.strptime(to_timestamp, "%Y-%m-%d")).date()
 
         previous_info = EnrollmentStatisticView.get_last_state(course_key, from_date)
 
@@ -148,8 +149,8 @@ class EnrollmentStatisticView(View):
         """
         Return CSV.
         """
-        from_date = datetime.fromtimestamp(from_timestamp).date()
-        to_date = datetime.fromtimestamp(to_timestamp).date()
+        from_date = make_aware(datetime.strptime(from_timestamp, "%Y-%m-%d")).date()
+        to_date = make_aware(datetime.strptime(to_timestamp, "%Y-%m-%d")).date()
         data = EnrollmentStatisticView.get_state_for_period(course_key, from_date, to_date)
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="enrollments_{}--{}.csv"'.format(from_date, to_date)
@@ -168,8 +169,8 @@ class EnrollmentStatisticView(View):
         """
         try:
             _format = request.POST.get('format', 'json')
-            from_timestamp = int(request.POST['from'])
-            to_timestamp = int(request.POST['to'])
+            from_timestamp = request.POST['from']
+            to_timestamp = request.POST['to']
 
             stats_course_id = request.POST['course_id']
             course_key = CourseKey.from_string(stats_course_id)

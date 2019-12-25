@@ -3,7 +3,7 @@ Problems sub-tab module.
 """
 import csv
 from abc import ABCMeta, abstractmethod
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from itertools import chain
 import json
 
@@ -12,6 +12,7 @@ from django.db.models.expressions import RawSQL
 from django.http.response import HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
+from django.utils.timezone import make_aware
 from django.views.generic import View
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
@@ -67,8 +68,8 @@ class ProblemHomeWorkStatisticView(View):
 
         try:
             _format = request.POST.get('format', 'json')
-            from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
-            to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
+            from_date = make_aware(datetime.strptime(post_data['from'], "%Y-%m-%d")).date()
+            to_date = make_aware(datetime.strptime(post_data['to'], "%Y-%m-%d")).date()
 
             course_key = CourseKey.from_string(stats_course_id)
         except ValueError:
