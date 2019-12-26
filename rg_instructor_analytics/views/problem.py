@@ -89,7 +89,8 @@ class ProblemHomeWorkStatisticView(View):
         Return CSV.
         """
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="problems_{}--{}.csv"'.format(from_date, to_date)
+        response['Content-Disposition'] = 'attachment; filename="{}_problems_{}--{}.csv"'.format(course_key, from_date,
+                                                                                                 to_date)
 
         writer = csv.writer(response)
         writer.writerow([

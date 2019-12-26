@@ -66,7 +66,7 @@ class GradebookView(View):
 
         if _format == 'csv':
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="gradebook.csv"'
+            response['Content-Disposition'] = 'attachment; filename="{}_gradebook.csv"'.format(course_key)
 
             writer = csv.writer(response)
             writer.writerow([_('Student')] + exam_names)
