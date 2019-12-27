@@ -5,13 +5,11 @@ import os
 from path import Path
 
 from django.apps import AppConfig
+from openedx.core.constants import COURSE_ID_PATTERN
 from openedx.core.djangoapps.plugins.constants import ProjectType, PluginURLs
 
 
 log = logging.getLogger(__name__)
-
-# assume standard here because we can't use imported from settings in class property
-COURSE_ID_PATTERN = '(?P<course_id>[^/+]+(/|\\+)[^/+]+(/|\\+)[^/?]+)'
 
 
 class InstructorAnalyticsConfig(AppConfig):
