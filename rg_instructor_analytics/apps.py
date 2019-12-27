@@ -20,7 +20,7 @@ class InstructorAnalyticsConfig(AppConfig):
             ProjectType.LMS: {
                 PluginURLs.NAMESPACE: u'rg_instructor_analytics',
                 PluginURLs.APP_NAME: u'rg_instructor_analytics',
-                PluginURLs.REGEX: r'^courses/{}/customtab/instructor_analytics/'.format(
+                PluginURLs.REGEX: u'courses/{}/customtab/instructor_analytics/'.format(
                     COURSE_ID_PATTERN
                 ),
             }
