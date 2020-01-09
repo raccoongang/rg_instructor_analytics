@@ -164,6 +164,7 @@ function GradebookTab(button, content) {
         
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
         greadebookTab.gradebookTableBody.append(htmlStringStudentsUnenroll);
+        greadebookTab.gradebookTableBody.css('padding-top', greadebookTab.gradebookTableHeader.height() + 1);
 
         //Make cells width equal to biggest cell
         var maxLength = 0;
