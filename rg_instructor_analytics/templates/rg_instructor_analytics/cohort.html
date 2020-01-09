@@ -11,7 +11,11 @@
     from openedx.core.lib.url_utils import quote_slashes
     from openedx.core.lib.xblock_utils import wrap_xblock
 %>
-<h1>${_("Clusters")}</h1>
+
+<div class="analytics-section-title">
+    <h1>${_("Clusters")}</h1>
+    <button class="btn export-cohort-to-csv">${_('Export to CSV')}</button>
+</div>
 <div class="tab-banner" hidden>
     <h2>${_("Course has not started yet.")}</h2>
 </div>
@@ -29,7 +33,6 @@
     </div>
 
     <div id="cohort-plot"></div>
-    <button class="btn export-cohort-to-csv">${_('Export to CSV')}</button>
 
     <hr/>
 

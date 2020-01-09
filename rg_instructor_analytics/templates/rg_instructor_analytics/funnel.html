@@ -3,7 +3,11 @@
 from django.utils.translation import ugettext as _
 %>
 
-<h1>${_("Progress Funnel")}</h1>
+<div class="analytics-section-title">
+  <h1>${_("Progress Funnel")}</h1>
+  <button class="btn export-funnel-to-csv">${_('Export to CSV')}</button>
+</div>
+
 <div class="tab-banner" hidden>
   <h2>${_("Course has not started yet.")}</h2>
 </div>
@@ -28,7 +32,6 @@ from django.utils.translation import ugettext as _
   <%include file="time-filter.html" args="active_tab='funnel'"/>
 
   <div class="content"></div>
-  <button class="btn export-funnel-to-csv">${_('Export to CSV')}</button>
 </div>
 
 <div class="course-dates-data" data-course-dates="${section_data['course_dates_info']}"></div>

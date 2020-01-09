@@ -125,7 +125,6 @@
 #gradebook_table_body {
     max-height: 200px;
     overflow-y: auto;
-    padding-top: 64px;
 }
 .funnel-item.active > .content {
     display: block;
@@ -836,6 +835,9 @@ body .disc-list {
 .problem-action-buttons-wrapper {
     display: none;
 }
+.instructor-nav {
+    margin-bottom: 20px !important;
+}
 .instructor-nav li:last-child {
     float: right;
     height: 40px;
@@ -887,4 +889,13 @@ body .disc-list {
 }
 .success-message {
     color: green;
+}
+.analytics-section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+.analytics-section-title h1 {
+    margin-bottom: 0;
 }

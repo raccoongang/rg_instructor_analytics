@@ -2,7 +2,12 @@
 <%
     from django.utils.translation import ugettext as _
 %>
-<h1>${_("Enrollment stats")}</h1>
+
+<div class="analytics-section-title">
+    <h1>${_("Enrollment stats")}</h1>
+    <button class="btn export-enrollments-to-csv">${_('Export to CSV')}</button>
+</div>
+
 <h2 class="enrollment-title">${_("This report shows the dynamics of the following metrics:")}</h2>
 <ul class="disc-list">
     <li class="enrollment-title-text">${_("Enrollments: Number of students that enrolled in the course")}</li>
@@ -24,5 +29,3 @@
 <div id="enrollment-stats-plot">
 
 </div>
-
-<button class="btn export-enrollments-to-csv">${_('Export to CSV')}</button>

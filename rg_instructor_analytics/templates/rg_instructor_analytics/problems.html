@@ -4,7 +4,11 @@
 from django.utils.translation import ugettext as _
 %>
 
-<h1>${_("Problems")}</h1>
+<div class="analytics-section-title">
+  <h1>${_("Problems")}</h1>
+  <button class="btn export-problems-to-csv">${_('Export to CSV')}</button>
+</div>
+
 <div class="tab-banner" hidden>
   <h2 class="enrollment-title">${_("Course has not started yet.")}</h2>
 </div>
@@ -49,9 +53,6 @@ from django.utils.translation import ugettext as _
       ${_("Red column = 100% if students gave incorrect answers and used all the attempts")}
     </li>
   </ul>
-  <div>
-    <button class="btn export-problems-to-csv">${_('Export to CSV')}</button>
-  </div>
 
   <span class="enrollment-title-text enrollment-title-text-1 hidden">
     ${_("Click on the area that represents a unit to get detailed information.")}
