@@ -164,7 +164,6 @@ function GradebookTab(button, content) {
         
         greadebookTab.gradebookTableBody.append(htmlStringStudents);
         greadebookTab.gradebookTableBody.append(htmlStringStudentsUnenroll);
-        greadebookTab.gradebookTableBody.css('padding-top', greadebookTab.gradebookTableHeader.height() + 1);
 
         //Make cells width equal to biggest cell
         var maxLength = 0;
@@ -179,6 +178,8 @@ function GradebookTab(button, content) {
         $tableCells.each(function (item) {
             $tableCells[item].style.flex = '0 0 ' + maxLength + 'px';
         });
+
+        greadebookTab.gradebookTableBody.css('padding-top', greadebookTab.gradebookTableHeader.height() + 1);
 
         $(greadebookTab.gradebookTableBody).click(function (evt) {
             var colorArray = greadebookTab.examNames.map(function (item, idx, arr) {
