@@ -3,7 +3,7 @@ Problems sub-tab module.
 """
 import csv
 from abc import ABCMeta, abstractmethod
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from itertools import chain
 import json
 
@@ -254,8 +254,8 @@ class ProblemsStatisticView(View):
         stats_course_id = post_data.get('course_id')
 
         try:
-            from_date = post_data.get('from') and date.fromtimestamp(float(post_data['from']))
-            to_date = post_data.get('to') and date.fromtimestamp(float(post_data['to']))
+            from_date = post_data.get('from') and make_aware(datetime.strptime(post_data['from'], "%Y-%m-%d")).date()
+            to_date = post_data.get('to') and make_aware(datetime.strptime(post_data['to'], "%Y-%m-%d")).date()
 
             course_key = CourseKey.from_string(stats_course_id)
         except ValueError:
