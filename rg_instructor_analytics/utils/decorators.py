@@ -23,7 +23,7 @@ def instructor_access_required(view_func):
     Decorator for views that checks the user is logged in and has instructor access
     to the course with given course_id.
     """
-    role = 'instructor'
+    role = 'staff'
 
     @wraps(view_func, assigned=available_attrs(view_func))
     def _wrapped_view(request, *args, **kwargs):
