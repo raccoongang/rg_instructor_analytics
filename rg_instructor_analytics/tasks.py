@@ -126,11 +126,15 @@ def get_grade_summary(user_id, course):
     """
     Return the grade for the given student in the addressed course.
     """
+    user = User.objects.all().filter(id=user_id).first()
+    if not user:
+        return None
+
     try:
         if HAWTHORN:
-            grade_summary = CourseGradeFactory().read(User.objects.all().filter(id=user_id).first(), course).summary
+            grade_summary = CourseGradeFactory().read(user, course).summary
         else:
-            grade_summary = CourseGradeFactory().create(User.objects.all().filter(id=user_id).first(), course).summary
+            grade_summary = CourseGradeFactory().create(user, course).summary
         return grade_summary
     except PermissionDenied:
         return None
