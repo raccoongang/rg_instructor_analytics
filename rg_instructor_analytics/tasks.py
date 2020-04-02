@@ -10,7 +10,6 @@ from celery.schedules import crontab
 from celery.task import periodic_task, task
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.db import transaction
 from django.db.models import F
@@ -125,6 +124,7 @@ def get_items_for_grade_update():
 def get_grade_summary(user_id, course):
     """
     Return the grade for the given student in the addressed course.
+    For Lakeside we want to just skip grade if any error is oocured.
     """
     user = User.objects.all().filter(id=user_id).first()
     if not user:
@@ -136,7 +136,7 @@ def get_grade_summary(user_id, course):
         else:
             grade_summary = CourseGradeFactory().create(user, course).summary
         return grade_summary
-    except PermissionDenied:
+    except:
         return None
 
 
