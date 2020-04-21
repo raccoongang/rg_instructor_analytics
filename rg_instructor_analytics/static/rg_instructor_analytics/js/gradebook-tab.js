@@ -317,7 +317,7 @@ function GradebookTab(button, content) {
                 htmlStringStudents += _.template(
                     '<div class="gradebook-table-row">' +
                         '<div class="gradebook-table-cell">' +
-                            '<a data-position="<%= dataPosition %>"><%= studentName %></a>' +
+                            '<a data-position="<%= dataPosition %>" title="<%= studentName %>"><%= studentName %></a>' +
                         '</div>' +
                         htmlStringResults +
                     '</div>'
@@ -329,7 +329,7 @@ function GradebookTab(button, content) {
                 htmlStringStudentsUnenroll += _.template(
                     '<div class="gradebook-table-row">' +
                         '<div class="gradebook-table-cell">' +
-                            '<a data-position="<%= dataPosition %>"><%= studentName %> (unenroll)</a>' +
+                            '<a data-position="<%= dataPosition %>" title="<%= studentName %> (unenroll)"><%= studentName %> (unenroll)</a>' +
                         '</div>' +
                         htmlStringResults +
                     '</div>'

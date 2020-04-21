@@ -80,14 +80,3 @@ from django.utils.translation import ugettext as _
         </div>
     </div>
 </div>
-
-<script>
-    (function () {
-        var cellsLinks = document.querySelectorAll('.gradebook-table-cell a');
-
-        Array.prototype.forEach.call(cellsLinks, function(cellLink) {
-            var title = cellLink.textContent;
-            cellLink.setAttribute('title', title);
-        });
-    })();
-</script>
