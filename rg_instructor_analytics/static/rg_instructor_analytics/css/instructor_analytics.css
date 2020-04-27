@@ -141,6 +141,9 @@
     text-overflow: ellipsis;
     width: 100%;
 }
+.gradebook-table-cell .assignment-label {
+    white-space: nowrap;
+}
 #gradebook_table_header .gradebook-table-cell {
     background: rgb(210,210,210);
 }
