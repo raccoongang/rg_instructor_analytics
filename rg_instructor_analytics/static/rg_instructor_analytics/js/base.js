@@ -3,6 +3,7 @@ $(function() {
     var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
     var $content = $('.' + CSS_INSTRUCTOR_CONTENT);
     var courseSelect = $content.find('#select_course');
+    var cohortSelect = $content.find('#select_cohort');
 
     var tabNames = {
         'enrollment-stats-btn': 'enrollment',
@@ -42,13 +43,21 @@ $(function() {
 
     var firstTab = $content.find('.instructor-nav').children().first();
     if (firstTab.length) {
+        var courseId = courseSelect.val();
+        if (cohortSelect) {
+            var cohortID = cohortSelect.val();
+            var courseId = $content.find('#select_cohort option:selected').data('course-id');
+        }
         var tabId = firstTab.children()[0].id;
 
-        var tabHolder = new TabHolder(tabs, courseSelect.val());
+        var tabHolder = new TabHolder(tabs, courseId, cohortID);
         tabHolder.toggleToTab(tabNames[tabId]);
 
         courseSelect.change(function(item) {
             tabHolder.selectCourse(item.target.value);
+        });
+        cohortSelect.change(function(item) {
+            tabHolder.selectCohort(item.target.value, $content.find('#select_cohort option:selected').data('course-id'));
         });
     }
 

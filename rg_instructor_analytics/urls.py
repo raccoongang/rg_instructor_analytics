@@ -6,7 +6,9 @@ from django.conf.urls import url
 from rg_instructor_analytics.views.activity import ActivityView
 from rg_instructor_analytics.views.cohort import CohortSendMessage, CohortView
 from rg_instructor_analytics.views.enrollment import EnrollmentStatisticView
-from rg_instructor_analytics.views.funnel import GradeFunnelSendMessage, GradeFunnelView
+from rg_instructor_analytics.views.funnel import (
+    GradeFunnelSendMessage, GradeFunnelView, GradeFunnelCohortView, GradeFunnelCohortSendMessage
+)
 from rg_instructor_analytics.views.gradebook import (
     DiscussionActivityView, GradebookView, StudentStepView, VideoView
 )
@@ -14,7 +16,7 @@ from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView, ProblemStudentDataView
 )
 from rg_instructor_analytics.views.suggestion import SuggestionView
-from rg_instructor_analytics.views.tab_fragment import instructor_analytics_dashboard
+from rg_instructor_analytics.views.tab_fragment import cohort_report_dashboard, instructor_analytics_dashboard
 
 urlpatterns = [
     # Enrollment stats tab:
@@ -67,5 +69,10 @@ urlpatterns = [
     # Suggestions tab:
     url(r'^api/suggestion/$', SuggestionView.as_view(), name='suggestion'),
 
+    url(r'^cohort/$', cohort_report_dashboard, name='cohort_report_dashboard'),
     url(r'^$', instructor_analytics_dashboard, name='instructor_analytics_dashboard'),
+
+    # Cohort Progress Funnel tab:
+    url(r'^cohort/api/cohort_funnel/$', GradeFunnelCohortView.as_view(), name='cohort-funnel'),
+    url(r'^cohort/api/cohort_funnel/send_email/$', GradeFunnelCohortSendMessage.as_view(), name='cohort-funnel-email'),
 ]

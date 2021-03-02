@@ -22,6 +22,7 @@ setup(
     long_description=README,
     entry_points={
         "openedx.course_tab": [
+            "cohort_report = rg_instructor_analytics.plugins:CohortReportDashboardTab",
             "instructor_analytics = rg_instructor_analytics.plugins:InstructorAnalyticsDashboardTab"
         ],
     }
