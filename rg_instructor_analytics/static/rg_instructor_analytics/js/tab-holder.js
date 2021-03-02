@@ -1,8 +1,9 @@
-function TabHolder(tabs, course) {
+function TabHolder(tabs, course, cohort) {
     var holder = this;
     
     this.tabs = tabs;
     this.course = course;
+    this.cohort = cohort;
 
     this.original_ajax = $.ajax;
 
@@ -46,6 +47,18 @@ function TabHolder(tabs, course) {
     };
 
     this.selectCourse = function(course) {
+        holder.course = course;
+        for (var tabName in tabs) {
+            if (tabs.hasOwnProperty(tabName)) {
+                if (tabs[tabName].isActive) {
+                    tabs[tabName].loadTabData();
+                }
+            }
+        }
+    }
+
+    this.selectCohort = function(cohort, course) {
+        holder.cohort = cohort;
         holder.course = course;
         for (var tabName in tabs) {
             if (tabs.hasOwnProperty(tabName)) {

@@ -84,3 +84,44 @@ class InstructorTabsConfig(models.Model):
         Return human readable object name.
         """
         return "Tabs config for user: {}".format(self.user)
+
+
+class CohortReportTabsConfig(models.Model):
+    """
+    Model for configuring cohort report tabs.
+    """
+
+    user = models.OneToOneField(User, verbose_name=_('Cohort Leader'))
+    enrollment_stats = models.BooleanField(default=False, verbose_name=_('Enrollment stats'))
+    activities = models.BooleanField(default=False, verbose_name=_('Activities'))
+    problems = models.BooleanField(default=False, verbose_name=_('Problems'))
+    students_info = models.BooleanField(default=True, verbose_name=_('Students\' Info'))
+    clusters = models.BooleanField(default=False, verbose_name=_('Clusters'))
+    progress_funnel = models.BooleanField(default=True, verbose_name=_('Progress Funnel'))
+    suggestions = models.BooleanField(default=False, verbose_name=_('Suggestions'))
+
+    @classmethod
+    def get_tabs_names(cls):
+        """
+        Return all tabs names.
+        """
+        return [f.name for f in cls._meta.get_fields() if f.name not in ('user', 'id')]
+
+    @classmethod
+    def tabs_for_user(cls, user):
+        """
+        Return enabled tabs names.
+        """
+        fields = cls.get_tabs_names()
+        try:
+            conf = cls.objects.get(user=user).__dict__
+        except cls.DoesNotExist:
+            return fields
+        else:
+            return [k for k, v in conf.items() if k in fields and v]
+
+    def __unicode__(self):
+        """
+        Return human readable object name.
+        """
+        return "Tabs config for user: {}".format(self.user)

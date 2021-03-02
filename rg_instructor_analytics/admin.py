@@ -45,7 +45,44 @@ class InstructorTabsConfigAdmin(admin.ModelAdmin):
             track_info
         )
 
+class CohortReportTabsConfigAdmin(admin.ModelAdmin):
+    """
+    Django admin class for cohort report tabs configuring model.
+    """
+
+    list_display = ('user',) + tuple(models.CohortReportTabsConfig.get_tabs_names())
+    fieldsets = (
+        (None, {'fields': ('user',)}),
+        (_('Tabs'), {
+            'fields': tuple(models.CohortReportTabsConfig.get_tabs_names()),
+            'description': _(
+                'Enabling additional tabs requires extra traffic, '
+                'and might affect system activity. '
+                'It might take a little time before data is updated.'
+            )
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        """
+        Save model and track event.
+        """
+        super(CohortReportTabsConfigAdmin, self).save_model(request, obj, form, change)
+        track_info = {
+            'instructor': unicode(obj.user),
+            'instructor_id': obj.user.id,
+            'admin': unicode(request.user),
+            'admin_id': request.user.id,
+        }
+        track_info.update(dict((f, getattr(obj, f, None)) for f in obj.get_tabs_names()))
+
+        tracker.emit(
+            'rg_instructor_analytics.tabs_config.changed',
+            track_info
+        )
+
 
 admin.site.register(models.GradeStatistic, admin.ModelAdmin)
 admin.site.register(models.LastGradeStatUpdate, admin.ModelAdmin)
 admin.site.register(models.InstructorTabsConfig, InstructorTabsConfigAdmin)
+admin.site.register(models.CohortReportTabsConfig, CohortReportTabsConfigAdmin)

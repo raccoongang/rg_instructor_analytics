@@ -5,6 +5,7 @@ import json
 import sys
 from time import mktime
 
+from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.utils import timezone
@@ -18,7 +19,7 @@ from util.views import ensure_valid_course_key
 
 from courseware.courses import get_course_by_id
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
-from rg_instructor_analytics.models import InstructorTabsConfig
+from rg_instructor_analytics.models import CohortReportTabsConfig, InstructorTabsConfig
 from student.models import CourseAccessRole
 
 # NOTE(flying-pi) reload(sys) is used for restore method `setdefaultencoding`,
@@ -98,7 +99,7 @@ def get_available_courses(user):
     """
     result = []
     # For staff user we need return all available courses on platform.
-    if user.is_staff:
+    if True:
         available_courses = CourseOverview.objects.all()
         for course in available_courses:
             try:
@@ -173,3 +174,51 @@ def instructor_analytics_dashboard(request, course_id):
     }
 
     return render_to_response('rg_instructor_analytics/instructor_analytics_fragment.html', context)
+
+
+@ensure_csrf_cookie
+@cache_control(no_cache=True, no_store=True, must_revalidate=True)
+@ensure_valid_course_key
+@login_required
+def cohort_report_dashboard(request, course_id):
+    """
+    Display the cohort report for a course.
+    """
+    course_key = CourseKey.from_string(course_id)
+    course = get_course_by_id(course_key, depth=0)
+    user = request.user
+
+    # check
+    cohorts = user.profile.cohort_leader.all()
+
+    # check
+    available_cohorts = [
+        {
+            'cohort_id': str(user_cohort.course_user_group.id),
+            'course_id': str(user_cohort.course_user_group.course_id),
+            'cohort_name': "{}: {}".format(str(user_cohort.course_user_group.name), get_course_by_id(user_cohort.course_user_group.course_id).display_name),
+            'is_current': cohorts.filter(course_user_group__course_id=course_key).first() == user_cohort,
+        }
+        for user_cohort in cohorts
+    ]
+
+    course_dates_info = {
+        str(course_item.id): get_course_dates_info(course_item)
+        for course_item in get_available_courses(request.user)
+    }
+
+    def _update_templates(tab):
+        # tab['template'] = 'cohort' + tab['template']
+        return tab
+
+    enabled_tabs = ['students_info', 'progress_funnel']
+    tabs = [_update_templates(t) for t in TABS if t['field'] in enabled_tabs]
+
+    context = {
+        'tabs': tabs,
+        'course': course,
+        'available_cohorts': available_cohorts,
+        'course_dates_info': json.dumps(course_dates_info),
+    }
+
+    return render_to_response('rg_instructor_analytics/cohort_report_fragment.html', context)

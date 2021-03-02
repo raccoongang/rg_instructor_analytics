@@ -6,7 +6,7 @@ from django.core.files.storage import get_storage_class
 from django.utils.translation import ugettext_noop
 
 from courseware.access import has_access
-from courseware.tabs import CourseTab
+from xmodule.tabs import CourseTab
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 
 
@@ -20,7 +20,7 @@ class InstructorAnalyticsDashboardTab(CourseTab):
     title = ugettext_noop("Instructor analytics")
     body_class = "instructor-analytics-tab"
     is_dynamic = True
-    fragment_view_name = 'rg_instructor_analytics.views.instructor_analytics_dashboard'
+    fragment_view_name = 'rg_instructor_analytics.views.tab_fragment.instructor_analytics_dashboard'
     view_name = 'instructor_analytics_dashboard'
 
     @classmethod
@@ -65,3 +65,39 @@ class InstructorAnalyticsDashboardTab(CourseTab):
         Render this tab to a web fragment.
         """
         return self.fragment_view.render_to_fragment(request, course_id=unicode(course.id), **kwargs)
+
+
+class CohortReportDashboardTab(InstructorAnalyticsDashboardTab):
+    name = "cohort_report"
+    type = "cohort_report"
+    title = ugettext_noop("Cohort Report")
+    body_class = "cohort-report-tab"
+    is_dynamic = True
+    fragment_view_name = 'rg_instructor_analytics.views.tab_fragment.cohort_report_dashboard'
+    view_name = 'cohort_report_dashboard'
+    priority = 100
+
+    def __init__(self, tab_dict):
+        """
+        Counstruct tab.
+        """
+        super(CohortReportDashboardTab, self).__init__(tab_dict)
+        self._fragment_view = None
+
+    @classmethod
+    def is_enabled(cls, course, user=None):
+        """
+        Return true if the specified user has staff access.
+        """
+        return bool(
+            user and
+            user.profile.cohort_leader.count() > 0 and
+            (
+                configuration_helpers.get_value(
+                    'ENABLE_RG_INSTRUCTOR_ANALYTICS',
+                    settings.FEATURES.get('ENABLE_RG_INSTRUCTOR_ANALYTICS', False)
+                ) and configuration_helpers.get_value(
+                    'ENABLE_COHORT_REPORTS',
+                    settings.FEATURES.get('ENABLE_COHORT_REPORTS', False)
+                )
+            ))
