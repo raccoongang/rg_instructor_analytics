@@ -172,7 +172,6 @@ def instructor_analytics_dashboard(request, course_id):
         'available_courses': available_courses,
         'course_dates_info': json.dumps(course_dates_info),
     }
-
     return render_to_response('rg_instructor_analytics/instructor_analytics_fragment.html', context)
 
 
@@ -208,8 +207,10 @@ def cohort_report_dashboard(request, course_id):
     }
 
     def _update_templates(tab):
-        # tab['template'] = 'cohort' + tab['template']
-        return tab
+        new_tab = tab.copy()
+        if tab['field'] == 'students_info':
+            new_tab['template'] = 'cohort_gradebook.html'
+        return new_tab
 
     enabled_tabs = ['students_info', 'progress_funnel']
     tabs = [_update_templates(t) for t in TABS if t['field'] in enabled_tabs]

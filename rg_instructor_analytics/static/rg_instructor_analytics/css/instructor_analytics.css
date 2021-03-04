@@ -194,6 +194,19 @@
     overflow: auto;
     padding-top: 28px;
 }
+.cohort-gradebook-title {
+  display: flex;
+}
+.cohort-gradebook-title .cohort-gradebook-dopdown {
+  margin: 6px 0 0 100px;
+  display: block;
+}
+.gradebook-student-number {
+  margin-top: 24px;
+}
+.gradebook-table-cell span {
+    padding: 7px 15px;
+}
 .funnel-item.active > .content {
     display: block;
 }
@@ -698,10 +711,10 @@
     height: 100%;
     justify-content: space-between;
     background: linear-gradient(
-        to bottom, 
-        #eee, #eee 0.4%, 
-        white 0.4%, white 50%, 
-        #eee 50%, #eee 50.4%, 
+        to bottom,
+        #eee, #eee 0.4%,
+        white 0.4%, white 50%,
+        #eee 50%, #eee 50.4%,
         white 50.4%, white 99.6%,
         black 99.6%, black 100%
     );
@@ -863,14 +876,14 @@
     display: flex;
     height: 100%;
     justify-content: space-around;
-    
+
     background: linear-gradient(
-        to bottom, 
-        #eee, #eee 0.4%, 
+        to bottom,
+        #eee, #eee 0.4%,
         white 0.4%, white 25%,
         #eee 25%, #eee 25.4%,
         white 25.4%, white 50%,
-        black 50%, black 50.4%, 
+        black 50%, black 50.4%,
         white 50.4%, white 75%,
         #eee 75%, #eee 75.4%,
         white 75.4%, white 99.6%,

@@ -68,10 +68,16 @@ function GradebookTab(button, content) {
             updateTables(filterString);
         }
 
+        var data = {
+          filter: filterString,
+          cohort_id: greadebookTab.tabHolder.cohort,
+          enrollment_type: greadebookTab.tabHolder.enrollmentType
+        }
+
         $.ajax({
             type: "POST",
             url: "api/gradebook/",
-            data: {filter: filterString},
+            data: data,
             dataType: "json",
             traditional: true,
             success: onSuccess,
@@ -255,6 +261,9 @@ function GradebookTab(button, content) {
         var $searchInput;
         var htmlTemp;
 
+        // set the number of students in the table
+        $('#student-number').text(greadebookTab.studentExamValues.length)
+
         var htmlTemplate = (
             '<div class="gradebook-table-cell">' +
             '<form class="student-search">' +
@@ -305,38 +314,53 @@ function GradebookTab(button, content) {
 
         for (var j = 0; j < greadebookTab.studentExamValues.length; j++) {
             var htmlStringResults = '';
-            var studentName = greadebookTab.studentInfo[j]['username'];
+            var studentName = greadebookTab.studentInfo[j]['email'];
             var isEnrolled =  greadebookTab.studentInfo[j]['is_enrolled'];
+            var studentUsername = greadebookTab.studentInfo[j]['username'];
 
             for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
                 var exName = greadebookTab.studentExamValues[j][greadebookTab.examNames[nameIndex]];
                 htmlStringResults += '<div class="gradebook-table-cell">' + exName + '</div>';
             }
 
-            if (isEnrolled) {
-                htmlStringStudents += _.template(
-                    '<div class="gradebook-table-row">' +
-                        '<div class="gradebook-table-cell">' +
-                            '<a data-position="<%= dataPosition %>" title="<%= studentName %>"><%= studentName %></a>' +
-                        '</div>' +
-                        htmlStringResults +
-                    '</div>'
-                )({
-                    studentName: studentName,
-                    dataPosition: j,
-                });
+            if (studentUsername) {
+              if (isEnrolled) {
+                  htmlStringStudents += _.template(
+                      '<div class="gradebook-table-row">' +
+                          '<div class="gradebook-table-cell">' +
+                              '<a data-position="<%= dataPosition %>" title="<%= studentName %>"><%= studentName %></a>' +
+                          '</div>' +
+                          htmlStringResults +
+                      '</div>'
+                  )({
+                      studentName: studentName,
+                      dataPosition: j,
+                  });
+              } else {
+                  htmlStringStudentsUnenroll += _.template(
+                      '<div class="gradebook-table-row">' +
+                          '<div class="gradebook-table-cell">' +
+                              '<a data-position="<%= dataPosition %>" title="<%= studentName %> (unenroll)"><%= studentName %> (unenroll)</a>' +
+                          '</div>' +
+                          htmlStringResults +
+                      '</div>'
+                  )({
+                      studentName: studentName,
+                      dataPosition: j,
+                  });
+              }
             } else {
-                htmlStringStudentsUnenroll += _.template(
-                    '<div class="gradebook-table-row">' +
-                        '<div class="gradebook-table-cell">' +
-                            '<a data-position="<%= dataPosition %>" title="<%= studentName %> (unenroll)"><%= studentName %> (unenroll)</a>' +
-                        '</div>' +
-                        htmlStringResults +
-                    '</div>'
-                )({
-                    studentName: studentName,
-                    dataPosition: j,
-                });
+              htmlStringStudentsUnenroll += _.template(
+                  '<div class="gradebook-table-row">' +
+                      '<div class="gradebook-table-cell">' +
+                          '<span data-position="<%= dataPosition %>" title="<%= studentName %> (not enrolled)"><%= studentName %> (not enrolled)</span>' +
+                      '</div>' +
+                      htmlStringResults +
+                  '</div>'
+              )({
+                  studentName: studentName,
+                  dataPosition: j,
+              });
             }
         }
 
@@ -359,53 +383,58 @@ function GradebookTab(button, content) {
 
         $(greadebookTab.gradebookTableBody).off('click');
         $(greadebookTab.gradebookTableBody).on('click', function (evt) {
-            var colorArray = greadebookTab.examNames.map(function (item, idx, arr) {
-                if (idx === arr.length - 1) {
-                    return '#c14f84';
-                }
-                return '#568ecc';
-            });
-
             var studentsGrades = [];
             var studentPosition = evt.target.dataset['position'];
             var stat;
-            var lastVisit = greadebookTab.studentInfo[studentPosition]['last_visit'];
-            $lastVisitInfo.prop('hidden', false).html('Date of the last Course visit: ' + lastVisit);
+            if (studentPosition) {
+              var lastVisit = greadebookTab.studentInfo[studentPosition]['last_visit'];
+              var userName = greadebookTab.studentInfo[studentPosition]['username'];
+              if (userName) {
+                $lastVisitInfo.prop('hidden', false).html('Date of the last Course visit: ' + lastVisit);
+                var colorArray = greadebookTab.examNames.map(function (item, idx, arr) {
+                    if (idx === arr.length - 1) {
+                        return '#c14f84';
+                    }
+                    return '#568ecc';
+                });
 
-            getDiscussionActivity(studentPosition);
-            getVideoActivity(studentPosition);
-            getStudentStep(studentPosition);
 
-            $statsPlot.removeClass('hidden');
-            for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
-                studentsGrades.push(
-                  greadebookTab.studentExamValues[studentPosition][greadebookTab.examNames[nameIndex]]
-                );
+                getDiscussionActivity(studentPosition);
+                getVideoActivity(studentPosition);
+                getStudentStep(studentPosition);
+
+                $statsPlot.removeClass('hidden');
+                for (var nameIndex = 0; nameIndex < greadebookTab.examNames.length; nameIndex++) {
+                    studentsGrades.push(
+                      greadebookTab.studentExamValues[studentPosition][greadebookTab.examNames[nameIndex]]
+                    );
+                }
+
+                stat = {
+                    y: studentsGrades,
+                    x: greadebookTab.examNames,
+                    type: 'bar',
+                    marker:{
+                        color: colorArray
+                    },
+                    width: 0.6,
+                };
+                var data = [stat];
+
+                var layout = {
+                    title: greadebookTab.studentExamValues[evt.target.dataset['position']].email,
+                    showlegend: false,
+                    xaxis: {domain: [0, 0.97]},
+                };
+
+                $('.gradebook-table-row').removeClass('active');
+                $(evt.target).closest('.gradebook-table-row').toggleClass('active');
+                $tabSubtitle.removeClass('hidden');
+                $tabSubtitleText.removeClass('hidden');
+
+                Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});
+              }
             }
-
-            stat = {
-                y: studentsGrades,
-                x: greadebookTab.examNames,
-                type: 'bar',
-                marker:{
-                    color: colorArray
-                },
-                width: 0.6,
-            };
-            var data = [stat];
-
-            var layout = {
-                title: greadebookTab.studentExamValues[evt.target.dataset['position']].username,
-                showlegend: false,
-                xaxis: {domain: [0, 0.97]},
-            };
-
-            $('.gradebook-table-row').removeClass('active');
-            $(evt.target).closest('.gradebook-table-row').toggleClass('active');
-            $tabSubtitle.removeClass('hidden');
-            $tabSubtitleText.removeClass('hidden');
-
-            Plotly.newPlot('gradebook-stats-plot', data, layout, {displayModeBar: false});
         })
     }
 

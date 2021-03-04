@@ -67,7 +67,7 @@ class GradeFunnelView(View):
 
     # NOTE(wowkalucky): needs optimization - request takes above 30 sec!
 
-    @method_decorator(instructor_access_required)    
+    @method_decorator(instructor_access_required)
     def dispatch(self, *args, **kwargs):
         """
         See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
@@ -431,7 +431,7 @@ class GradeFunnelCohortView(View):
         return courses_structure
 
 
-class GradeFunnelCohortSendMessage(GradeFunnelSendMessage):
+class GradeFunnelCohortSendMessage(View):
     """
     Endpoint for sending email message.
     """
@@ -442,3 +442,22 @@ class GradeFunnelCohortSendMessage(GradeFunnelSendMessage):
         See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
         """
         return super(GradeFunnelCohortSendMessage, self).dispatch(*args, **kwargs)
+
+    def post(self, request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        emails = request.POST.get('emails')
+        email_subject = request.POST.get('subject')
+        email_body = request.POST.get('body')
+
+        email_list = list(set([email for email in emails.split(',') if email]))
+
+        tasks.send_email.delay(
+            subject=email_subject,
+            message=email_body,
+            students=email_list
+        )
+        return JsonResponse({'status': 'ok'})
