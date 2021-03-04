@@ -10,7 +10,7 @@ from rg_instructor_analytics.views.funnel import (
     GradeFunnelSendMessage, GradeFunnelView, GradeFunnelCohortView, GradeFunnelCohortSendMessage
 )
 from rg_instructor_analytics.views.gradebook import (
-    DiscussionActivityView, GradebookView, StudentStepView, VideoView
+    DiscussionActivityView, GradebookView, StudentStepView, VideoView, CohortGradebookView,
 )
 from rg_instructor_analytics.views.problem import (
     ProblemDetailView, ProblemHomeWorkStatisticView, ProblemQuestionView, ProblemsStatisticView, ProblemStudentDataView
@@ -75,4 +75,10 @@ urlpatterns = [
     # Cohort Progress Funnel tab:
     url(r'^cohort/api/cohort_funnel/$', GradeFunnelCohortView.as_view(), name='cohort-funnel'),
     url(r'^cohort/api/cohort_funnel/send_email/$', GradeFunnelCohortSendMessage.as_view(), name='cohort-funnel-email'),
+
+    # Cohort Gradebook tab:
+    url(r'^cohort/api/gradebook/$', CohortGradebookView.as_view(), name='gradebook_view'),
+    url(r'^cohort/api/gradebook/video_views/$', VideoView.as_view(), name='video_views'),
+    url(r'^cohort/api/gradebook/discussion/$', DiscussionActivityView.as_view(), name='gradebook_discussion_view'),
+    url(r'^cohort/api/gradebook/student_step/$', StudentStepView.as_view(), name='gradebook_student_step_view'),
 ]

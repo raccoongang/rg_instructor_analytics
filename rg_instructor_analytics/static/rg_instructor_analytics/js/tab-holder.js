@@ -1,9 +1,10 @@
-function TabHolder(tabs, course, cohort) {
+function TabHolder(tabs, course, cohort, enrollmentType) {
     var holder = this;
-    
+
     this.tabs = tabs;
     this.course = course;
     this.cohort = cohort;
+    this.enrollmentType = enrollmentType;
 
     this.original_ajax = $.ajax;
 
@@ -22,7 +23,7 @@ function TabHolder(tabs, course, cohort) {
             holder.toggleToTab(tabName);
         });
     }
-    
+
     for (var tabName in tabs) {
         if (tabs.hasOwnProperty(tabName)) {
             setTab(tabName);
@@ -39,7 +40,7 @@ function TabHolder(tabs, course, cohort) {
 
     this.openLocation = function(location) {
         var tab = tabs[location.value];
-        
+
         if (tab.openLocation) {
             tab.openLocation(location.child);
         }
@@ -60,6 +61,17 @@ function TabHolder(tabs, course, cohort) {
     this.selectCohort = function(cohort, course) {
         holder.cohort = cohort;
         holder.course = course;
+        for (var tabName in tabs) {
+            if (tabs.hasOwnProperty(tabName)) {
+                if (tabs[tabName].isActive) {
+                    tabs[tabName].loadTabData();
+                }
+            }
+        }
+    }
+
+    this.selectEnrollmentType = function(enrollmentType) {
+      this.enrollmentType = enrollmentType;
         for (var tabName in tabs) {
             if (tabs.hasOwnProperty(tabName)) {
                 if (tabs[tabName].isActive) {

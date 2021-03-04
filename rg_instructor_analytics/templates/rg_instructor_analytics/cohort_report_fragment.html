@@ -39,10 +39,8 @@
                   % endfor
 
                     <li>
-                    <div class="cohort-dropdown-holder">
-
-                        <div class="custom-select"> 
-
+                      <div class="cohort-dropdown-holder">
+                        <div class="custom-select">
                            <select id="select_cohort" class="js-select-time-interval filter-dropdown" style="border: 2px solid #568ecc !important;">
                             %for cohort_info in available_cohorts:
                                 <option
@@ -52,10 +50,9 @@
                                     ${cohort_info['cohort_name']}
                                 </option>
                             %endfor
-
-                        </select>
+                          </select>
                         </div>
-                        </div>
+                      </div>
                     </li>
                 </ul>
 
@@ -73,47 +70,6 @@
     </div>
 </div>
 
-<style>
-.cohort-dropdown-holder {
-    display: flex;
-}
-.cohort-dropdown-holder .custom-select .filter-dropdown {
-    height: 34px !important;
-    border: 2px solid #568ecc !important;
-    color: #568ecc !important;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    background: none !important;
-    padding: 0 30px 0 15px !important;
-    width: auto !important;
-    position: relative;
-    border-radius: 0 !important;
-    -webkit-appearance: none !important;
-    -webkit-border-radius: 0 !important;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
-@-moz-document url-prefix() {
-    .cohort-dropdown-holder .custom-select .filter-dropdown {
-        padding: 3px 30px 0 15px !important;
-    }
-}
-.cohort-dropdown-holder .custom-select .filter-dropdown option {
-    padding: 5px 5px 2px;
-}
-.cohort-dropdown-holder .custom-select:before {
-    content: '\f0d7';
-    font-family: 'FontAwesome';
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translate(0,-50%);
-    color: #568ecc;
-}
-</style>
-
 <%block name="js_extra">
 <script src="${static.url('rg_instructor_analytics/js/utils.js')}"></script>
 <script src="${static.url('rg_instructor_analytics/js/tab.js')}"></script>
@@ -122,8 +78,8 @@
 <script src="${static.url('rg_instructor_analytics/js/activity-tab.js')}"></script>
 <script src="${static.url('rg_instructor_analytics/js/problem-tab.js')}"></script>
 <script src="${static.url('rg_instructor_analytics/js/cohort-funnel-tab.js')}"></script>
-<script src="${static.url('rg_instructor_analytics/js/gradebook-tab.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/cohort-gradebook-tab.js')}"></script>
 <script src="${static.url('rg_instructor_analytics/js/clusters-tab.js')}"></script>
 <script src="${static.url('rg_instructor_analytics/js/suggestions-tab.js')}"></script>
-<script src="${static.url('rg_instructor_analytics/js/base.js')}"></script>
+<script src="${static.url('rg_instructor_analytics/js/base_cohorts.js')}"></script>
 </%block>

@@ -15,10 +15,11 @@ from opaque_keys.edx.keys import CourseKey
 from rg_instructor_analytics_log_collector.models import DiscussionActivity, LastCourseVisitByUser, StudentStepCourse, \
     VideoViewsByUser
 
+from openedx.core.djangoapps.course_groups.models import CourseUserGroup, UnregisteredLearnerCohortAssignments
 import django_comment_client.utils as utils
 from lms.djangoapps.courseware.courses import get_course_by_id
 from rg_instructor_analytics.models import GradeStatistic
-from rg_instructor_analytics.utils.decorators import instructor_access_required
+from rg_instructor_analytics.utils.decorators import cohort_leader_access_required, instructor_access_required
 
 
 class GradebookView(View):
@@ -283,5 +284,104 @@ class StudentStepView(View):
                 'units': units,
                 'steps': steps,
                 'x_default': x_default
+            }
+        )
+
+
+class CohortGradebookView(View):
+    """
+    Gradebook API view that filtered by cohort ID.
+
+    Source: modulestore (MongoDB) periodic task
+    """
+
+    @method_decorator(cohort_leader_access_required)
+    def dispatch(self, *args, **kwargs):
+        """
+        See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
+        """
+        return super(CohortGradebookView, self).dispatch(*args, **kwargs)
+
+    @staticmethod
+    def post(request, course_id):
+        """
+        POST request handler.
+
+        :param course_id: (str) context course ID (from urlconf)
+        """
+        try:
+            filter_string = request.POST.get('filter')
+            stats_course_id = request.POST.get('course_id')
+            cohort_id = request.POST.get('cohort_id')
+            enrollment_type = request.POST.get('enrollment_type', '')
+            course_key = CourseKey.from_string(stats_course_id)
+
+            cohort = CourseUserGroup.objects.get(id=cohort_id, group_type=CourseUserGroup.COHORT)
+
+        except CourseUserGroup.DoesNotExist:
+            return HttpResponseBadRequest(_("Invalid cohort ID."))
+        except InvalidKeyError:
+            return HttpResponseBadRequest(_("Invalid course ID."))
+        not_enrolled_students = []
+        course_students = []
+        students_info = []
+        student_exam_values = []
+
+        course_students = GradeStatistic.objects.filter(course_id=course_key)
+        student_ids = None
+        if cohort is not None:
+            student_ids = cohort.users.all().values_list('id', flat=True)
+            course_students = course_students.filter(student__in=student_ids)
+
+        if filter_string:
+            course_students = course_students.filter(
+                Q(student__username__icontains=filter_string) |
+                Q(student__first_name__icontains=filter_string) |
+                Q(student__last_name__icontains=filter_string) |
+                Q(student__email__icontains=filter_string)
+            )
+
+        course_students = course_students.order_by('student__username')
+
+        students_last_visit_dict = dict(LastCourseVisitByUser.objects.filter(
+            course=course_key
+        ).values_list('user_id', 'log_time'))
+
+        for student in course_students:
+            student_exam_values.append(
+                json.JSONDecoder(object_pairs_hook=OrderedDict).decode(student.exam_info))
+            student_last_visit_date = students_last_visit_dict.get(student.student.id, '')
+            student_last_visit = (student_last_visit_date and
+                                  student_last_visit_date.strftime("%d %B %Y"))
+            students_info.append({'username': student.student.username,
+                                  'email': student.student.email,
+                                  'is_enrolled': student.is_enrolled,
+                                  'last_visit': student_last_visit
+                                  })
+        exam_names = list(student_exam_values[0].keys()) if len(student_exam_values) > 0 else []
+
+        if enrollment_type == 'not_enrolled':
+            student_exam_values = []
+            students_info = []
+        if enrollment_type in ['not_enrolled', 'all']:
+            not_enrolled_students = UnregisteredLearnerCohortAssignments.objects.filter(
+                course_user_group=cohort)
+            if filter_string:
+                not_enrolled_students = not_enrolled_students.filter(email__icontains=filter_string)
+            if not_enrolled_students:
+                students_info += [
+                    {'email': email} for email
+                    in not_enrolled_students.values_list('email', flat=True)
+                ]
+                student_exam_values.append([
+                    {k: 'undefined' for k in exam_names} for student
+                    in not_enrolled_students.values_list('email', flat=True)
+                ])
+
+        return JsonResponse(
+            data={
+                'student_exam_values': student_exam_values,
+                'exam_names': exam_names,
+                'students_info': students_info,
             }
         )

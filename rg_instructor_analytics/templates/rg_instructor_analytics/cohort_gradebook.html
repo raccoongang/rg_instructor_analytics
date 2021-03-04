@@ -1,0 +1,94 @@
+<%page args="section_data" expression_filter="h"/>
+
+<%
+from django.utils.translation import ugettext as _
+%>
+
+<div class="cohort-gradebook-title">
+  <div><h1>${_("Students' Info")}</h1></div>
+  <div class="enroll-buttons-holder cohort-gradebook-dopdown">
+      <div class="custom-select">
+      <select id="select_enrollment_type" class="js-select-time-interval enrollment-type-dropdown filter-dropdown">
+          <option class="js-select-eligible" value="not_enrolled">${_("Eligible to enroll, but not enrolled")}</option>
+          <option class="js-select-enrolled" value="enrolled">${_("Enrolled")}</option>
+          <option class="js-select-all" selected value="all">${_("All")}</option>
+      </select>
+      </div>
+  </div>
+</div>
+<div class="tab-banner" hidden>
+    <h2>${_("Course has not started yet.")}</h2>
+</div>
+<div class="tab-content">
+    <h2 class="analytics-title">
+        ${_("This reports gives an overview of all students’ progress in a simple spreadsheet form.")}
+    </h2>
+    <span class="analytics-title-text">
+        ${_("Progress details of any student are available by clicking on the corresponding row of "
+        "the spreadsheet.")}
+    </span>
+    <span class="analytics-title-text">
+        ${_("You can filter student list by using “Search Student…” field.")}
+        ${_("You can search by first name, last name or email (non-case-sensitive).")}
+    </span>
+    <div class="gradebook-student-number">Number of students: <span id="student-number"></span></div>
+    <div class="grades grade-table-wrapper" >
+        <div class="grade-table">
+            <div class="gradebook-table-row" id="gradebook_table_header"></div>
+            <div id="gb-loader" class="loader hidden">
+                ${_("Loading")}
+                <img src="/static/rg_instructor_analytics/images/ajax-loader.gif" alt="loader">
+            </div>
+            <div id="gradebook_table_body">
+            </div>
+        </div>
+    </div>
+
+    <div class="gradebook-plot">
+        <h4 class="last-student-visit-banner js-last-student-visit" hidden></h4>
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Progress Graph")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
+            ${_("This graph shows the current progress details for the selected student. "
+            "It contains progress on each Homework (blue columns) and total course progress (red column).")}
+        </span>
+        <div id="gradebook-stats-plot"></div>
+    </div>
+
+    <div class="gradebook-video-plot">
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Video Views")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
+            ${_("This graph indicates the amount of seconds Student watched each of the course videos. Completed "
+            "videos are indicated green.")}
+        </span>
+        <div id="gradebook-video-stats-plot"></div>
+        <div class="loader hidden">
+            ${_("Loading")}
+            <img src="/static/rg_instructor_analytics/images/ajax-loader.gif" alt="loader">
+        </div>
+    </div>
+
+    <div class="gradebook-discussion-plot">
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Discussion Activity")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
+            ${_("This graphic indicates the amount of Student's activity in Discussions including "
+            "comments, responses, topics creation, and votes.")}
+        </span>
+        <div id="gradebook-discussion-stats-plot"></div>
+        <div class="loader hidden">
+            ${_("Loading")}
+            <img src="/static/rg_instructor_analytics/images/ajax-loader.gif" alt="loader">
+        </div>
+    </div>
+
+    <div class="gradebook-student-step-plot">
+        <h2 class="analytics-title js-analytics-subtitle hidden">${_("Student Step")}</h2>
+        <span class="analytics-title-text js-analytics-subtitle-text hidden">
+            ${_("Student's path through the course .")}
+        </span>
+        <div id="gradebook-student-step-stats-plot"></div>
+        <div class="loader hidden">
+            ${_("Loading")}
+            <img src="/static/rg_instructor_analytics/images/ajax-loader.gif" alt="loader">
+        </div>
+    </div>
+</div>

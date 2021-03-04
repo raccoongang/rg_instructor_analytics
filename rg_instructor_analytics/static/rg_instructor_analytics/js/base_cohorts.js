@@ -3,6 +3,9 @@ $(function() {
     var CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
     var $content = $('.' + CSS_INSTRUCTOR_CONTENT);
     var courseSelect = $content.find('#select_course');
+    var cohortSelect = $content.find('#select_cohort');
+    var enrollmentTypeSelect = $content.find('#select_enrollment_type');
+
 
     var tabNames = {
         'enrollment-stats-btn': 'enrollment',
@@ -42,14 +45,33 @@ $(function() {
 
     var firstTab = $content.find('.instructor-nav').children().first();
     if (firstTab.length) {
+        var cohortID, enrollmentType = null
+        var courseId = courseSelect.val();
+        if (cohortSelect) {
+            cohortID = cohortSelect.val();
+            courseId = $content.find('#select_cohort option:selected').data('course-id');
+            if (enrollmentTypeSelect) {
+              enrollmentType = enrollmentTypeSelect.val();
+            }
+        }
         var tabId = firstTab.children()[0].id;
 
-        var tabHolder = new TabHolder(tabs, courseSelect.val());
+        var tabHolder = new TabHolder(tabs, courseId, cohortID, enrollmentType);
         tabHolder.toggleToTab(tabNames[tabId]);
 
         courseSelect.change(function(item) {
             tabHolder.selectCourse(item.target.value);
         });
+        if (cohortSelect) {
+        cohortSelect.change(function(item) {
+            tabHolder.selectCohort(item.target.value, $content.find('#select_cohort option:selected').data('course-id'));
+        });
+        if (enrollmentTypeSelect) {
+          enrollmentTypeSelect.change(function(item) {
+              tabHolder.selectEnrollmentType(item.target.value);
+          });
+        }
+      }
     }
 
     window.setup_debug = function (element_id, edit_link, staff_context) {
