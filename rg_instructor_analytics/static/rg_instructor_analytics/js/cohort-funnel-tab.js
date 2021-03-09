@@ -32,6 +32,7 @@ function FunnelTab(button, content) {
             emails: emails,
             subject: $subject.val(),
             body: $richTextEditor.html(),
+            cohort_id: funnelTab.tabHolder.cohort,
         };
 
         function isValid(data) {
@@ -45,7 +46,7 @@ function FunnelTab(button, content) {
 
         $.ajax({
             type: "POST",
-            url: "api/cohort_funnel/send_email",
+            url: "api/cohort_funnel/send_email/",
             data: data,
             dataType: "json",
             success: function () {

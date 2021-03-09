@@ -161,7 +161,7 @@ function GradebookTab(button, content) {
         $.ajax({
             type: "POST",
             url: "api/gradebook/discussion/",
-            data: {username: userName},
+            data: {username: userName, cohort_id: greadebookTab.tabHolder.cohort},
             dataType: "json",
             traditional: true,
             success: function (response) {
@@ -180,7 +180,7 @@ function GradebookTab(button, content) {
         $.ajax({
             type: "POST",
             url: "api/gradebook/video_views/",
-            data: {username: userName},
+            data: {username: userName, cohort_id: greadebookTab.tabHolder.cohort},
             dataType: "json",
             traditional: true,
             success: function (response) {
@@ -244,7 +244,7 @@ function GradebookTab(button, content) {
         $.ajax({
             type: "POST",
             url: "api/gradebook/student_step/",
-            data: {username: userName},
+            data: {username: userName, cohort_id: greadebookTab.tabHolder.cohort},
             dataType: "json",
             traditional: true,
             success: function (response) {

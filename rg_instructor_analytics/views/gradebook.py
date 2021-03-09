@@ -19,7 +19,9 @@ from openedx.core.djangoapps.course_groups.models import CourseUserGroup, Unregi
 import django_comment_client.utils as utils
 from lms.djangoapps.courseware.courses import get_course_by_id
 from rg_instructor_analytics.models import GradeStatistic
-from rg_instructor_analytics.utils.decorators import cohort_leader_access_required, instructor_access_required
+from rg_instructor_analytics.utils.decorators import (cohort_leader_access_required,
+                                                      instructor_access_required,
+                                                      instructor_or_cohort_leader_access_required)
 
 
 class GradebookView(View):
@@ -94,7 +96,7 @@ class VideoView(View):
     Video Views API view.
     """
 
-    @method_decorator(instructor_access_required)
+    @method_decorator(instructor_or_cohort_leader_access_required)
     def dispatch(self, *args, **kwargs):
         """
         See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
@@ -161,7 +163,7 @@ class DiscussionActivityView(View):
 
     """
 
-    @method_decorator(instructor_access_required)
+    @method_decorator(instructor_or_cohort_leader_access_required)
     def dispatch(self, *args, **kwargs):
         """
         See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
@@ -223,7 +225,7 @@ class StudentStepView(View):
 
     """
 
-    @method_decorator(instructor_access_required)
+    @method_decorator(instructor_or_cohort_leader_access_required)
     def dispatch(self, *args, **kwargs):
         """
         See: https://docs.djangoproject.com/en/1.8/topics/class-based-views/intro/#id2.
@@ -366,17 +368,19 @@ class CohortGradebookView(View):
         if enrollment_type in ['not_enrolled', 'all']:
             not_enrolled_students = UnregisteredLearnerCohortAssignments.objects.filter(
                 course_user_group=cohort)
+            not_enrolled_registered_students = cohort.users.exclude(pk__in=course_students.values_list('student', flat=True))
+
             if filter_string:
                 not_enrolled_students = not_enrolled_students.filter(email__icontains=filter_string)
-            if not_enrolled_students:
+            if not_enrolled_students or not_enrolled_registered_students:
+                list_of_unenrolled_users = (list(not_enrolled_students.values_list('email', flat=True)) +
+                                            list(not_enrolled_registered_students.values_list('email', flat=True)))
                 students_info += [
-                    {'email': email} for email
-                    in not_enrolled_students.values_list('email', flat=True)
+                    {'email': email} for email in list_of_unenrolled_users if email
                 ]
-                student_exam_values.append([
-                    {k: 'undefined' for k in exam_names} for student
-                    in not_enrolled_students.values_list('email', flat=True)
-                ])
+                student_exam_values += [
+                    {k: 'undefined' for k in exam_names} for student in list_of_unenrolled_users if student
+                ]
 
         return JsonResponse(
             data={

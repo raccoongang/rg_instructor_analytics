@@ -48,6 +48,39 @@ def instructor_access_required(view_func):
     return _wrapped_view
 
 
+def instructor_or_cohort_leader_access_required(view_func):
+    """
+    Instructor access check decorator.
+
+    Decorator for views that checks the user is logged in and has instructor access
+    to the course with given course_id.
+    """
+    role = 'staff'
+
+    @wraps(view_func, assigned=available_attrs(view_func))
+    def _wrapped_view(request, *args, **kwargs):
+        course_id = request.POST.get('course_id') or kwargs.get('course_id')
+        cohort_id = request.POST.get('cohort_id') or kwargs.get('cohort_id')
+        try:
+            course_key = CourseKey.from_string(course_id)
+            course = get_course(course_key)
+            if (not has_access(request.user, role, course) and
+                (not getattr(request.user, 'profile') or
+                 not request.user.profile.cohort_leader.filter(id=cohort_id).exists())):
+                return HttpResponseForbidden(reason='Instructors and Cohort Leaders only!')
+            return view_func(request, *args, **kwargs)
+        except InvalidKeyError:
+            log.error(
+                "Unable to find course with course key %s while loading the Instructor Analytics dashboard.",
+                course_id
+            )
+            return HttpResponseBadRequest(reason=_("Invalid course ID."))
+        except ValueError as exc:
+            log.error(exc.message, course_id)
+            return HttpResponseBadRequest(reason=exc.message)
+    return _wrapped_view
+
+
 def cohort_leader_access_required(view_func):
     """
     Cohort Leader access check decorator.
