@@ -1,4 +1,12 @@
-# rg_instructor_analytics
+# rg_instructor_analytics [Not Supported]
+
+This repository is archived and not supported.
+
+RaccoonGang decided to continue developing analytics service on private basis
+the current available product version is 3.x.x. 
+
+Please find more information on our site 
+[RG Instructor Analytics](https://raccoongang.com/case-studies/rg-analytics-open-edx/)
 
 ## Installation
 * Add `rg_instructor_analytics` and `web_fragments` to the INSTALLED_APPS (i.e. in `edx-platform/lms/envs/common.py`)
